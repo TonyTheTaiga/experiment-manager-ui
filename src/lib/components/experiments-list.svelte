@@ -25,7 +25,7 @@
                     }
                 `}
             >
-                <article class={"flex flex-col gap-2"}>
+                <article class={"flex flex-col gap-1"}>
                     {#if expandedId !== experiment.id}
                         <!-- Condensed View -->
                         <div class="flex flex-row justify-between">
@@ -38,29 +38,42 @@
                                 }}
                             >
                                 <Maximize2
-                                    class="w-5 h-5 text-gray-300 hover:text-gray-600"
+                                    class="w-5 h-5 text-gray-400 hover:text-gray-600"
                                 />
                             </button>
                         </div>
 
-                        <p class="text-gray-600 text-sm leading-relaxed">
+                        <p class="text-gray-400 text-sm leading-relaxed">
                             Lorem ipsum odor amet, consectetuer adipiscing elit.
                         </p>
-                        <div class="flex flex-row gap-2">
-                            <span class="text-gray-600 text-sm">Groups:</span>
+                        <div class="flex flex-row gap-1 text-sm text-gray-500">
+                            <span>Groups:</span>
                             {#if experiment?.groups}
-                                <ul class="flex flex-row gap-2">
+                                <ul class="flex flex-row gap-1">
                                     {#each experiment.groups as group}
                                         <li class="items-center">
-                                            <span class="text-gray-500 text-sm"
-                                                >{group}</span
-                                            >
+                                            <span>{group}</span>
                                         </li>
                                     {/each}
                                 </ul>
                             {/if}
                         </div>
-                        <time class="text-gray-400 text-xs mt-auto pt-4">
+                        <div class="text-sm">
+                            <span class="text-gray-500">Status:</span>
+                            <span
+                                class={`
+                                    ${
+                                        experiment.running
+                                            ? "text-sky-400"
+                                            : "text-orange-400"
+                                    }
+                                    `}
+                                >{experiment.running
+                                    ? "Running"
+                                    : "Stopped"}</span
+                            >
+                        </div>
+                        <time class="text-gray-300 text-xs mt-auto pt-4">
                             Created: 00-00-0000: 00:00
                         </time>
                     {:else}
@@ -77,15 +90,28 @@
                                 }}
                             >
                                 <Minimize2
-                                    class="w-5 h-5 text-gray-300 hover:text-gray-600"
+                                    class="w-5 h-5 text-gray-400 hover:text-gray-600"
                                 />
                             </button>
                         </div>
-
-                        <p class="text-gray-400 leading-relaxed">
-                            Lorem ipsum odor amet, consectetuer adipiscing elit.
-                        </p>
-                        <textarea></textarea>
+                        <div class="text-gray-400 leading-relaxed">
+                            <p>
+                                Lorem ipsum odor amet, consectetuer adipiscing
+                                elit.
+                            </p>
+                        </div>
+                        <div class="flex flex-row gap-1 text-gray-500">
+                            <span>Groups:</span>
+                            {#if experiment?.groups}
+                                <ul class="flex flex-row gap-1">
+                                    {#each experiment.groups as group}
+                                        <li class="items-center">
+                                            <span>{group}</span>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            {/if}
+                        </div>
                         <InteractiveChart bind:this={chartComponent} />
                     {/if}
                 </article>

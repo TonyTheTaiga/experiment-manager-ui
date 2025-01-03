@@ -2,6 +2,8 @@
     import Chart from "chart.js/auto";
     import { onDestroy, onMount } from "svelte";
 
+    // Take in data from props
+
     let chartInstance: Chart | null = null;
     let chartCanvas: HTMLCanvasElement;
 
