@@ -5,6 +5,7 @@
 
     let { experiments }: { experiments: Experiment[] } = $props();
     let expandedId = $state<number | null>(null);
+    let chartComponent = $state<InteractiveChart | null>(null);
 
     function toggleExapandedId(id: number) {
         expandedId = expandedId === id ? null : id;
@@ -85,7 +86,7 @@
                             Lorem ipsum odor amet, consectetuer adipiscing elit.
                         </p>
                         <textarea></textarea>
-                        <InteractiveChart />
+                        <InteractiveChart bind:this={chartComponent} />
                     {/if}
                 </article>
             </div>

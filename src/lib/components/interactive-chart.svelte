@@ -1,41 +1,56 @@
 <script lang="ts">
-    import chartjs from "chart.js/auto";
-    let chartData;
-    import { onMount } from "svelte";
+    import Chart from "chart.js/auto";
+    import { onDestroy, onMount } from "svelte";
 
-    let chartValues = [20, 10, 5, 2, 20, 30, 45];
-    let chartLabels = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-    ];
-    let ctx;
-    let chartCanvas;
+    let chartInstance: Chart | null = null;
+    let chartCanvas: HTMLCanvasElement;
+
+    function destroyChart() {
+        if (chartInstance) {
+            chartInstance.destroy();
+            chartInstance = null;
+        }
+    }
+
+    function createChart() {
+        destroyChart();
+        if (chartCanvas) {
+            try {
+                chartInstance = new Chart(chartCanvas, {
+                    type: "line",
+                    data: {
+                        labels: ["January", "February", "March"],
+                        datasets: [
+                            {
+                                label: "Dataset 1",
+                                data: [65, 59, 80],
+                                borderColor: "rgb(75, 192, 192)",
+                                tension: 0.1,
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                    },
+                });
+            } catch (error) {
+                console.error("Failed to create chart:", error);
+            }
+        }
+    }
 
     onMount(() => {
-        ctx = chartCanvas.getContext("2d");
-        var chart = new chartjs(ctx, {
-            type: "line",
-            data: {
-                labels: chartLabels,
-                datasets: [
-                    {
-                        label: "Revenue",
-                        backgroundColor: "rgb(255, 99, 132)",
-                        borderColor: "rgb(255, 99, 132)",
-                        data: chartValues,
-                    },
-                ],
-            },
-        });
-        return () => {
-            chartCanvas.destroy();
-        };
+        createChart();
     });
+
+    onDestroy(() => {
+        console.log("destroying chart!");
+        destroyChart();
+    });
+
+    export function destroy() {
+        destroyChart();
+    }
 </script>
 
 <canvas bind:this={chartCanvas} id="myChart"></canvas>
