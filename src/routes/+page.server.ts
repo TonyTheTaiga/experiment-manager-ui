@@ -1,23 +1,39 @@
 import type { Actions } from './$types';
 import type { PageServerLoad } from './$types';
+import { createExperiment, getExperiments, deleteExeriment } from '$lib/server/database';
+import { fail } from '@sveltejs/kit';
 
 
 // Dummy Data
 export const load: PageServerLoad = async ({ params }) => {
+	let experiments = await getExperiments();
 	return {
-		experiments: [
-			{ id: 1, name: 'Resnet', groups: ['Dogs', 'Animals'], running: false, availableMetrics: ['loss', 'val_loss'] },
-			{ id: 2, name: "DeezNuts3000", groups: ['Animals', 'Cats'], running: true, availableMetrics: ['loss', 'val_loss'] },
-			{ id: 3, name: "Hello, World", running: false, availableMetrics: ['loss', 'val_loss'] },
-			{ id: 4, name: "Top Secret", groups: ['CIA'], running: true, availableMetrics: ['loss', 'val_loss'] }
-		]
+		experiments: experiments
 	};
 };
 
 export const actions = {
-	create: async ({ cookies, request }) => {
-		console.log('creating new experiment...');
+	create: async ({ request }) => {
 		const data = await request.formData();
 		console.log(data);
+		let name = data.get('experiment-name')?.toString();
+		let description = data.get('experiment-description')?.toString();
+		if (name && description) {
+			console.log('creating new experiment...');
+			await createExperiment(name, description);
+		}
+
+	},
+	delete: async ({ request }) => {
+		const data = await request.formData();
+		const id = Number(data.get('id'));
+
+		try {
+			await deleteExeriment(id);
+			return { success: true };
+		} catch (error) {
+			return fail(500, { message: 'Failed to delete experiment' });
+		}
 	}
+
 } satisfies Actions;

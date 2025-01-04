@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Experiment } from "$lib/types";
-    import { Maximize2, Minimize2 } from "lucide-svelte";
+    import { Maximize2, Minimize2, X } from "lucide-svelte";
     import InteractiveChart from "./interactive-chart.svelte";
 
     let { experiments }: { experiments: Experiment[] } = $props();
@@ -44,7 +44,7 @@
                         </div>
 
                         <p class="text-gray-400 text-sm leading-relaxed">
-                            Lorem ipsum odor amet, consectetuer adipiscing elit.
+                            {experiment.description}
                         </p>
                         <div class="flex flex-row gap-1 text-sm text-gray-500">
                             <span>Groups:</span>
@@ -63,12 +63,12 @@
                             <span
                                 class={`
                                     ${
-                                        experiment.running
+                                        experiment.jobState === 1
                                             ? "text-sky-400"
                                             : "text-orange-400"
                                     }
                                     `}
-                                >{experiment.running
+                                >{experiment.jobState === 1
                                     ? "Running"
                                     : "Stopped"}</span
                             >
@@ -78,26 +78,43 @@
                         </time>
                     {:else}
                         <!-- Expanded View -->
-                        <div class="flex flex-row justify-between">
+                        <div class="flex flex-row justify-between items-center">
                             <h3
                                 class="font-medium text-lg text-gray-900 text-left"
                             >
                                 {experiment.name}
                             </h3>
-                            <button
-                                onclick={() => {
-                                    toggleExapandedId(experiment.id);
-                                }}
-                            >
-                                <Minimize2
-                                    class="w-5 h-5 text-gray-400 hover:text-gray-600"
-                                />
-                            </button>
+                            <div class="flex flex-row gap-2">
+                                <button
+                                    onclick={() => {
+                                        toggleExapandedId(experiment.id);
+                                    }}
+                                >
+                                    <Minimize2
+                                        class="w-5 h-5 text-gray-400 hover:text-gray-600"
+                                    />
+                                </button>
+                                <form
+                                    class="w-5 h-5"
+                                    method="POST"
+                                    action="?/delete"
+                                >
+                                    <input
+                                        type="hidden"
+                                        name="id"
+                                        value={experiment.id}
+                                    />
+                                    <button type="submit">
+                                        <X
+                                            class="text-gray-400 hover:text-gray-600"
+                                        />
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                         <div class="text-gray-400 leading-relaxed">
                             <p>
-                                Lorem ipsum odor amet, consectetuer adipiscing
-                                elit.
+                                {experiment.description}
                             </p>
                         </div>
                         <div class="flex flex-row gap-1 text-gray-500">
@@ -112,7 +129,7 @@
                                 </ul>
                             {/if}
                         </div>
-                        <InteractiveChart bind:this={chartComponent} />
+                        <!-- <InteractiveChart bind:this={chartComponent} /> -->
                     {/if}
                 </article>
             </div>
