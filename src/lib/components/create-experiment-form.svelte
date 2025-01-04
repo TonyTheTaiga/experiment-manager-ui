@@ -1,10 +1,8 @@
 <script lang="ts">
-    import { enhance } from "$app/forms";
-
     let { toggleIsOpen }: { toggleIsOpen: () => void } = $props();
 </script>
 
-<form method="POST" action="?/create" use:enhance class="p-4">
+<form method="POST" action="?/create" class="p-4">
     <div>
         <label class="block text-sm text-gray-700" for="name">Name</label>
         <input
