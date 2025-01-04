@@ -1,39 +1,54 @@
-import type { Actions } from './$types';
-import type { PageServerLoad } from './$types';
-import { createExperiment, getExperiments, deleteExeriment } from '$lib/server/database';
-import { fail, redirect } from '@sveltejs/kit';
+import type { Actions } from "./$types";
+import type { PageServerLoad } from "./$types";
+import { fail, redirect } from "@sveltejs/kit";
 
-
-// Dummy Data
-export const load: PageServerLoad = async ({ params }) => {
-	let experiments = await getExperiments();
-	return {
-		experiments: experiments
-	};
+export const load: PageServerLoad = async ({ fetch }) => {
+  const response = await fetch("/api/experiments");
+  const data = await response.json();
+  return {
+    experiments: data,
+  };
 };
 
 export const actions = {
-	create: async ({ request }) => {
-		const data = await request.formData();
-		let name = data.get('experiment-name')?.toString();
-		let description = data.get('experiment-description')?.toString();
-		if (name && description) {
-			console.log('creating new experiment...');
-			await createExperiment(name, description);
-		}
+  create: async ({ request, fetch }) => {
+    const data = await request.formData();
+    let name = data.get("experiment-name");
+    let description = data.get("experiment-description");
+    if (!name || !description) {
+      return fail(400, { message: "Name and description are required" });
+    }
+    console.log("creating new experiment...");
+    let response = await fetch("/api/experiments/create", {
+      method: "POST",
+      body: JSON.stringify({
+        name: name,
+        description: description,
+      }),
+    });
+    if (!response.ok) {
+      console.log(response);
+      return fail(500, { message: "Failed to create experiment" });
+    }
+    redirect(303, "/");
+  },
 
-		redirect(303, '/');
-	},
-	delete: async ({ request }) => {
-		const data = await request.formData();
-		const id = Number(data.get('id'));
-		try {
-			console.log('deleteing experiment...');
-			await deleteExeriment(id);
-			return { success: true };
-		} catch (error) {
-			return fail(500, { message: 'Failed to delete experiment' });
-		}
-	}
-
+  delete: async ({ request, fetch }) => {
+    const data = await request.formData();
+    const id = Number(data.get("id"));
+    if (!id) {
+      return fail(400, { message: "ID is required" });
+    }
+    let response = await fetch("/api/experiments/delete", {
+      method: "POST",
+      body: JSON.stringify({
+        id: id,
+      }),
+    });
+    if (!response.ok) {
+      console.log(response);
+      return fail(500, { message: "Failed to delete experiment" });
+    }
+    redirect(303, "/");
+  },
 } satisfies Actions;

@@ -37,14 +37,6 @@
         </ul>
     </div>
 {/if}
-<div class="text-sm">
-    <span class="text-gray-500">Status:</span>
-    <span
-        class={`
-            ${experiment.jobState === 1 ? "text-sky-400" : "text-orange-400"}
-            `}>{experiment.jobState === 1 ? "Running" : "Stopped"}</span
-    >
-</div>
 <time class="text-gray-300 text-xs mt-auto pt-4">
     Created: 00-00-0000: 00:00
 </time>
