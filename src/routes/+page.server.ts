@@ -27,7 +27,7 @@ function parseFormData(formData: FormData) {
       if (!result.hyperparams[idx]) {
         result.hyperparams[idx] = { key: value as string, value: "" };
       } else {
-        result.hyperparams[idx].value = field;
+        result.hyperparams[idx].value = value;
       }
     } else {
       result[key] = value;

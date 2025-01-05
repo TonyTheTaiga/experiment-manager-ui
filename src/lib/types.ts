@@ -4,6 +4,7 @@ export type Experiment = {
   description: string | null;
   groups?: string[];
   availableMetrics?: string[];
+  hyperparams?: HyperParam[];
   createdAt?: Date;
 };
 

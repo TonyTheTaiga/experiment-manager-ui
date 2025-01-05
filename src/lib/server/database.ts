@@ -42,7 +42,7 @@ export async function createExperiment(
   };
 }
 
-export async function getExperiments() {
+export async function getExperiments(): Promise<Experiment[]> {
   client = getClient();
   const { data, error } = await client.from("experiment").select();
   if (error) {
@@ -54,6 +54,7 @@ export async function getExperiments() {
       id: query_data["id"],
       name: query_data["name"],
       description: query_data["description"],
+      hyperparams: query_data["hyperparams"] as HyperParam[],
     };
   });
 

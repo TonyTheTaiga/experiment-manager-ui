@@ -30,12 +30,14 @@
       {#each pairs as pair, i}
         <div class="pair">
           <input
+            class="px-3 py-2"
             name="hyperparams.{i}.key"
             bind:value={pair.key}
             placeholder="Name"
             required
           />
           <input
+            class="px-3 py-2"
             name="hyperparams.{i}.value"
             bind:value={pair.value}
             placeholder="Value"
