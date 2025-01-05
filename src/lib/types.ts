@@ -6,3 +6,8 @@ export type Experiment = {
   availableMetrics?: string[];
   createdAt?: Date;
 };
+
+export type HyperParam = {
+  key: string;
+  value: string;
+};

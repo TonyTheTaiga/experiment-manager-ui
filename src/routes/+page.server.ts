@@ -10,11 +10,38 @@ export const load: PageServerLoad = async ({ fetch }) => {
   };
 };
 
+function parseFormData(formData: FormData) {
+  const obj = Object.fromEntries(formData);
+  const result: {
+    hyperparams: Record<string, any>[];
+    [key: string]: any;
+  } = {
+    hyperparams: [],
+  };
+
+  Object.entries(obj).forEach(([key, value]) => {
+    if (key.startsWith("hyperparams.")) {
+      const [_, index, field] = key.split(".");
+      let idx = Number(index);
+      if (!result.hyperparams[idx]) {
+        result.hyperparams[idx] = {};
+      }
+      result.hyperparams[idx][field] = value;
+    } else {
+      result[key] = value;
+    }
+  });
+  result.hyperparams = result.hyperparams.filter(Boolean);
+  return result;
+}
+
 export const actions = {
   create: async ({ request, fetch }) => {
-    const data = await request.formData();
-    let name = data.get("experiment-name");
-    let description = data.get("experiment-description");
+    const form = await request.formData();
+    const data = parseFormData(form);
+    console.log(data);
+    let name = data["experiment-name"];
+    let description = data["experiment-description"];
     if (!name || !description) {
       return fail(400, { message: "Name and description are required" });
     }
