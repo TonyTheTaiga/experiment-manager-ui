@@ -1,6 +1,7 @@
 import type { Actions } from "./$types";
 import type { PageServerLoad } from "./$types";
 import { fail, redirect } from "@sveltejs/kit";
+import type { HyperParam } from "$lib/types";
 
 export const load: PageServerLoad = async ({ fetch }) => {
   const response = await fetch("/api/experiments");
@@ -13,7 +14,7 @@ export const load: PageServerLoad = async ({ fetch }) => {
 function parseFormData(formData: FormData) {
   const obj = Object.fromEntries(formData);
   const result: {
-    hyperparams: Record<string, any>[];
+    hyperparams: HyperParam[];
     [key: string]: any;
   } = {
     hyperparams: [],
@@ -24,9 +25,10 @@ function parseFormData(formData: FormData) {
       const [_, index, field] = key.split(".");
       let idx = Number(index);
       if (!result.hyperparams[idx]) {
-        result.hyperparams[idx] = {};
+        result.hyperparams[idx] = { key: value as string, value: "" };
+      } else {
+        result.hyperparams[idx].value = field;
       }
-      result.hyperparams[idx][field] = value;
     } else {
       result[key] = value;
     }
@@ -39,9 +41,9 @@ export const actions = {
   create: async ({ request, fetch }) => {
     const form = await request.formData();
     const data = parseFormData(form);
-    console.log(data);
     let name = data["experiment-name"];
     let description = data["experiment-description"];
+    let hyperparams = data["hyperparams"];
     if (!name || !description) {
       return fail(400, { message: "Name and description are required" });
     }
@@ -51,6 +53,7 @@ export const actions = {
       body: JSON.stringify({
         name: name,
         description: description,
+        hyperparams: hyperparams,
       }),
     });
     if (!response.ok) {

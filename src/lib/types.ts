@@ -9,5 +9,5 @@ export type Experiment = {
 
 export type HyperParam = {
   key: string;
-  value: string;
+  value: any;
 };

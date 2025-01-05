@@ -5,7 +5,7 @@ import {
   PUBLIC_SUPABASE_ANON_KEY,
 } from "$env/static/public";
 import type { Database } from "./database.types";
-import type { Experiment } from "$lib/types";
+import type { Experiment, HyperParam } from "$lib/types";
 
 const supabaseUrl = PUBLIC_SUPABASE_URL;
 const supabaseKey = PUBLIC_SUPABASE_ANON_KEY;
@@ -23,11 +23,12 @@ function getClient() {
 export async function createExperiment(
   name: string,
   description: string,
+  hyperparams: HyperParam[],
 ): Promise<Experiment> {
   client = getClient();
   const { data, error } = await client
     .from("experiment")
-    .insert({ name: name, description: description })
+    .insert({ name: name, description: description, hyperparams: hyperparams })
     .select();
   if (error) {
     throw new Error("Failed to create experiment");
