@@ -88,8 +88,6 @@ export async function createMetric(metric: Metric) {
 
 export async function batchCreateMetric(metrics: Metric[]) {
   let client = getClient();
-
-  // Add retry logic
   const maxRetries = 3;
   for (let i = 0; i < maxRetries; i++) {
     try {
@@ -100,7 +98,7 @@ export async function batchCreateMetric(metrics: Metric[]) {
     } catch (error) {
       if (i === maxRetries - 1)
         throw new Error("Failed to write metrics after retries");
-      await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1))); // Exponential backoff
+      await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
     }
   }
 }
