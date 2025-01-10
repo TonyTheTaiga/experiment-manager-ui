@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { HyperParam } from "$lib/types";
-
   let {
     toggleIsOpen,
   }: {
@@ -8,55 +7,6 @@
   } = $props();
 
   let pairs = $state<HyperParam[]>([]);
-
-  //   function parseFormData(formData: FormData) {
-  //     const obj = Object.fromEntries(formData);
-  //     const result: {
-  //       hyperparams: HyperParam[];
-  //       [key: string]: any;
-  //     } = {
-  //       hyperparams: [],
-  //     };
-
-  //     Object.entries(obj).forEach(([key, value]) => {
-  //       if (key.startsWith("hyperparams.")) {
-  //         const [_, index, field] = key.split(".");
-  //         let idx = Number(index);
-  //         if (!result.hyperparams[idx]) {
-  //           result.hyperparams[idx] = { key: value as string, value: "" };
-  //         } else {
-  //           result.hyperparams[idx].value = value;
-  //         }
-  //       } else {
-  //         result[key] = value;
-  //       }
-  //     });
-  //     result.hyperparams = result.hyperparams.filter(Boolean);
-  //     return result;
-  //   }
-
-  //   async function handleSubmit(
-  //     event: SubmitEvent & { currentTarget: EventTarget & HTMLFormElement }
-  //   ) {
-  //     event.preventDefault();
-  //     let data = parseFormData(new FormData(event.currentTarget));
-  //     let name = data["experiment-name"];
-  //     let description = data["experiment-description"];
-  //     let hyperparams = data["hyperparams"];
-  //     if (!name || !description) {
-  //       throw new Error("Name and description are required");
-  //     }
-  //     let response = await fetch(event.currentTarget.action, {
-  //       method: "POST",
-  //       body: JSON.stringify({
-  //         name: name,
-  //         description: description,
-  //         hyperparams: hyperparams,
-  //       }),
-  //     });
-  //     // goto("/");
-  //     await invalidateAll();
-  //   }
 </script>
 
 <form method="POST" action="?/create" class="p-4">
@@ -80,7 +30,6 @@
     </div>
 
     <div class="flex flex-col">
-      <!-- <span class="text-gray-500"> Hyperparams: </span> -->
       {#each pairs as pair, i}
         <div class="pair">
           <input

@@ -5,9 +5,9 @@
   import ExperimentSimple from "./experiment-simple.svelte";
 
   let { experiments }: { experiments: Experiment[] } = $props();
-  let targetId = $state<number | null>(null);
+  let targetId = $state<string | null>(null);
 
-  function toggleToggleId(id: number) {
+  function toggleToggleId(id: string) {
     targetId = targetId === id ? null : id;
   }
 </script>

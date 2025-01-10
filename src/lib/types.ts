@@ -1,14 +1,14 @@
 export type Experiment = {
   id: string;
   name: string;
-  description: string | null;
+  description?: string | null;
   groups?: string[];
-  availableMetrics?: string[];
-  hyperparams?: HyperParam[];
+  availableMetrics?: string[] | null;
+  hyperparams?: HyperParam[] | null;
   createdAt?: Date;
 };
 
 export type HyperParam = {
   key: string;
-  value: any;
+  value: string | number;
 };

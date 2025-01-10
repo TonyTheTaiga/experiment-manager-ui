@@ -38,6 +38,7 @@ export async function createExperiment(
     description: data[0].description,
     createdAt: createdAt,
     id: data[0].id,
+    hyperparams: data[0].hyperparams as HyperParam[],
   };
 }
 
@@ -48,14 +49,13 @@ export async function getExperiments(): Promise<Experiment[]> {
     throw new Error("Failed to fetch experiments");
   }
 
-  let experiments = data.map((query_data) => {
-    return {
-      id: query_data["id"],
-      name: query_data["name"],
-      description: query_data["description"],
-      hyperparams: query_data["hyperparams"] as HyperParam[],
-    };
-  });
+  let experiments = data.map((query_data) => ({
+    id: query_data["id"],
+    name: query_data["name"],
+    description: query_data["description"],
+    hyperparams: query_data["hyperparams"] as HyperParam[],
+    createdAt: new Date(query_data["created_at"]),
+  }));
 
   return experiments;
 }
@@ -78,14 +78,14 @@ export async function createMetric(
   metadata?: Json,
 ) {
   client = getClient();
-  console.log(metadata);
-
-  let res = await client.from("metric").insert({
+  const { error } = await client.from("metric").insert({
     experiment_id: experimentId,
     name: name,
     value: value,
     metadata: metadata,
     step: step,
   });
-  console.log(res);
+  if (error) {
+    throw new Error("Failed to write metric");
+  }
 }

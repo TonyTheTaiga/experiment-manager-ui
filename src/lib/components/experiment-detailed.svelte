@@ -5,7 +5,7 @@
   let {
     experiment,
     toggleToggleId,
-  }: { experiment: Experiment; toggleToggleId: (id: number) => void } =
+  }: { experiment: Experiment; toggleToggleId: (id: string) => void } =
     $props();
 </script>
 

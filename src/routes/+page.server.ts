@@ -27,7 +27,7 @@ function parseFormData(formData: FormData) {
       if (!result.hyperparams[idx]) {
         result.hyperparams[idx] = { key: value as string, value: "" };
       } else {
-        result.hyperparams[idx].value = value;
+        result.hyperparams[idx].value = value as string | number;
       }
     } else {
       result[key] = value;
@@ -47,7 +47,6 @@ export const actions = {
     if (!name || !description) {
       return fail(400, { message: "Name and description are required" });
     }
-    console.log("creating new experiment...");
     let response = await fetch("/api/experiments/create", {
       method: "POST",
       body: JSON.stringify({
@@ -57,7 +56,6 @@ export const actions = {
       }),
     });
     if (!response.ok) {
-      console.log(response);
       return fail(500, { message: "Failed to create experiment" });
     }
     redirect(303, "/");
@@ -76,7 +74,6 @@ export const actions = {
       }),
     });
     if (!response.ok) {
-      console.log(response);
       return fail(500, { message: "Failed to delete experiment" });
     }
     redirect(303, "/");
