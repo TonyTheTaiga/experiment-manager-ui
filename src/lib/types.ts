@@ -1,6 +1,6 @@
 import type { Json } from "./server/database.types";
 
-export type Experiment = {
+export interface Experiment {
   id: string;
   name: string;
   description?: string | null;
@@ -10,7 +10,7 @@ export type Experiment = {
   createdAt?: Date;
 };
 
-export type Metric = {
+export interface Metric {
   experiment_id: string,
   name: string,
   value: number,
@@ -18,7 +18,7 @@ export type Metric = {
   metadata?: Json,
 }
 
-export type HyperParam = {
+export interface HyperParam {
   key: string;
   value: string | number;
 };
