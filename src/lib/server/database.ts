@@ -4,9 +4,8 @@ import {
   PUBLIC_SUPABASE_URL,
   PUBLIC_SUPABASE_ANON_KEY,
 } from "$env/static/public";
-import type { Database } from "./database.types";
-import type { Experiment, HyperParam } from "$lib/types";
-
+import type { Database, Json } from "./database.types";
+import { type Experiment, type HyperParam } from "$lib/types";
 const supabaseUrl = PUBLIC_SUPABASE_URL;
 const supabaseKey = PUBLIC_SUPABASE_ANON_KEY;
 
@@ -61,7 +60,32 @@ export async function getExperiments(): Promise<Experiment[]> {
   return experiments;
 }
 
+export async function getExperiment(id: number) {
+  client = getClient();
+  return await client.from("experiment").select().eq("id", id);
+}
+
 export async function deleteExeriment(id: number) {
   client = getClient();
   await client.from("experiment").delete().eq("id", id);
+}
+
+export async function createMetric(
+  experimentId: string,
+  name: string,
+  value: number,
+  step?: number,
+  metadata?: Json,
+) {
+  client = getClient();
+  console.log(metadata);
+
+  let res = await client.from("metric").insert({
+    experiment_id: experimentId,
+    name: name,
+    value: value,
+    metadata: metadata,
+    step: step,
+  });
+  console.log(res);
 }

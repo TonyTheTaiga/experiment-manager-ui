@@ -14,24 +14,62 @@ export type Database = {
           created_at: string
           description: string | null
           hyperparams: Json[] | null
-          id: number
+          id: string
           name: string
         }
         Insert: {
           created_at?: string
           description?: string | null
           hyperparams?: Json[] | null
-          id?: number
+          id?: string
           name: string
         }
         Update: {
           created_at?: string
           description?: string | null
           hyperparams?: Json[] | null
-          id?: number
+          id?: string
           name?: string
         }
         Relationships: []
+      }
+      metric: {
+        Row: {
+          created_at: string
+          experiment_id: string | null
+          id: number
+          metadata: Json | null
+          name: string
+          step: number | null
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          experiment_id?: string | null
+          id?: number
+          metadata?: Json | null
+          name: string
+          step?: number | null
+          value: number
+        }
+        Update: {
+          created_at?: string
+          experiment_id?: string | null
+          id?: number
+          metadata?: Json | null
+          name?: string
+          step?: number | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "metric_experiment_id_fkey"
+            columns: ["experiment_id"]
+            isOneToOne: false
+            referencedRelation: "experiment"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

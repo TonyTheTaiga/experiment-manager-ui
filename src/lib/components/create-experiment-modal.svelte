@@ -1,7 +1,11 @@
 <script lang="ts">
   import CreateExperimentForm from "./create-experiment-form.svelte";
 
-  let { toggleIsOpen }: { toggleIsOpen: () => void } = $props();
+  let {
+    toggleIsOpen,
+  }: {
+    toggleIsOpen: () => void;
+  } = $props();
 </script>
 
 <div

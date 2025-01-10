@@ -1,5 +1,5 @@
 export type Experiment = {
-  id: number;
+  id: string;
   name: string;
   description: string | null;
   groups?: string[];

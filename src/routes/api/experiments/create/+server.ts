@@ -7,5 +7,6 @@ export async function POST({ request }) {
   let description = data["description"];
   let hyperparams = data["hyperparams"];
   const experiment = await createExperiment(name, description, hyperparams);
-  return json(experiment);
+  // return json({ experiment: experiment, success: true, type: "success" });
+  return json({ success: true });
 }
