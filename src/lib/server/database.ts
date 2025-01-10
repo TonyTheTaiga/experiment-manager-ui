@@ -5,7 +5,7 @@ import {
   PUBLIC_SUPABASE_ANON_KEY,
 } from "$env/static/public";
 import type { Database, Json } from "./database.types";
-import { type Experiment, type HyperParam } from "$lib/types";
+import { type Experiment, type HyperParam, type Metric } from "$lib/types";
 const supabaseUrl = PUBLIC_SUPABASE_URL;
 const supabaseKey = PUBLIC_SUPABASE_ANON_KEY;
 
@@ -24,7 +24,7 @@ export async function createExperiment(
   description: string,
   hyperparams: HyperParam[],
 ): Promise<Experiment> {
-  client = getClient();
+  let client = getClient();
   const { data, error } = await client
     .from("experiment")
     .insert({ name: name, description: description, hyperparams: hyperparams })
@@ -43,12 +43,12 @@ export async function createExperiment(
 }
 
 export async function getExperiments(): Promise<Experiment[]> {
-  client = getClient();
+  let client = getClient();
+
   const { data, error } = await client.from("experiment").select();
   if (error) {
-    throw new Error("Failed to fetch experiments");
+    throw new Error("Failed to get experiments");
   }
-
   let experiments = data.map((query_data) => ({
     id: query_data["id"],
     name: query_data["name"],
@@ -61,31 +61,46 @@ export async function getExperiments(): Promise<Experiment[]> {
 }
 
 export async function getExperiment(id: number) {
-  client = getClient();
-  return await client.from("experiment").select().eq("id", id);
+  let client = getClient();
+  let { data, error } = await client.from("experiment").select().eq("id", id);
+  if (error) {
+    throw new Error("Failed to get experiment with ID: " + id);
+  }
+
+  return data;
 }
 
 export async function deleteExeriment(id: number) {
-  client = getClient();
-  await client.from("experiment").delete().eq("id", id);
+  let client = getClient();
+  let { error } = await client.from("experiment").delete().eq("id", id);
+  if (error) {
+    throw new Error("Failed to get delete experiment with ID: " + id);
+  }
 }
 
-export async function createMetric(
-  experimentId: string,
-  name: string,
-  value: number,
-  step?: number,
-  metadata?: Json,
-) {
-  client = getClient();
-  const { error } = await client.from("metric").insert({
-    experiment_id: experimentId,
-    name: name,
-    value: value,
-    metadata: metadata,
-    step: step,
-  });
+export async function createMetric(metric: Metric) {
+  let client = getClient();
+  const { error } = await client.from("metric").insert(metric);
   if (error) {
     throw new Error("Failed to write metric");
+  }
+}
+
+export async function batchCreateMetric(metrics: Metric[]) {
+  let client = getClient();
+
+  // Add retry logic
+  const maxRetries = 3;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const { error } = await client.from("metric").insert(metrics);
+      if (!error) return;
+
+      throw error;
+    } catch (error) {
+      if (i === maxRetries - 1)
+        throw new Error("Failed to write metrics after retries");
+      await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1))); // Exponential backoff
+    }
   }
 }

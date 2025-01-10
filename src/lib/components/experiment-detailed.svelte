@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Experiment } from "$lib/types";
   import { Minimize2, X } from "lucide-svelte";
+  import InteractiveChart from "./interactive-chart.svelte";
 
   let {
     experiment,
@@ -56,4 +57,4 @@
     </ul>
   </div>
 {/if}
-<!-- <InteractiveChart /> -->
+<InteractiveChart />

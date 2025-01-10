@@ -2,8 +2,6 @@
   import Chart from "chart.js/auto";
   import { onDestroy, onMount } from "svelte";
 
-  // Take in data from props
-
   let chartInstance: Chart | null = null;
   let chartCanvas: HTMLCanvasElement;
 
@@ -21,11 +19,11 @@
         chartInstance = new Chart(chartCanvas, {
           type: "line",
           data: {
-            labels: ["January", "February", "March"],
+            labels: [0, 1, 2],
             datasets: [
               {
-                label: "Dataset 1",
-                data: [65, 59, 80],
+                label: "loss",
+                data: [0.5, 0.2, 0.1],
                 borderColor: "rgb(75, 192, 192)",
                 tension: 0.1,
               },
