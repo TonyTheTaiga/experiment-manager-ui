@@ -20,9 +20,8 @@ function mapExperimentData(exp: any): Experiment {
     name: exp.name,
     description: exp.description,
     hyperparams: exp.hyperparams,
-    createdAt: exp.createdAt,
-    groups: exp.groups ?? undefined,
-    availableMetrics: exp.available_metrics ?? undefined
+    createdAt: new Date(exp.createdAt),
+    availableMetrics: exp.availableMetrics ?? undefined
   };
 }
 
@@ -57,7 +56,6 @@ export const load: PageServerLoad = async ({ fetch }) => {
   const response = await fetch(API_ROUTES.GET_EXPERIMENTS);
   const rawData = await response.json();
   const experiments = rawData.map(mapExperimentData);
-
   return { experiments };
 };
 

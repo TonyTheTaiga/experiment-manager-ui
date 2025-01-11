@@ -1,6 +1,5 @@
 <script lang="ts">
   import CreateExperimentForm from "./create-experiment-form.svelte";
-
   let {
     toggleIsOpen,
   }: {
@@ -9,13 +8,16 @@
 </script>
 
 <div
-  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+  class="fixed inset-0 bg-gray-950/20 backdrop-blur-[2px]
+         flex items-center justify-center p-4"
 >
-  <div class="bg-white rounded-sm flex flex-col">
-    <div class="p-2">
-      <h2 class="text-lg font-medium">Create a New Experiment</h2>
-      <div class="mt-2 border-b border-gray-200"></div>
+  <div class="bg-white w-full max-w-xl">
+    <div class="px-8 pt-8 pb-6">
+      <h2 class="text-xl font-medium text-gray-900">Create a New Experiment</h2>
     </div>
-    <CreateExperimentForm {toggleIsOpen} />
+
+    <div class="px-8 pb-8">
+      <CreateExperimentForm {toggleIsOpen} />
+    </div>
   </div>
 </div>

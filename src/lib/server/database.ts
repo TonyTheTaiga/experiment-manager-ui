@@ -48,17 +48,11 @@ class DatabaseClient {
     };
   }
 
-
   static async getExperiments(): Promise<Experiment[]> {
-    const startTime = performance.now();
-
     const { data, error } = await DatabaseClient.getInstance()
       .from("experiment")
-      .select()
+      .select('*, metric (name)')
       .order('created_at', { ascending: false });
-
-    const queryTime = performance.now();
-    // console.log(`DB query took ${(queryTime - startTime).toFixed(2)}ms`);
 
     if (error) {
       throw new Error(`Failed to get experiments: ${error.message}`);
@@ -70,11 +64,8 @@ class DatabaseClient {
       description: exp.description,
       hyperparams: exp.hyperparams as unknown as HyperParam[],
       createdAt: new Date(exp.created_at),
+      availableMetrics: [...new Set(exp.metric.map(m => m.name))]
     }));
-
-    const endTime = performance.now();
-    // console.log(`Data mapping took ${(endTime - queryTime).toFixed(2)}ms`);
-    // console.log(`Total time: ${(endTime - startTime).toFixed(2)}ms`);
 
     return result;
   }

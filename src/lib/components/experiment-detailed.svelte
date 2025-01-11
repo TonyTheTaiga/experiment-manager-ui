@@ -3,58 +3,63 @@
   import { Minimize2, X } from "lucide-svelte";
   import InteractiveChart from "./interactive-chart.svelte";
 
-  let {
-    experiment,
-    toggleToggleId,
-  }: { experiment: Experiment; toggleToggleId: (id: string) => void } =
-    $props();
+  export let experiment: Experiment;
+  export let toggleToggleId: (id: string) => void;
 </script>
 
-<div class="flex flex-row justify-between items-center">
-  <h3 class="font-medium text-lg text-gray-900 text-left">
-    {experiment.name}
-  </h3>
-  <div class="flex flex-row gap-2">
-    <button
-      onclick={() => {
-        toggleToggleId(experiment.id);
-      }}
-    >
-      <Minimize2 class="w-5 h-5 text-gray-400 hover:text-gray-600" />
-    </button>
-    <form class="w-5 h-5" method="POST" action="?/delete">
-      <input type="hidden" name="id" value={experiment.id} />
-      <button type="submit">
-        <X class="text-red-400 hover:text-red-600" />
+<article class="p-6 bg-white">
+  <header class="flex justify-between items-center mb-4">
+    <time class="text-xs text-gray-400">
+      {new Date(experiment.createdAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })}
+    </time>
+
+    <div class="flex gap-3">
+      <button
+        on:click={() => toggleToggleId(experiment.id)}
+        class="text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        <Minimize2 size={16} />
       </button>
-    </form>
-  </div>
-</div>
-<div class="text-gray-400 leading-relaxed">
-  <p>
+
+      <form method="POST" action="?/delete">
+        <input type="hidden" name="id" value={experiment.id} />
+        <button
+          type="submit"
+          class="text-gray-400 hover:text-red-500 transition-colors"
+        >
+          <X size={16} />
+        </button>
+      </form>
+    </div>
+  </header>
+
+  <h2 class="text-lg font-medium text-gray-900 mb-2">
+    {experiment.name}
+  </h2>
+
+  <p class="text-sm text-gray-500 mb-4 leading-relaxed">
     {experiment.description}
   </p>
-</div>
-<div class="flex flex-col gap-2">
-  {#if experiment?.hyperparams}
-    {#each experiment.hyperparams as hyperparam}
-      <div>
-        <span class="text-gray-600">{hyperparam.key}: </span>
-        <span class="text-gray-400">{hyperparam.value}</span>
-      </div>
-    {/each}
-  {/if}
-</div>
-{#if experiment?.groups}
-  <div class="flex flex-row gap-1 text-gray-500">
-    <span>Groups:</span>
-    <ul class="flex flex-row gap-1">
-      {#each experiment.groups as group}
-        <li class="items-center">
-          <span>{group}</span>
-        </li>
+
+  {#if experiment.hyperparams}
+    <div class="flex flex-wrap gap-4 mb-6">
+      {#each experiment.hyperparams as param}
+        <div class="flex items-center gap-1">
+          <span class="text-xs text-gray-600">{param.key}</span>
+          <span class="text-xs text-gray-400">{param.value}</span>
+        </div>
       {/each}
-    </ul>
-  </div>
-{/if}
-<InteractiveChart {experiment} />
+    </div>
+  {/if}
+
+  <!-- Metrics -->
+  {#if experiment.availableMetrics}
+    <div class="mt-4">
+      <InteractiveChart {experiment} />
+    </div>
+  {/if}
+</article>
