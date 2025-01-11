@@ -141,7 +141,7 @@
 </script>
 
 <div
-  class="rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-200"
+  class="rounded-md border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-200"
 >
   <div class="p-4 space-y-4">
     {#if experiment.availableMetrics}
@@ -166,9 +166,9 @@
 
     {#if selectedMetric}
       <div
-        class="relative h-64 w-full rounded-lg border border-gray-200 bg-gray-50/50 overflow-hidden"
+        class="relative h-64 w-full rounded-sm border border-gray-200 bg-gray-50/50 overflow-hidden"
       >
-        <div class="absolute inset-0 bg-white m-[1px] rounded-lg">
+        <div class="absolute inset-0 bg-white m-[1px] rounded-sm">
           <canvas bind:this={chartCanvas} class="p-2"></canvas>
         </div>
       </div>
