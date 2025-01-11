@@ -11,6 +11,7 @@ const API_ROUTES = {
 
 interface FormDataResult {
   hyperparams: HyperParam[];
+  tags: string[],
   [key: string]: any;
 }
 
@@ -30,6 +31,7 @@ function parseFormData(formData: FormData): FormDataResult {
   const obj = Object.fromEntries(formData);
   const result: FormDataResult = {
     hyperparams: [],
+    tags: [],
   };
 
   Object.entries(obj).forEach(([key, value]) => {
@@ -42,6 +44,13 @@ function parseFormData(formData: FormData): FormDataResult {
       } else {
         result.hyperparams[idx].value = value as string | number;
       }
+    } else if (key.startsWith("tags.")) {
+      const [_, index] = key.split('.');
+      const idx = Number(index);
+
+      if (!result.tags[idx]) {
+        result.tags[idx] = value as string;
+      }
     } else {
       result[key] = value;
     }
@@ -50,6 +59,7 @@ function parseFormData(formData: FormData): FormDataResult {
   return {
     ...result,
     hyperparams: result.hyperparams.filter(Boolean),
+    tags: result.tags.filter(Boolean),
   };
 }
 
@@ -66,6 +76,7 @@ async function handleCreate(request: Request, fetch: Function) {
     "experiment-name": name,
     "experiment-description": description,
     hyperparams,
+    tags,
   } = parseFormData(form);
 
   if (!name || !description) {
@@ -74,7 +85,7 @@ async function handleCreate(request: Request, fetch: Function) {
 
   const response = await fetch(API_ROUTES.CREATE_EXPERIMENT, {
     method: "POST",
-    body: JSON.stringify({ name, description, hyperparams }),
+    body: JSON.stringify({ name, description, hyperparams, tags }),
   });
 
   if (!response.ok) {

@@ -58,9 +58,10 @@
     <span class="text-sm font-medium text-gray-700">Tags</span>
 
     {#each tags as tag, i}
+      <input type="hidden" value={tag} name="tags.{i}" />
       <span
         class="px-3 py-1 text-sm bg-gray-50 text-gray-600
-                flex items-center gap-1 group"
+            flex items-center gap-1 group"
       >
         {tag}
         <button
