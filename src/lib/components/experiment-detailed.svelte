@@ -14,6 +14,8 @@
         year: "numeric",
         month: "short",
         day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
       })}
     </time>
     <div class="flex items-center gap-3">
@@ -39,9 +41,20 @@
     {experiment.name}
   </h2>
 
-  <p class="text-sm text-gray-500 mb-4 leading-relaxed">
+  <p class="text-sm text-gray-500 mb-2 leading-relaxed">
     {experiment.description}
   </p>
+
+  {#if experiment.tags && experiment.tags.length > 0}
+    <div class="flex flex-wrap items-center gap-2 mb-2">
+      <span class="text-sm text-gray-600">Tags:</span>
+      {#each experiment.tags as tag}
+        <span class="px-2 py-1 text-xs bg-gray-50 text-gray-600 rounded-sm">
+          {tag}
+        </span>
+      {/each}
+    </div>
+  {/if}
 
   {#if experiment.hyperparams}
     <div class="flex flex-wrap gap-4 mb-6">
