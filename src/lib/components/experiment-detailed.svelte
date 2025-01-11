@@ -8,7 +8,7 @@
 </script>
 
 <article class="p-4 bg-white">
-  <header class="flex justify-between items-center mb-2">
+  <header class="flex justify-between items-center">
     <time class="text-sm text-gray-400">
       {new Date(experiment.createdAt).toLocaleDateString("en-US", {
         year: "numeric",
@@ -37,7 +37,7 @@
     </div>
   </header>
 
-  <h2 class="text-2xl font-medium text-gray-900 mb-2">
+  <h2 class="text-2xl font-medium text-gray-900 mb-6">
     {experiment.name}
   </h2>
 
