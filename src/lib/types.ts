@@ -6,6 +6,7 @@ export interface Experiment {
   description?: string | null;
   availableMetrics?: string[] | null;
   hyperparams?: HyperParam[] | null;
+  tags?: string[] | null;
   createdAt: Date;
 }
 

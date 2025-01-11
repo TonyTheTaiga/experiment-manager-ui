@@ -24,6 +24,7 @@ class DatabaseClient {
     name: string,
     description: string,
     hyperparams: HyperParam[],
+    tags: string[],
   ): Promise<Experiment> {
     const { data, error } = await DatabaseClient.getInstance()
       .from("experiment")
@@ -31,6 +32,7 @@ class DatabaseClient {
         name,
         description,
         hyperparams: hyperparams as unknown as Json[],
+        tags
       })
       .select()
       .single();
@@ -45,6 +47,7 @@ class DatabaseClient {
       description: data.description,
       hyperparams: data.hyperparams as unknown as HyperParam[],
       createdAt: new Date(data.created_at),
+      tags: data.tags,
     };
   }
 
@@ -65,6 +68,7 @@ class DatabaseClient {
         description: exp.description,
         hyperparams: exp.hyperparams as unknown as HyperParam[],
         createdAt: new Date(exp.created_at),
+        tags: exp.tags,
         availableMetrics: [...new Set(exp.metric.map((m) => m.name))],
       }),
     );
@@ -75,7 +79,7 @@ class DatabaseClient {
   static async getExperiment(id: string): Promise<Experiment> {
     const { data, error } = await DatabaseClient.getInstance()
       .from("experiment")
-      .select()
+      .select("*, metric (name)")
       .eq("id", id)
       .single();
 
@@ -91,6 +95,8 @@ class DatabaseClient {
       description: data.description,
       hyperparams: data.hyperparams as unknown as HyperParam[],
       createdAt: new Date(data.created_at),
+      availableMetrics: [...new Set(data.metric.map((m) => m.name))],
+      tags: data.tags,
     };
   }
 

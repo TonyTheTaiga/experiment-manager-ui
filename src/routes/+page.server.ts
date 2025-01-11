@@ -22,6 +22,7 @@ function mapExperimentData(exp: any): Experiment {
     hyperparams: exp.hyperparams,
     createdAt: new Date(exp.createdAt),
     availableMetrics: exp.availableMetrics ?? undefined,
+    tags: exp.tags,
   };
 }
 

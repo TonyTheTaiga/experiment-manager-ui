@@ -7,6 +7,7 @@ export async function POST({ request }) {
     let name = data["name"];
     let description = data["description"];
     let hyperparams = data["hyperparams"];
+    let tags = data['tags'];
 
     if (typeof hyperparams === "string") {
       try {
@@ -17,7 +18,7 @@ export async function POST({ request }) {
       }
     }
 
-    const experiment = await createExperiment(name, description, hyperparams);
+    const experiment = await createExperiment(name, description, hyperparams, tags);
     return json({ success: true, experiment: experiment });
   } catch (error: unknown) {
     console.error("Error in POST handler:", error);

@@ -1,11 +1,27 @@
 <script lang="ts">
   import type { HyperParam } from "$lib/types";
+  import { SquarePlus, CirclePlus } from "lucide-svelte";
+
   let {
     toggleIsOpen,
   }: {
     toggleIsOpen: () => void;
   } = $props();
+
   let pairs = $state<HyperParam[]>([]);
+
+  // Tags stuff
+  let addingNewTag = $state<boolean>(false);
+  let tag = $state<string | null>(null);
+  let tags = $state<string[]>([]);
+
+  function addTag() {
+    if (tag) {
+      tags = [...tags, tag];
+      tag = null;
+      addingNewTag = false;
+    }
+  }
 </script>
 
 <form method="POST" action="?/create" class="flex flex-col gap-6">
@@ -37,6 +53,65 @@
     />
   </div>
 
+  <!-- Tags -->
+  <div class="flex flex-wrap items-center gap-3">
+    <span class="text-sm font-medium text-gray-700">Tags</span>
+
+    {#each tags as tag, i}
+      <span
+        class="px-3 py-1 text-sm bg-gray-50 text-gray-600
+                flex items-center gap-1 group"
+      >
+        {tag}
+        <button
+          class="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"
+          onclick={() => tags.splice(i, 1)}
+        >
+          ×
+        </button>
+      </span>
+    {/each}
+
+    {#if addingNewTag}
+      <div class="flex items-center gap-2">
+        <input
+          type="text"
+          bind:value={tag}
+          class="px-3 py-1 w-32 text-sm bg-gray-50
+               text-gray-900 placeholder-gray-400
+               focus:outline-none focus:ring-0 focus:bg-gray-100
+               transition-colors"
+          placeholder="New tag"
+          onkeydown={(e) => {
+            if (e.key === "Enter") {
+              addTag();
+            }
+          }}
+        />
+        <button
+          onclick={(e) => {
+            e.preventDefault();
+            addTag();
+          }}
+          class="text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <CirclePlus size={16} />
+        </button>
+      </div>
+    {/if}
+
+    {#if !addingNewTag}
+      <button
+        onclick={() => {
+          addingNewTag = true;
+        }}
+        class="text-gray-400 hover:text-gray-600 transition-colors"
+      >
+        <SquarePlus size={16} />
+      </button>
+    {/if}
+  </div>
+
   <!-- Hyperparameters Section -->
   <div class="space-y-3">
     {#each pairs as pair, i}
@@ -47,7 +122,6 @@
                  focus:outline-none focus:ring-0 focus:bg-gray-100
                  transition-colors"
           name="hyperparams.{i}.key"
-          bind:value={pair.key}
           placeholder="Parameter name"
           required
         />
@@ -57,7 +131,6 @@
                  focus:outline-none focus:ring-0 focus:bg-gray-100
                  transition-colors"
           name="hyperparams.{i}.value"
-          bind:value={pair.value}
           placeholder="Value"
           required
         />
