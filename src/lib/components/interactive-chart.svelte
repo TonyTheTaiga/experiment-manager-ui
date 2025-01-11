@@ -154,7 +154,7 @@
                    hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm
                    focus:outline-none focus:ring-2 focus:ring-blue-500/20
                    {selectedMetric === metric
-              ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-sm'
+              ? 'bg-red-50 text-gray-600 border-red-200 shadow-sm'
               : 'bg-white text-gray-600'}"
             onclick={() => setSelectedMetric(metric)}
           >
