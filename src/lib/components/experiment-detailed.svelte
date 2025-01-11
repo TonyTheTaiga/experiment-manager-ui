@@ -8,8 +8,8 @@
 </script>
 
 <article class="p-6 bg-white">
-  <header class="flex justify-between items-center mb-4">
-    <time class="text-xs text-gray-400">
+  <header class="flex justify-between items-center mb-2">
+    <time class="text-sm text-gray-400">
       {new Date(experiment.createdAt).toLocaleDateString("en-US", {
         year: "numeric",
         month: "short",
@@ -19,7 +19,7 @@
 
     <div class="flex gap-3">
       <button
-        on:click={() => toggleToggleId(experiment.id)}
+        onclick={() => toggleToggleId(experiment.id)}
         class="text-gray-400 hover:text-gray-600 transition-colors"
       >
         <Minimize2 size={16} />
@@ -37,7 +37,7 @@
     </div>
   </header>
 
-  <h2 class="text-lg font-medium text-gray-900 mb-2">
+  <h2 class="text-2xl font-medium text-gray-900 mb-2">
     {experiment.name}
   </h2>
 
