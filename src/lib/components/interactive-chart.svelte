@@ -45,8 +45,8 @@
             {
               label,
               data: y,
-              borderColor: "#6B7280", // gray-500 for minimalist look
-              backgroundColor: "#F3F4F6", // gray-100 for subtle fill
+              borderColor: "#6B7280",
+              backgroundColor: "#F3F4F6",
               borderWidth: 1.5,
               tension: 0.2,
               fill: true,
@@ -66,9 +66,9 @@
             },
             tooltip: {
               backgroundColor: "#ffffff",
-              titleColor: "#111827",
-              bodyColor: "#374151",
-              borderColor: "#E5E7EB",
+              titleColor: "#1e293b",
+              bodyColor: "#475569",
+              borderColor: "#e2e8f0",
               borderWidth: 1,
               padding: 8,
               displayColors: false,
@@ -86,7 +86,8 @@
                 color: "#6B7280",
               },
               grid: {
-                display: false,
+                display: true,
+                color: "#f1f5f9",
               },
               ticks: {
                 color: "#9CA3AF",
@@ -106,7 +107,8 @@
                 color: "#6B7280",
               },
               grid: {
-                color: "#F3F4F6",
+                display: true,
+                color: "#f1f5f9",
               },
               ticks: {
                 color: "#9CA3AF",
@@ -138,25 +140,50 @@
   }
 </script>
 
-<div class="space-y-4">
-  {#if experiment.availableMetrics}
-    <div class="flex flex-wrap gap-2">
-      {#each experiment.availableMetrics as metric}
-        <button
-          class="px-3 py-1.5 text-sm text-gray-600 bg-gray-50
-                 hover:bg-gray-100 rounded-sm transition-colors
-                 {selectedMetric === metric ? 'bg-gray-200 text-gray-800' : ''}"
-          onclick={() => setSelectedMetric(metric)}
-        >
-          {metric}
-        </button>
-      {/each}
-    </div>
-  {/if}
+<div
+  class="rounded-lg border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-200"
+>
+  <div class="p-4 space-y-4">
+    {#if experiment.availableMetrics}
+      <div class="flex flex-wrap gap-2">
+        {#each experiment.availableMetrics as metric}
+          <button
+            class="px-3 py-1.5 text-sm font-medium
+                   rounded-md border border-gray-200
+                   transition-all duration-150 ease-in-out
+                   hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm
+                   focus:outline-none focus:ring-2 focus:ring-blue-500/20
+                   {selectedMetric === metric
+              ? 'bg-blue-50 text-blue-600 border-blue-200 shadow-sm'
+              : 'bg-white text-gray-600'}"
+            onclick={() => setSelectedMetric(metric)}
+          >
+            {metric}
+          </button>
+        {/each}
+      </div>
+    {/if}
 
-  {#if selectedMetric}
-    <div class="h-64 w-full">
-      <canvas bind:this={chartCanvas}></canvas>
-    </div>
-  {/if}
+    {#if selectedMetric}
+      <div
+        class="relative h-64 w-full rounded-lg border border-gray-200 bg-gray-50/50 overflow-hidden"
+      >
+        <div class="absolute inset-0 bg-white m-[1px] rounded-lg">
+          <canvas bind:this={chartCanvas} class="p-2"></canvas>
+        </div>
+      </div>
+
+      <!-- <div class="mt-2 text-xs text-gray-400 text-center">
+        Click and drag to zoom • Double click to reset
+      </div> -->
+    {/if}
+  </div>
 </div>
+
+<style>
+  canvas {
+    background-image: radial-gradient(#f1f5f9 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: -10px -10px;
+  }
+</style>

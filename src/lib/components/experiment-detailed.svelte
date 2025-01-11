@@ -7,7 +7,7 @@
   export let toggleToggleId: (id: string) => void;
 </script>
 
-<article class="p-6 bg-white">
+<article class="p-4 bg-white">
   <header class="flex justify-between items-center mb-2">
     <time class="text-sm text-gray-400">
       {new Date(experiment.createdAt).toLocaleDateString("en-US", {
@@ -16,20 +16,18 @@
         day: "numeric",
       })}
     </time>
-
-    <div class="flex gap-3">
+    <div class="flex items-center gap-3">
       <button
         onclick={() => toggleToggleId(experiment.id)}
-        class="text-gray-400 hover:text-gray-600 transition-colors"
+        class="text-gray-600 hover:text-black transition-colors flex items-center justify-center"
       >
         <Minimize2 size={16} />
       </button>
-
-      <form method="POST" action="?/delete">
+      <form method="POST" action="?/delete" class="flex items-center">
         <input type="hidden" name="id" value={experiment.id} />
         <button
           type="submit"
-          class="text-gray-400 hover:text-red-500 transition-colors"
+          class="text-gray-600 hover:text-red-600 transition-colors flex items-center justify-center"
         >
           <X size={16} />
         </button>

@@ -18,7 +18,7 @@
       toggleToggleId(experiment.id);
     }}
   >
-    <Maximize2 class="text-gray-400 hover:text-gray-600" size={16} />
+    <Maximize2 class="text-gray-600 hover:text-black" size={16} />
   </button>
 </div>
 
