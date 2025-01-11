@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Experiment } from "$lib/types";
-  import InteractiveChart from "./interactive-chart.svelte";
   import ExperimentDetailed from "./experiment-detailed.svelte";
   import ExperimentSimple from "./experiment-simple.svelte";
 

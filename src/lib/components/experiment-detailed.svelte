@@ -57,4 +57,4 @@
     </ul>
   </div>
 {/if}
-<InteractiveChart />
+<InteractiveChart {experiment} />

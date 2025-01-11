@@ -3,5 +3,6 @@ import { getExperiments } from "$lib/server/database.js";
 
 export async function GET(event) {
   const experiments = await getExperiments();
+  console.log(experiments);
   return json(experiments);
 }

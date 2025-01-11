@@ -1,6 +1,7 @@
 import { json, type RequestEvent } from '@sveltejs/kit';
-import { createMetric } from '$lib/server/database';
+import { createMetric, getMetrics } from '$lib/server/database';
 import type { Json } from '$lib/server/database.types';
+import { MoveVerticalIcon } from 'lucide-svelte';
 
 interface MetricInput {
   name: string;
@@ -24,7 +25,6 @@ export async function POST({
   try {
     const payload = await request.json() as MetricInput;
 
-    // Validate required fields
     if (!payload.name?.trim()) {
       throw new Error('Metric name is required');
     }
@@ -38,7 +38,6 @@ export async function POST({
       throw new Error('Invalid experiment ID');
     }
 
-    // Optional field validation
     if (payload.step !== undefined && !Number.isFinite(payload.step)) {
       throw new Error('Step must be a finite number');
     }
@@ -66,4 +65,9 @@ export async function POST({
       }
     } satisfies APIResponse, { status: statusCode });
   }
+}
+
+export async function GET({ params }: RequestEvent<{ slug: string }>) {
+  const metrics = await getMetrics(params.slug)
+  return json(metrics)
 }

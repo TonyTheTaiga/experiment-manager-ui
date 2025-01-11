@@ -5,100 +5,168 @@ import {
   PUBLIC_SUPABASE_ANON_KEY,
 } from "$env/static/public";
 import type { Database, Json } from "./database.types";
-import { type Experiment, type HyperParam, type Metric } from "$lib/types";
-const supabaseUrl = PUBLIC_SUPABASE_URL;
-const supabaseKey = PUBLIC_SUPABASE_ANON_KEY;
+import type { Experiment, HyperParam, Metric } from "$lib/types";
 
-let client: SupabaseClient<Database>;
+class DatabaseClient {
+  private static instance: SupabaseClient<Database>;
 
-function getClient() {
-  if (!client) {
-    client = createClient<Database>(supabaseUrl, supabaseKey);
+  private static getInstance(): SupabaseClient<Database> {
+    if (!this.instance) {
+      this.instance = createClient<Database>(
+        PUBLIC_SUPABASE_URL,
+        PUBLIC_SUPABASE_ANON_KEY
+      );
+    }
+    return this.instance;
   }
 
-  return client;
-}
+  static async createExperiment(
+    name: string,
+    description: string,
+    hyperparams: HyperParam[]
+  ): Promise<Experiment> {
+    const { data, error } = await DatabaseClient.getInstance()
+      .from("experiment")
+      .insert({
+        name,
+        description,
+        hyperparams: hyperparams as unknown as Json[],
+      })
+      .select()
+      .single();
 
-export async function createExperiment(
-  name: string,
-  description: string,
-  hyperparams: HyperParam[],
-): Promise<Experiment> {
-  let client = getClient();
-  const { data, error } = await client
-    .from("experiment")
-    .insert({ name: name, description: description, hyperparams: hyperparams })
-    .select();
-  if (error) {
-    throw new Error("Failed to create experiment");
-  }
-  let createdAt = new Date(data[0].created_at);
-  return {
-    name: data[0].name,
-    description: data[0].description,
-    createdAt: createdAt,
-    id: data[0].id,
-    hyperparams: data[0].hyperparams as HyperParam[],
-  };
-}
+    if (error || !data) {
+      throw new Error(`Failed to create experiment: ${error?.message}`);
+    }
 
-export async function getExperiments(): Promise<Experiment[]> {
-  let client = getClient();
-
-  const { data, error } = await client.from("experiment").select();
-  if (error) {
-    throw new Error("Failed to get experiments");
-  }
-  let experiments = data.map((query_data) => ({
-    id: query_data["id"],
-    name: query_data["name"],
-    description: query_data["description"],
-    hyperparams: query_data["hyperparams"] as HyperParam[],
-    createdAt: new Date(query_data["created_at"]),
-  }));
-
-  return experiments;
-}
-
-export async function getExperiment(id: number) {
-  let client = getClient();
-  let { data, error } = await client.from("experiment").select().eq("id", id);
-  if (error) {
-    throw new Error("Failed to get experiment with ID: " + id);
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      hyperparams: data.hyperparams as unknown as HyperParam[],
+      createdAt: new Date(data.created_at),
+    };
   }
 
-  return data;
-}
 
-export async function deleteExeriment(id: number) {
-  let client = getClient();
-  let { error } = await client.from("experiment").delete().eq("id", id);
-  if (error) {
-    throw new Error("Failed to get delete experiment with ID: " + id);
+  static async getExperiments(): Promise<Experiment[]> {
+    const startTime = performance.now();
+
+    const { data, error } = await DatabaseClient.getInstance()
+      .from("experiment")
+      .select()
+      .order('created_at', { ascending: false });
+
+    const queryTime = performance.now();
+    // console.log(`DB query took ${(queryTime - startTime).toFixed(2)}ms`);
+
+    if (error) {
+      throw new Error(`Failed to get experiments: ${error.message}`);
+    }
+
+    const result = data.map((exp): Experiment => ({
+      id: exp.id,
+      name: exp.name,
+      description: exp.description,
+      hyperparams: exp.hyperparams as unknown as HyperParam[],
+      createdAt: new Date(exp.created_at),
+    }));
+
+    const endTime = performance.now();
+    // console.log(`Data mapping took ${(endTime - queryTime).toFixed(2)}ms`);
+    // console.log(`Total time: ${(endTime - startTime).toFixed(2)}ms`);
+
+    return result;
   }
-}
 
-export async function createMetric(metric: Metric) {
-  let client = getClient();
-  const { error } = await client.from("metric").insert(metric);
-  if (error) {
-    throw new Error("Failed to write metric");
+  static async getExperiment(id: string): Promise<Experiment> {
+    const { data, error } = await DatabaseClient.getInstance()
+      .from("experiment")
+      .select()
+      .eq("id", id)
+      .single();
+
+    if (error || !data) {
+      throw new Error(`Failed to get experiment with ID ${id}: ${error?.message}`);
+    }
+
+    return {
+      id: data.id,
+      name: data.name,
+      description: data.description,
+      hyperparams: data.hyperparams as unknown as HyperParam[],
+      createdAt: new Date(data.created_at),
+    };
   }
-}
 
-export async function batchCreateMetric(metrics: Metric[]) {
-  let client = getClient();
-  const maxRetries = 3;
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      const { error } = await client.from("metric").insert(metrics);
-      if (!error) return;
+  static async deleteExperiment(id: string): Promise<void> {
+    const { error } = await DatabaseClient.getInstance()
+      .from("experiment")
+      .delete()
+      .eq("id", id);
 
-      throw error;
-    } catch (error) {
-      if (i === maxRetries - 1)
-        throw new Error("Failed to write metrics after retries");
-      await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
+    if (error) {
+      throw new Error(`Failed to delete experiment with ID ${id}: ${error.message}`);
     }
   }
+
+  static async getMetrics(experimentId: string): Promise<Metric[]> {
+    const { data, error } = await DatabaseClient.getInstance()
+      .from("metric")
+      .select()
+      .eq("experiment_id", experimentId).order('created_at', { ascending: false });
+
+    if (error) {
+      throw new Error(`Failed to get metrics: ${error.message}`);
+    }
+
+    return data as Metric[];
+  }
+
+  static async createMetric(metric: Metric): Promise<void> {
+    const { error } = await DatabaseClient.getInstance()
+      .from("metric")
+      .insert(metric);
+
+    if (error) {
+      throw new Error(`Failed to write metric: ${error.message}`);
+    }
+  }
+
+  static async batchCreateMetric(metrics: Metric[]): Promise<void> {
+    const maxRetries = 3;
+    let lastError: Error | null = null;
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        const { error } = await DatabaseClient.getInstance()
+          .from("metric")
+          .insert(metrics);
+
+        if (!error) return;
+        lastError = new Error(`Batch insert failed: ${error.message}`);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown error occurred');
+
+        if (attempt < maxRetries - 1) {
+          await new Promise(resolve =>
+            setTimeout(resolve, 1000 * Math.pow(2, attempt))
+          );
+          continue;
+        }
+      }
+    }
+
+    throw new Error(`Failed to write metrics after ${maxRetries} retries: ${lastError?.message}`);
+  }
 }
+
+export const {
+  createExperiment,
+  getExperiments,
+  getExperiment,
+  deleteExperiment,
+  getMetrics,
+  createMetric,
+  batchCreateMetric,
+} = DatabaseClient;

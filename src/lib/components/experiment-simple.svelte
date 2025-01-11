@@ -37,6 +37,14 @@
     </ul>
   </div>
 {/if}
-<time class="text-gray-300 text-xs mt-auto pt-4">
-  Created: {experiment.createdAt}
-</time>
+{#if experiment?.createdAt}
+  <time class="text-gray-800 text-xs mt-auto pt-4">
+    Created: {experiment.createdAt.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric",
+    })}
+  </time>
+{/if}

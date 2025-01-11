@@ -21,9 +21,6 @@ export async function POST({
 }: RequestEvent<{ slug: string }, string>): Promise<Response> {
   try {
     const metrics = await request.json() as MetricInput[];
-    console.log(metrics);
-
-    // Input validation
     if (!Array.isArray(metrics)) {
       throw new Error('Invalid input: expected array of metrics');
     }
@@ -41,7 +38,6 @@ export async function POST({
       ...data,
       experiment_id: experimentId,
     }));
-    console.log(finalMetrics);
 
     await batchCreateMetric(finalMetrics);
 
@@ -52,7 +48,6 @@ export async function POST({
     });
 
   } catch (error) {
-    console.log(error);
     const apiError: APIError = {
       message: error instanceof Error ? error.message : 'Unknown error occurred',
       code: 'METRIC_CREATE_ERROR',

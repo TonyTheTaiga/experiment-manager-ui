@@ -1,31 +1,44 @@
-import type { Actions } from "./$types";
-import type { PageServerLoad } from "./$types";
-import { fail, redirect } from "@sveltejs/kit";
-import type { HyperParam } from "$lib/types";
+import type { Actions } from './$types';
+import type { PageServerLoad } from './$types';
+import { fail, redirect } from '@sveltejs/kit';
+import type { Experiment, HyperParam } from '$lib/types';
 
-export const load: PageServerLoad = async ({ fetch }) => {
-  const response = await fetch("/api/experiments");
-  const data = await response.json();
+const API_ROUTES = {
+  GET_EXPERIMENTS: '/api/experiments',
+  CREATE_EXPERIMENT: '/api/experiments/create',
+  DELETE_EXPERIMENT: '/api/experiments/delete'
+} as const;
+
+interface FormDataResult {
+  hyperparams: HyperParam[];
+  [key: string]: any;
+}
+
+function mapExperimentData(exp: any): Experiment {
   return {
-    experiments: data,
+    id: exp.id,
+    name: exp.name,
+    description: exp.description,
+    hyperparams: exp.hyperparams,
+    createdAt: exp.createdAt,
+    groups: exp.groups ?? undefined,
+    availableMetrics: exp.available_metrics ?? undefined
   };
-};
+}
 
-function parseFormData(formData: FormData) {
+function parseFormData(formData: FormData): FormDataResult {
   const obj = Object.fromEntries(formData);
-  const result: {
-    hyperparams: HyperParam[];
-    [key: string]: any;
-  } = {
+  const result: FormDataResult = {
     hyperparams: [],
   };
 
   Object.entries(obj).forEach(([key, value]) => {
-    if (key.startsWith("hyperparams.")) {
-      const [_, index, field] = key.split(".");
-      let idx = Number(index);
+    if (key.startsWith('hyperparams.')) {
+      const [_, index, field] = key.split('.');
+      const idx = Number(index);
+
       if (!result.hyperparams[idx]) {
-        result.hyperparams[idx] = { key: value as string, value: "" };
+        result.hyperparams[idx] = { key: value as string, value: '' };
       } else {
         result.hyperparams[idx].value = value as string | number;
       }
@@ -33,49 +46,62 @@ function parseFormData(formData: FormData) {
       result[key] = value;
     }
   });
-  result.hyperparams = result.hyperparams.filter(Boolean);
-  return result;
+
+  return {
+    ...result,
+    hyperparams: result.hyperparams.filter(Boolean)
+  };
 }
 
-export const actions = {
-  create: async ({ request, fetch }) => {
-    const form = await request.formData();
-    const data = parseFormData(form);
-    let name = data["experiment-name"];
-    let description = data["experiment-description"];
-    let hyperparams = data["hyperparams"];
-    if (!name || !description) {
-      return fail(400, { message: "Name and description are required" });
-    }
-    let response = await fetch("/api/experiments/create", {
-      method: "POST",
-      body: JSON.stringify({
-        name: name,
-        description: description,
-        hyperparams: hyperparams,
-      }),
-    });
-    if (!response.ok) {
-      return fail(500, { message: "Failed to create experiment" });
-    }
-    redirect(303, "/");
-  },
+export const load: PageServerLoad = async ({ fetch }) => {
+  const response = await fetch(API_ROUTES.GET_EXPERIMENTS);
+  const rawData = await response.json();
+  const experiments = rawData.map(mapExperimentData);
 
-  delete: async ({ request, fetch }) => {
-    const data = await request.formData();
-    const id = Number(data.get("id"));
-    if (!id) {
-      return fail(400, { message: "ID is required" });
-    }
-    let response = await fetch("/api/experiments/delete", {
-      method: "POST",
-      body: JSON.stringify({
-        id: id,
-      }),
-    });
-    if (!response.ok) {
-      return fail(500, { message: "Failed to delete experiment" });
-    }
-    redirect(303, "/");
-  },
-} satisfies Actions;
+  return { experiments };
+};
+
+async function handleCreate(request: Request, fetch: Function) {
+  const form = await request.formData();
+  const { 'experiment-name': name, 'experiment-description': description, hyperparams } = parseFormData(form);
+
+  if (!name || !description) {
+    return fail(400, { message: 'Name and description are required' });
+  }
+
+  const response = await fetch(API_ROUTES.CREATE_EXPERIMENT, {
+    method: 'POST',
+    body: JSON.stringify({ name, description, hyperparams }),
+  });
+
+  if (!response.ok) {
+    return fail(500, { message: 'Failed to create experiment' });
+  }
+
+  throw redirect(303, '/');
+}
+
+async function handleDelete(request: Request, fetch: Function) {
+  const data = await request.formData();
+  const id = data.get('id');
+
+  if (!id) {
+    return fail(400, { message: 'ID is required' });
+  }
+
+  const response = await fetch(API_ROUTES.DELETE_EXPERIMENT, {
+    method: 'POST',
+    body: JSON.stringify({ id }),
+  });
+
+  if (!response.ok) {
+    return fail(500, { message: 'Failed to delete experiment' });
+  }
+
+  throw redirect(303, '/');
+}
+
+export const actions: Actions = {
+  create: async ({ request, fetch }) => handleCreate(request, fetch),
+  delete: async ({ request, fetch }) => handleDelete(request, fetch)
+};

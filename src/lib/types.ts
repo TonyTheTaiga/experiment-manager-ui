@@ -7,7 +7,7 @@ export interface Experiment {
   groups?: string[];
   availableMetrics?: string[] | null;
   hyperparams?: HyperParam[] | null;
-  createdAt?: Date;
+  createdAt: Date;
 };
 
 export interface Metric {
