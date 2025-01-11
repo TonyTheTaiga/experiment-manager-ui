@@ -5,5 +5,5 @@ export async function POST({ request }) {
   let data = await request.json();
   let id = data["id"];
   await deleteExperiment(id);
-  return json({ success: true })
+  return json({ success: true });
 }

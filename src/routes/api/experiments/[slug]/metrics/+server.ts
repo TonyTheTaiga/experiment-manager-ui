@@ -1,7 +1,7 @@
-import { json, type RequestEvent } from '@sveltejs/kit';
-import { createMetric, getMetrics } from '$lib/server/database';
-import type { Json } from '$lib/server/database.types';
-import { MoveVerticalIcon } from 'lucide-svelte';
+import { json, type RequestEvent } from "@sveltejs/kit";
+import { createMetric, getMetrics } from "$lib/server/database";
+import type { Json } from "$lib/server/database.types";
+import { MoveVerticalIcon } from "lucide-svelte";
 
 interface MetricInput {
   name: string;
@@ -20,26 +20,26 @@ interface APIResponse {
 
 export async function POST({
   request,
-  params
+  params,
 }: RequestEvent<{ slug: string }, string>): Promise<Response> {
   try {
-    const payload = await request.json() as MetricInput;
+    const payload = (await request.json()) as MetricInput;
 
     if (!payload.name?.trim()) {
-      throw new Error('Metric name is required');
+      throw new Error("Metric name is required");
     }
 
     if (payload.value === undefined || payload.value === null) {
-      throw new Error('Metric value is required');
+      throw new Error("Metric value is required");
     }
 
     const experimentId = params.slug;
     if (!experimentId?.trim()) {
-      throw new Error('Invalid experiment ID');
+      throw new Error("Invalid experiment ID");
     }
 
     if (payload.step !== undefined && !Number.isFinite(payload.step)) {
-      throw new Error('Step must be a finite number');
+      throw new Error("Step must be a finite number");
     }
 
     await createMetric({
@@ -53,21 +53,24 @@ export async function POST({
     return json({
       success: true,
     } satisfies APIResponse);
-
   } catch (error) {
     const statusCode = error instanceof Error ? 400 : 500;
 
-    return json({
-      success: false,
-      error: {
-        message: error instanceof Error ? error.message : 'Internal server error',
-        code: 'METRIC_CREATE_FAILED'
-      }
-    } satisfies APIResponse, { status: statusCode });
+    return json(
+      {
+        success: false,
+        error: {
+          message:
+            error instanceof Error ? error.message : "Internal server error",
+          code: "METRIC_CREATE_FAILED",
+        },
+      } satisfies APIResponse,
+      { status: statusCode },
+    );
   }
 }
 
 export async function GET({ params }: RequestEvent<{ slug: string }>) {
-  const metrics = await getMetrics(params.slug)
-  return json(metrics)
+  const metrics = await getMetrics(params.slug);
+  return json(metrics);
 }
