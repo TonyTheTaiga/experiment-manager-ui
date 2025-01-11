@@ -32,7 +32,7 @@ class DatabaseClient {
         name,
         description,
         hyperparams: hyperparams as unknown as Json[],
-        tags
+        tags,
       })
       .select()
       .single();

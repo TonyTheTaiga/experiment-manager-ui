@@ -11,7 +11,7 @@ const API_ROUTES = {
 
 interface FormDataResult {
   hyperparams: HyperParam[];
-  tags: string[],
+  tags: string[];
   [key: string]: any;
 }
 
@@ -45,7 +45,7 @@ function parseFormData(formData: FormData): FormDataResult {
         result.hyperparams[idx].value = value as string | number;
       }
     } else if (key.startsWith("tags.")) {
-      const [_, index] = key.split('.');
+      const [_, index] = key.split(".");
       const idx = Number(index);
 
       if (!result.tags[idx]) {
