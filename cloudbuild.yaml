@@ -10,7 +10,6 @@ steps:
         echo "PUBLIC_SUPABASE_ANON_KEY=$(gcloud secrets versions access latest --secret=SUPABASE_KEY)" >> .env
         echo "PUBLIC_ANTHROPIC_KEY=$(gcloud secrets versions access latest --secret=ANTHROPIC_KEY)" >> .env
 
-        # Print confirmation (without showing the actual values)
         echo ".env file created successfully"
 
   - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
