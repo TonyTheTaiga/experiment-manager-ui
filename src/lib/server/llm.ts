@@ -6,7 +6,7 @@ const client = new Anthropic({
 });
 
 const PROMPT =
-  "You are a helpful assistant tasked to analyze and compile a report of machine learning experiments. Output well structured markdown.";
+  "You are a helpful assistant tasked to analyze and compile a report of machine learning experiments. Output well structured text-only markdown.";
 
 export const generateText = async (prompt: string) => {
   const msg = await client.messages.create({

@@ -100,11 +100,153 @@
 </article>
 
 <style>
-	.preview {
-		height: 75%;
-		padding: 2rem;
-		box-sizing: border-box;
-		display: block;
-		width: 100%;
-	}
+    .preview {
+      height: 75%;
+      padding: 2rem;
+      box-sizing: border-box;
+      display: block;
+      width: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.5;
+      color: #333;
+      overflow-y: auto;
+    }
+
+    /* Use :global to style elements rendered from markdown */
+    .preview :global(h1) {
+      font-size: 2rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid #eaecef;
+    }
+
+    .preview :global(h2) {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 1.5rem;
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid #eaecef;
+    }
+
+    .preview :global(h3) {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 1.3rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .preview :global(h4) {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .preview :global(p) {
+      margin-bottom: 1rem;
+    }
+
+    .preview :global(ul),
+    .preview :global(ol) {
+      margin-left: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .preview :global(ul) {
+      list-style-type: disc;
+    }
+
+    .preview :global(ol) {
+      list-style-type: decimal;
+    }
+
+    .preview :global(li) {
+      margin-bottom: 0.25rem;
+    }
+
+    .preview :global(li p) {
+      margin-bottom: 0.5rem;
+    }
+
+    .preview :global(table) {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+
+    .preview :global(th),
+    .preview :global(td) {
+      border: 1px solid #ddd;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .preview :global(th) {
+      background-color: #f6f8fa;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    .preview :global(tr:nth-child(2n)) {
+      background-color: #f8f8f8;
+    }
+
+    .preview :global(pre) {
+      background-color: #f6f8fa;
+      border-radius: 3px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 85%;
+    }
+
+    .preview :global(code) {
+      background-color: rgba(27, 31, 35, 0.05);
+      border-radius: 3px;
+      font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      font-size: 85%;
+      padding: 0.2em 0.4em;
+      margin: 0;
+    }
+
+    .preview :global(pre code) {
+      background-color: transparent;
+      padding: 0;
+      margin: 0;
+      font-size: 100%;
+    }
+
+    .preview :global(blockquote) {
+      margin-left: 0;
+      padding: 0 1rem;
+      color: #6a737d;
+      border-left: 0.25rem solid #dfe2e5;
+      margin-bottom: 1rem;
+    }
+
+    .preview :global(hr) {
+      height: 0.25rem;
+      padding: 0;
+      margin: 1.5rem 0;
+      background-color: #e1e4e8;
+      border: 0;
+    }
+
+    .preview :global(a) {
+      color: #0366d6;
+      text-decoration: none;
+    }
+
+    .preview :global(a:hover) {
+      text-decoration: underline;
+    }
+
+    .preview :global(img) {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1rem 0;
+    }
 </style>
