@@ -2,13 +2,14 @@
   import type { Experiment } from "$lib/types";
   import { Minimize2, X } from "lucide-svelte";
   import InteractiveChart from "./interactive-chart.svelte";
+  import { marked } from "marked";
 
-  export let experiment: Experiment;
-  export let toggleToggleId: (id: string) => void;
+  let { experiment, toggleToggleId }: { experiment: Experiment, toggleToggleId: (id: string) => void } = $props();
+  let aiAnalysis: string | null = $state(null);
 </script>
 
 <article class="p-4 bg-white">
-  <header class="flex justify-between items-center">
+  <div class="flex justify-between items-center">
     <time class="text-sm text-gray-400">
       {new Date(experiment.createdAt).toLocaleDateString("en-US", {
         year: "numeric",
@@ -35,7 +36,7 @@
         </button>
       </form>
     </div>
-  </header>
+  </div>
 
   <h2 class="text-2xl font-medium text-gray-900 mb-6">
     {experiment.name}
@@ -69,8 +70,41 @@
 
   <!-- Metrics -->
   {#if experiment.availableMetrics}
-    <div class="mt-4">
+    <div class="mb-6 rounded-md border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
+      <h3 class="px-4 pt-4 text-lg">Charts</h3>
       <InteractiveChart {experiment} />
     </div>
   {/if}
+
+  <!-- AI Analysis -->
+  <div class="mb-6 rounded-md border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
+    <h3 class="px-4 pt-4 text-lg">AI Analysis</h3>
+    <div class='p-4'>
+        {#if aiAnalysis}
+            <div class="preview">{@html marked(aiAnalysis)}</div>
+        {:else}
+            <button
+            class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors duration-200"
+            onclick={async () => {
+                console.log("AI Analysis triggered");
+                let response = await fetch(`/api/experiments/${experiment.id}/analysis`);
+                let { analysis } = await response.json();
+                aiAnalysis = analysis;
+            }}
+            >
+                Analyze
+            </button>
+        {/if}
+    </div>
+  </div>
 </article>
+
+<style>
+	.preview {
+		height: 75%;
+		padding: 2rem;
+		box-sizing: border-box;
+		display: block;
+		width: 100%;
+	}
+</style>

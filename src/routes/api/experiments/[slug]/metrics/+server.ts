@@ -70,7 +70,7 @@ export async function POST({
   }
 }
 
-export async function GET({ params }: RequestEvent<{ slug: string }>) {
-  const metrics = await getMetrics(params.slug);
+export async function GET({ params: { slug } }: { params: { slug: string } }) {
+  const metrics = await getMetrics(slug);
   return json(metrics);
 }

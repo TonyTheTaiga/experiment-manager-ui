@@ -2,8 +2,8 @@
   import CreateExperimentModal from "$lib/components/create-experiment-modal.svelte";
   import ExperimentsList from "$lib/components/experiments-list.svelte";
   import type { Experiment } from "$lib/types";
-
   import type { PageData } from "./$types";
+
   let isOpen = $state(false);
   let { data }: { data: PageData } = $props();
   let experiments: Experiment[] = data.experiments;

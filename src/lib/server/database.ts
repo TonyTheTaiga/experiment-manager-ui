@@ -5,7 +5,12 @@ import {
   PUBLIC_SUPABASE_ANON_KEY,
 } from "$env/static/public";
 import type { Database, Json } from "./database.types";
-import type { Experiment, HyperParam, Metric } from "$lib/types";
+import type {
+  Experiment,
+  ExperimentAndMetrics,
+  HyperParam,
+  Metric,
+} from "$lib/types";
 
 class DatabaseClient {
   private static instance: SupabaseClient<Database>;
@@ -100,6 +105,35 @@ class DatabaseClient {
     };
   }
 
+  static async getExperimentAndMetrics(
+    id: string,
+  ): Promise<ExperimentAndMetrics> {
+    const { data, error } = await DatabaseClient.getInstance()
+      .from("experiment")
+      .select("*, metric (*)")
+      .eq("id", id)
+      .single();
+
+    if (error || !data) {
+      throw new Error(
+        `Failed to get experiment with ID ${id}: ${error?.message}`,
+      );
+    }
+
+    return {
+      experiment: {
+        id: data.id,
+        name: data.name,
+        description: data.description,
+        hyperparams: data.hyperparams as unknown as HyperParam[],
+        createdAt: new Date(data.created_at),
+        availableMetrics: [...new Set(data.metric.map((m) => m.name))],
+        tags: data.tags,
+      },
+      metrics: data.metric as Metric[],
+    };
+  }
+
   static async deleteExperiment(id: string): Promise<void> {
     const { error } = await DatabaseClient.getInstance()
       .from("experiment")
@@ -172,6 +206,7 @@ export const {
   createExperiment,
   getExperiments,
   getExperiment,
+  getExperimentAndMetrics,
   deleteExperiment,
   getMetrics,
   createMetric,
