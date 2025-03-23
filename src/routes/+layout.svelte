@@ -2,7 +2,7 @@
     import "../app.css";
 </script>
 
-<div class="min-h-screen bg-ctp-base text-ctp-text">
+<div class="h-screen bg-ctp-base text-ctp-text">
     <slot />
 </div>
 
