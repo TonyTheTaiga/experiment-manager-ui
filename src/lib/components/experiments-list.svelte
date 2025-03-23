@@ -4,20 +4,14 @@
   import ExperimentSimple from "./experiment-simple.svelte";
 
   let { experiments }: { experiments: Experiment[] } = $props();
+
   let selectedId = $state<string | null>(null);
   function toggleToggleId(id: string) {
-    console.log('Toggle selection called for ID:', id);
     if (selectedId === id) {
       selectedId = null;
-      console.log('Deselected ID:', id);
     } else {
       selectedId = id;
-      console.log('Selected ID:', id);
     }
-  }
-
-  function isSelected(id: string): boolean {
-    return selectedId === id;
   }
 </script>
 

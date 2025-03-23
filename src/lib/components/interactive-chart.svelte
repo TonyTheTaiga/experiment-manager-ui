@@ -1,16 +1,10 @@
 <script lang="ts">
   import type { Experiment, Metric } from "$lib/types";
   import Chart from "chart.js/auto";
-  import { onDestroy, onMount } from "svelte";
 
   let chartInstance: Chart | null = null;
   let chartCanvas: HTMLCanvasElement | null = $state(null);
-  let selectedMetric: string | null = $state(null);
   let { experiment }: { experiment: Experiment } = $props();
-
-  onDestroy(() => {
-    destroyChart();
-  });
 
   async function loadMetrics() {
     try {
@@ -125,6 +119,7 @@
     }
   }
 
+  let selectedMetric: string | null = $state(null);
   async function setSelectedMetric(metric: string) {
     selectedMetric = metric;
     const metrics = (await loadMetrics()) as Metric[];
