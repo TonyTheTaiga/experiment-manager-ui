@@ -19,13 +19,13 @@
 
 <header>
   <nav
-    class="px-6 py-4 flex flex-row justify-end bg-gray-900 border-b border-gray-700"
+    class="px-6 py-4 flex flex-row justify-end bg-ctp-mantle border-b border-ctp"
   >
     <button
       onclick={() => {
         isOpen = true;
       }}
-      class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-s-full transition-colors"
+      class="px-4 py-2 bg-ctp-mauve hover:bg-ctp-lavender text-ctp-mantle rounded-s-full transition-colors"
       >(+) Experiment</button
     >
   </nav>
@@ -34,7 +34,3 @@
 <main class="mx-4 my-4">
   <ExperimentsList {experiments} />
 </main>
-
-<style>
-
-</style>

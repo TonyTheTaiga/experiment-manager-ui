@@ -1,13 +1,16 @@
 <script lang="ts">
   import type { Experiment, Metric } from "$lib/types";
   import Chart from "chart.js/auto";
+  import { BarChart4 } from "lucide-svelte";
 
   let chartInstance: Chart | null = null;
   let chartCanvas: HTMLCanvasElement | null = $state(null);
   let { experiment }: { experiment: Experiment } = $props();
+  let isLoading: boolean = $state(false);
 
   async function loadMetrics() {
     try {
+      isLoading = true;
       const response = await fetch(`/api/experiments/${experiment.id}/metrics`);
       if (!response.ok) {
         throw new Error(`Failed to load metrics: ${response.statusText}`);
@@ -16,6 +19,8 @@
     } catch (e) {
       console.error("Error loading metrics:", e);
       return null;
+    } finally {
+      isLoading = false;
     }
   }
 
@@ -39,11 +44,18 @@
             {
               label,
               data: y,
-              borderColor: "#60a5fa",
-              backgroundColor: "rgba(96, 165, 250, 0.2)",
-              borderWidth: 1.5,
-              tension: 0.2,
+              borderColor: "var(--color-ctp-blue)",
+              backgroundColor: "rgba(137, 180, 250, 0.12)",
+              borderWidth: 2,
+              tension: 0.3,
               fill: true,
+              pointBackgroundColor: "var(--color-ctp-lavender)",
+              pointBorderColor: "var(--color-ctp-mantle)",
+              pointRadius: 3,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: "var(--color-ctp-mauve)",
+              pointHoverBorderColor: "var(--color-ctp-base)",
+              pointHoverBorderWidth: 2,
             },
           ],
         },
@@ -56,16 +68,32 @@
           },
           plugins: {
             legend: {
-              display: false, // Hide legend for cleaner look
+              display: false,
             },
             tooltip: {
-              backgroundColor: "#1f2937",
-              titleColor: "#e5e7eb",
-              bodyColor: "#d1d5db",
-              borderColor: "#374151",
+              backgroundColor: "var(--color-ctp-crust)",
+              titleColor: "var(--color-ctp-blue)",
+              bodyColor: "var(--color-ctp-text)",
+              borderColor: "var(--color-ctp-surface1)",
               borderWidth: 1,
-              padding: 8,
+              cornerRadius: 6,
+              padding: 10,
               displayColors: false,
+              titleFont: {
+                size: 14,
+                weight: 'bold',
+              },
+              bodyFont: {
+                size: 13,
+              },
+              callbacks: {
+                title: function(tooltipItems) {
+                  return `Step ${tooltipItems[0].label}`;
+                },
+                label: function(context) {
+                  return `${context.dataset.label}: ${context.formattedValue}`;
+                }
+              }
             },
           },
           scales: {
@@ -74,20 +102,29 @@
                 display: true,
                 text: "Step",
                 font: {
-                  size: 12,
-                  weight: 400,
+                  size: 13,
+                  weight: 500,
+                  family: "system-ui, sans-serif",
                 },
-                color: "#9ca3af",
+                color: "var(--color-ctp-lavender)",
+                padding: 10,
               },
               grid: {
                 display: true,
-                color: "rgba(75, 85, 99, 0.4)",
+                color: "rgba(180, 190, 254, 0.1)",
+                tickBorderDash: [2, 4],
+              },
+              border: {
+                display: false,
               },
               ticks: {
-                color: "#d1d5db",
+                color: "var(--color-ctp-subtext0)",
                 font: {
-                  size: 11,
+                  size: 12,
+                  family: "system-ui, sans-serif",
                 },
+                padding: 8,
+                maxRotation: 0,
               },
             },
             y: {
@@ -95,20 +132,29 @@
                 display: true,
                 text: label,
                 font: {
-                  size: 12,
-                  weight: 400,
+                  size: 13,
+                  weight: 500,
+                  family: "system-ui, sans-serif",
                 },
-                color: "#9ca3af",
+                color: "var(--color-ctp-lavender)",
+                padding: 10,
               },
               grid: {
                 display: true,
-                color: "rgba(75, 85, 99, 0.4)",
+                color: "rgba(180, 190, 254, 0.1)",
+                tickBorderDash: [2, 4],
+              },
+              border: {
+                display: false,
               },
               ticks: {
-                color: "#d1d5db",
+                color: "var(--color-ctp-subtext0)",
                 font: {
-                  size: 11,
+                  size: 12,
+                  family: "system-ui, sans-serif",
                 },
+                padding: 8,
+                precision: 4,
               },
             },
           },
@@ -122,57 +168,76 @@
   let selectedMetric: string | null = $state(null);
   async function setSelectedMetric(metric: string) {
     selectedMetric = metric;
-    const metrics = (await loadMetrics()) as Metric[];
-    const loss = Object.groupBy(metrics, ({ name }) => name);
-    const chart_targets = loss[metric];
+    isLoading = true;
+    
+    try {
+      const metrics = (await loadMetrics()) as Metric[];
+      const loss = Object.groupBy(metrics, ({ name }) => name);
+      const chart_targets = loss[metric];
 
-    if (chart_targets) {
-      chart_targets.sort((a, b) => (a.step ?? 0) - (b.step ?? 0));
-      const steps = chart_targets.map((l) => l.step ?? 0);
-      const values = chart_targets.map((l) => l.value);
-      createChart(metric, steps, values);
+      if (chart_targets) {
+        chart_targets.sort((a, b) => (a.step ?? 0) - (b.step ?? 0));
+        const steps = chart_targets.map((l) => l.step ?? 0);
+        const values = chart_targets.map((l) => l.value);
+        createChart(metric, steps, values);
+      }
+    } catch (error) {
+      console.error("Error displaying chart:", error);
+    } finally {
+      isLoading = false;
     }
   }
 </script>
 
-
-<div class="p-4 space-y-4">
-{#if experiment.availableMetrics}
-    <div class="flex flex-wrap gap-2">
-    {#each experiment.availableMetrics as metric}
+<div class="p-5 space-y-4">
+  {#if experiment.availableMetrics && experiment.availableMetrics.length > 0}
+    <div class="flex flex-wrap gap-2 mb-4">
+      {#each experiment.availableMetrics as metric}
         <button
-        class="px-3 py-1.5 text-sm font-medium
-                rounded-md border border-gray-700
-                transition-all duration-150 ease-in-out
-                hover:border-gray-600 hover:bg-gray-700 hover:shadow-xs
-                focus:outline-hidden focus:ring-2 focus:ring-blue-500/20
-                {selectedMetric === metric
-            ? 'bg-blue-900/40 text-blue-300 border-blue-700 shadow-xs'
-            : 'bg-gray-800 text-gray-300'}"
-        onclick={() => setSelectedMetric(metric)}
+          class="px-3 py-1.5 text-sm font-medium rounded-md
+                 transition-all duration-150 ease-in-out focus-visible:ring-2 focus-visible:ring-ctp-blue/30
+                 {selectedMetric === metric
+            ? 'bg-ctp-blue text-ctp-base shadow-sm'
+            : 'bg-ctp-mantle text-ctp-subtext1 border border-ctp-surface0 hover:border-ctp-blue/50 hover:text-ctp-blue'}"
+          onclick={() => setSelectedMetric(metric)}
         >
-        {metric}
+          {metric}
         </button>
-    {/each}
+      {/each}
     </div>
-{/if}
+  {/if}
 
-{#if selectedMetric}
+  {#if selectedMetric}
     <div
-    class="relative h-64 w-full rounded-xs border border-gray-700 bg-gray-800/50 overflow-hidden"
+      class="relative h-80 w-full rounded-md border border-ctp-surface1 bg-ctp-mantle overflow-hidden shadow-sm"
     >
-    <div class="absolute inset-0 bg-gray-800 m-[1px] rounded-xs">
-        <canvas bind:this={chartCanvas} class="p-2"></canvas>
+      {#if isLoading}
+        <div class="absolute inset-0 flex items-center justify-center bg-ctp-mantle/80 backdrop-blur-sm z-10">
+          <div class="animate-pulse text-ctp-lavender">Loading data...</div>
+        </div>
+      {/if}
+      <div class="absolute inset-0 p-2">
+        <canvas bind:this={chartCanvas}></canvas>
+      </div>
     </div>
+  {:else if experiment.availableMetrics && experiment.availableMetrics.length > 0}
+    <div class="flex flex-col items-center justify-center h-80 w-full rounded-md border border-ctp-surface1 bg-ctp-mantle p-8">
+      <BarChart4 size={32} class="text-ctp-overlay0 mb-4" />
+      <p class="text-ctp-subtext0 text-sm text-center max-w-md">
+        Select a metric from above to view the chart data
+      </p>
     </div>
-{/if}
+  {/if}
 </div>
-
 
 <style>
   canvas {
-    background-image: radial-gradient(rgba(75, 85, 99, 0.4) 1px, transparent 1px);
+    background-image: 
+      linear-gradient(rgba(180, 190, 254, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(180, 190, 254, 0.05) 1px, transparent 1px);
     background-size: 20px 20px;
-    background-position: -10px -10px;
+    background-position: -1px -1px;
+    background-color: transparent;
+    border-radius: 4px;
   }
 </style>

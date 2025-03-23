@@ -1,5 +1,7 @@
 <script lang="ts">
   import CreateExperimentForm from "./create-experiment-form.svelte";
+  import { X } from "lucide-svelte";
+  
   let {
     toggleIsOpen,
   }: {
@@ -8,15 +10,22 @@
 </script>
 
 <div
-  class="fixed inset-0 bg-black/50 backdrop-blur-[2px]
-         flex items-center justify-center p-4"
+  class="fixed inset-0 bg-ctp-crust/60 backdrop-blur-sm
+         flex items-center justify-center p-4 z-50"
 >
-  <div class="bg-gray-800 w-full max-w-xl border border-gray-700">
-    <div class="px-8 pt-8 pb-6">
-      <h2 class="text-xl font-medium text-gray-100">Create a New Experiment</h2>
+  <div class="bg-ctp-base w-full max-w-xl rounded-lg border border-ctp-surface1 shadow-lg overflow-hidden">
+    <div class="px-6 py-4 border-b border-ctp-surface0 flex justify-between items-center">
+      <h2 class="text-xl font-medium text-ctp-text">Create Experiment</h2>
+      <button 
+        onclick={toggleIsOpen} 
+        class="p-1.5 text-ctp-subtext0 hover:text-ctp-text hover:bg-ctp-surface0 rounded-full transition-colors"
+        aria-label="Close modal"
+      >
+        <X size={18} />
+      </button>
     </div>
 
-    <div class="px-8 pb-8">
+    <div class="p-6">
       <CreateExperimentForm {toggleIsOpen} />
     </div>
   </div>
