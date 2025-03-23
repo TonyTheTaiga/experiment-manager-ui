@@ -31,10 +31,7 @@
     <input
       name="experiment-name"
       type="text"
-      class="w-full px-4 py-2.5 bg-ctp-mantle border border-ctp-surface0 rounded-md
-             text-ctp-text placeholder-ctp-subtext0
-             focus:outline-none focus:border-ctp-blue focus:ring-1 focus:ring-ctp-blue/20
-             transition-colors"
+      class="ctp-input"
       placeholder="Enter experiment name"
     />
   </div>
@@ -47,33 +44,30 @@
     <textarea
       name="experiment-description"
       rows="3"
-      class="w-full px-4 py-2.5 bg-ctp-mantle border border-ctp-surface0 rounded-md
-             text-ctp-text placeholder-ctp-subtext0
-             focus:outline-none focus:border-ctp-blue focus:ring-1 focus:ring-ctp-blue/20
-             transition-colors resize-none"
+      class="ctp-input resize-none"
       placeholder="Briefly describe this experiment"
     ></textarea>
   </div>
 
   <!-- Tags Section -->
   <div class="space-y-3">
-    <div class="flex items-center gap-2 text-ctp-lavender">
-      <TagIcon size={16} />
-      <h3 class="text-sm font-medium">Tags</h3>
+    <div class="flex items-center gap-2">
+      <TagIcon size={16} class="text-ctp-mauve" />
+      <h3 class="ctp-heading-3">Tags</h3>
     </div>
     
     <div class="flex flex-wrap items-center gap-2">
       {#each tags as tag, i}
         <input type="hidden" value={tag} name="tags.{i}" />
         <span
-          class="px-2.5 py-1 text-xs bg-ctp-mantle text-ctp-lavender rounded-full border border-ctp-surface0
-              flex items-center gap-1.5 group"
+          class="ctp-tag ctp-tag-mauve flex items-center gap-1.5 group border border-ctp-surface0"
         >
           {tag}
           <button
             type="button"
             class="text-ctp-subtext0 hover:text-ctp-red transition-colors"
             onclick={() => tags.splice(i, 1)}
+            aria-label="Remove tag"
           >
             <X size={12} />
           </button>
@@ -85,10 +79,7 @@
           <input
             type="text"
             bind:value={tag}
-            class="px-3 py-1 w-32 text-xs bg-ctp-mantle border border-ctp-surface0 rounded-md
-                 text-ctp-text placeholder-ctp-subtext0
-                 focus:outline-none focus:border-ctp-lavender
-                 transition-colors"
+            class="ctp-input px-3 py-1 w-32 text-xs"
             placeholder="New tag"
             onkeydown={(e) => {
               if (e.key === "Enter") {
@@ -103,7 +94,7 @@
               e.preventDefault();
               addTag();
             }}
-            class="p-1 text-ctp-subtext0 hover:text-ctp-lavender hover:bg-ctp-surface0 rounded transition-colors"
+            class="ctp-btn-icon"
           >
             <Plus size={14} />
           </button>
@@ -115,8 +106,7 @@
             e.preventDefault();
             addingNewTag = true;
           }}
-          class="px-2.5 py-1 text-xs bg-ctp-mantle text-ctp-subtext0 rounded-full border border-ctp-surface0
-                hover:text-ctp-lavender hover:border-ctp-lavender/30 transition-colors flex items-center gap-1"
+          class="ctp-btn ctp-btn-xs ctp-btn-outline rounded-full"
         >
           <Plus size={12} />
           Add Tag
@@ -127,9 +117,9 @@
 
   <!-- Hyperparameters Section -->
   <div class="space-y-3">
-    <div class="flex items-center gap-2 text-ctp-blue">
-      <Settings size={16} />
-      <h3 class="text-sm font-medium">Parameters</h3>
+    <div class="flex items-center gap-2">
+      <Settings size={16} class="text-ctp-mauve" />
+      <h3 class="ctp-heading-3">Parameters</h3>
     </div>
 
     {#if pairs.length === 0}
@@ -141,19 +131,13 @@
     {#each pairs as pair, i}
       <div class="flex gap-2 items-center">
         <input
-          class="flex-1 px-3 py-2 bg-ctp-mantle border border-ctp-surface0 rounded-md
-                 text-sm text-ctp-text placeholder-ctp-subtext0
-                 focus:outline-none focus:border-ctp-blue
-                 transition-colors"
+          class="ctp-input text-sm flex-1"
           name="hyperparams.{i}.key"
           placeholder="Parameter name"
           required
         />
         <input
-          class="flex-1 px-3 py-2 bg-ctp-mantle border border-ctp-surface0 rounded-md
-                 text-sm text-ctp-text placeholder-ctp-subtext0
-                 focus:outline-none focus:border-ctp-blue
-                 transition-colors"
+          class="ctp-input text-sm flex-1"
           name="hyperparams.{i}.value"
           placeholder="Value"
           required
@@ -170,8 +154,7 @@
 
     <button
       type="button"
-      class="px-3 py-1.5 text-xs bg-ctp-mantle text-ctp-subtext0 rounded border border-ctp-surface0
-            hover:text-ctp-blue hover:border-ctp-blue/30 transition-colors flex items-center gap-1.5"
+      class="ctp-btn ctp-btn-sm ctp-btn-outline"
       onclick={() => (pairs = [...pairs, { key: "", value: "" }])}
     >
       <Plus size={12} />
@@ -184,15 +167,13 @@
     <button
       onclick={toggleIsOpen}
       type="button"
-      class="px-5 py-2 text-sm font-medium text-ctp-subtext1 bg-ctp-mantle border border-ctp-surface0 rounded-md
-             hover:text-ctp-text hover:bg-ctp-crust transition-colors"
+      class="ctp-btn ctp-btn-secondary"
     >
       Cancel
     </button>
     <button
       type="submit"
-      class="px-5 py-2 text-sm font-medium text-ctp-mantle bg-ctp-blue rounded-md shadow-sm
-             hover:bg-ctp-blue/90 transition-colors flex items-center gap-2"
+      class="ctp-btn ctp-btn-primary"
     >
       <Plus size={16} />
       Create Experiment

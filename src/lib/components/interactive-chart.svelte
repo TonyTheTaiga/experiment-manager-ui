@@ -154,11 +154,7 @@
     <div class="flex flex-wrap gap-2 mb-4">
       {#each experiment.availableMetrics as metric}
         <button
-          class="px-3 py-1.5 text-sm font-medium rounded-md
-                 transition-all duration-150 ease-in-out focus-visible:ring-2 focus-visible:ring-ctp-blue/40
-                 {selectedMetric === metric
-            ? 'bg-ctp-blue text-ctp-base shadow-md'
-            : 'bg-ctp-mantle text-ctp-subtext0 border border-ctp-surface1 hover:border-ctp-blue/60 hover:text-ctp-blue hover:shadow-sm'}"
+          class="ctp-btn ctp-btn-sm {selectedMetric === metric ? 'ctp-btn-primary' : 'ctp-btn-secondary'}"
           onclick={() => setSelectedMetric(metric)}
         >
           {metric}

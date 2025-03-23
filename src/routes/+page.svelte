@@ -26,8 +26,8 @@
         onclick={() => {
           isOpen = true;
         }}
-        class="px-4 py-2 bg-ctp-mauve hover:bg-ctp-lavender text-ctp-mantle rounded-s-full transition-colors"
-        >(+) Experiment</button
+        class="ctp-btn ctp-btn-primary rounded-s-full"
+        ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg> New Experiment</button
       >
     </nav>
   </header>
