@@ -154,7 +154,11 @@
     <div class="flex flex-wrap gap-2 mb-4">
       {#each experiment.availableMetrics as metric}
         <button
-          class="ctp-btn ctp-btn-sm {selectedMetric === metric ? 'ctp-btn-primary' : 'ctp-btn-secondary'}"
+          class={`py-1.5 px-3 text-sm font-medium rounded-md transition-colors ${
+            selectedMetric === metric 
+              ? 'bg-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:bg-[var(--color-ctp-lavender)]' 
+              : 'bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-text)] border border-[var(--color-ctp-surface1)] hover:bg-[var(--color-ctp-blue)] hover:text-[var(--color-ctp-crust)] hover:border-[var(--color-ctp-blue)]'
+          }`}
           onclick={() => setSelectedMetric(metric)}
         >
           {metric}
@@ -165,10 +169,10 @@
 
   {#if selectedMetric}
     <div
-      class="relative h-80 w-full rounded-md border border-ctp-surface1 bg-ctp-mantle overflow-hidden shadow-md"
+      class="relative h-80 w-full rounded-md border border-[var(--color-ctp-surface1)] bg-[var(--color-ctp-mantle)] overflow-hidden shadow-md"
     >
       {#if isLoading}
-        <div class="absolute inset-0 flex items-center justify-center bg-ctp-mantle/80 backdrop-blur-sm z-10">
+        <div class="absolute inset-0 flex items-center justify-center bg-[var(--color-ctp-mantle)]/80 backdrop-blur-sm z-10">
           <div class="animate-pulse text-[#89dceb]">Loading data...</div>
         </div>
       {/if}
@@ -177,9 +181,9 @@
       </div>
     </div>
   {:else if experiment.availableMetrics && experiment.availableMetrics.length > 0}
-    <div class="flex flex-col items-center justify-center h-80 w-full rounded-md border border-ctp-surface1 bg-ctp-mantle p-8">
-      <BarChart4 size={32} class="text-ctp-overlay0 mb-4" />
-      <p class="text-ctp-subtext0 text-sm text-center max-w-md">
+    <div class="flex flex-col items-center justify-center h-80 w-full rounded-md border border-[var(--color-ctp-surface1)] bg-[var(--color-ctp-mantle)] p-8">
+      <BarChart4 size={32} class="text-[var(--color-ctp-overlay0)] mb-4" />
+      <p class="text-[var(--color-ctp-subtext0)] text-sm text-center max-w-md">
         Select a metric from above to view the chart data
       </p>
     </div>
