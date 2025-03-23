@@ -33,7 +33,7 @@
       type="text"
       class="w-full px-4 py-2 bg-gray-50 border-0
              text-gray-900 placeholder-gray-400
-             focus:outline-none focus:ring-0 focus:bg-gray-100
+             focus:outline-hidden focus:ring-0 focus:bg-gray-100
              transition-colors"
     />
   </div>
@@ -48,7 +48,7 @@
       type="text"
       class="w-full px-4 py-2 bg-gray-50 border-0
              text-gray-900 placeholder-gray-400
-             focus:outline-none focus:ring-0 focus:bg-gray-100
+             focus:outline-hidden focus:ring-0 focus:bg-gray-100
              transition-colors"
     />
   </div>
@@ -80,7 +80,7 @@
           bind:value={tag}
           class="px-3 py-1 w-32 text-sm bg-gray-50
                text-gray-900 placeholder-gray-400
-               focus:outline-none focus:ring-0 focus:bg-gray-100
+               focus:outline-hidden focus:ring-0 focus:bg-gray-100
                transition-colors"
           placeholder="New tag"
           onkeydown={(e) => {
@@ -120,7 +120,7 @@
         <input
           class="flex-1 px-4 py-2 bg-gray-50 border-0
                  text-gray-900 placeholder-gray-400
-                 focus:outline-none focus:ring-0 focus:bg-gray-100
+                 focus:outline-hidden focus:ring-0 focus:bg-gray-100
                  transition-colors"
           name="hyperparams.{i}.key"
           placeholder="Parameter name"
@@ -129,7 +129,7 @@
         <input
           class="flex-1 px-4 py-2 bg-gray-50 border-0
                  text-gray-900 placeholder-gray-400
-                 focus:outline-none focus:ring-0 focus:bg-gray-100
+                 focus:outline-hidden focus:ring-0 focus:bg-gray-100
                  transition-colors"
           name="hyperparams.{i}.value"
           placeholder="Value"

@@ -1,16 +1,10 @@
 <script lang="ts">
   import type { Experiment, Metric } from "$lib/types";
   import Chart from "chart.js/auto";
-  import { onDestroy, onMount } from "svelte";
 
   let chartInstance: Chart | null = null;
   let chartCanvas: HTMLCanvasElement | null = $state(null);
-  let selectedMetric: string | null = $state(null);
   let { experiment }: { experiment: Experiment } = $props();
-
-  onDestroy(() => {
-    destroyChart();
-  });
 
   async function loadMetrics() {
     try {
@@ -125,6 +119,7 @@
     }
   }
 
+  let selectedMetric: string | null = $state(null);
   async function setSelectedMetric(metric: string) {
     selectedMetric = metric;
     const metrics = (await loadMetrics()) as Metric[];
@@ -149,10 +144,10 @@
         class="px-3 py-1.5 text-sm font-medium
                 rounded-md border border-gray-200
                 transition-all duration-150 ease-in-out
-                hover:border-gray-300 hover:bg-gray-50 hover:shadow-sm
-                focus:outline-none focus:ring-2 focus:ring-blue-500/20
+                hover:border-gray-300 hover:bg-gray-50 hover:shadow-xs
+                focus:outline-hidden focus:ring-2 focus:ring-blue-500/20
                 {selectedMetric === metric
-            ? 'bg-red-50 text-gray-600 border-red-200 shadow-sm'
+            ? 'bg-red-50 text-gray-600 border-red-200 shadow-xs'
             : 'bg-white text-gray-600'}"
         onclick={() => setSelectedMetric(metric)}
         >
@@ -164,9 +159,9 @@
 
 {#if selectedMetric}
     <div
-    class="relative h-64 w-full rounded-sm border border-gray-200 bg-gray-50/50 overflow-hidden"
+    class="relative h-64 w-full rounded-xs border border-gray-200 bg-gray-50/50 overflow-hidden"
     >
-    <div class="absolute inset-0 bg-white m-[1px] rounded-sm">
+    <div class="absolute inset-0 bg-white m-[1px] rounded-xs">
         <canvas bind:this={chartCanvas} class="p-2"></canvas>
     </div>
     </div>

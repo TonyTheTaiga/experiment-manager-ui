@@ -33,7 +33,7 @@
     <div class="flex flex-wrap items-center gap-2">
       <span class="text-sm text-gray-600">Tags:</span>
       {#each experiment.tags as tag}
-        <span class="px-2 py-1 text-xs bg-gray-50 text-gray-600 rounded-sm">
+        <span class="px-2 py-1 text-xs bg-gray-50 text-gray-600 rounded-xs">
           {tag}
         </span>
       {/each}

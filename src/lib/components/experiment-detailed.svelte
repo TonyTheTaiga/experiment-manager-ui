@@ -50,7 +50,7 @@
     <div class="flex flex-wrap items-center gap-2 mb-2">
       <span class="text-sm text-gray-600">Tags:</span>
       {#each experiment.tags as tag}
-        <span class="px-2 py-1 text-xs bg-gray-50 text-gray-600 rounded-sm">
+        <span class="px-2 py-1 text-xs bg-gray-50 text-gray-600 rounded-xs">
           {tag}
         </span>
       {/each}
@@ -70,14 +70,14 @@
 
   <!-- Metrics -->
   {#if experiment.availableMetrics}
-    <div class="mb-6 rounded-md border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
+    <div class="mb-6 rounded-md border border-gray-200 bg-white shadow-xs hover:shadow-md transition-shadow duration-200">
       <h3 class="px-4 pt-4 text-lg">Charts</h3>
       <InteractiveChart {experiment} />
     </div>
   {/if}
 
   <!-- AI Analysis -->
-  <div class="mb-6 rounded-md border border-gray-200 bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
+  <div class="mb-6 rounded-md border border-gray-200 bg-white shadow-xs hover:shadow-md transition-shadow duration-200">
     <h3 class="px-4 pt-4 text-lg">AI Analysis</h3>
     <div class='p-4'>
         {#if aiAnalysis}

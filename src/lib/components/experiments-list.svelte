@@ -4,10 +4,14 @@
   import ExperimentSimple from "./experiment-simple.svelte";
 
   let { experiments }: { experiments: Experiment[] } = $props();
-  let targetId = $state<string | null>(null);
 
+  let selectedId = $state<string | null>(null);
   function toggleToggleId(id: string) {
-    targetId = targetId === id ? null : id;
+    if (selectedId === id) {
+      selectedId = null;
+    } else {
+      selectedId = id;
+    }
   }
 </script>
 
@@ -18,14 +22,14 @@
         class={`
                     bg-white rounded-sm p-4
                     ${
-                      targetId === experiment.id
+                      selectedId === experiment.id
                         ? "md:col-span-2 lg:col-span-4 row-span-2 order-first"
                         : "order-none"
                     }
                 `}
       >
-        <article class={"flex flex-col gap-1"}>
-          {#if targetId !== experiment.id}
+        <article class="flex flex-col gap-1">
+          {#if selectedId !== experiment.id}
             <ExperimentSimple {experiment} {toggleToggleId} />
           {:else}
             <ExperimentDetailed {experiment} {toggleToggleId} />
