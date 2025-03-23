@@ -46,27 +46,17 @@
               data: y,
               borderColor: "#74c7ec", /* sapphire */
               backgroundColor: "rgba(116, 199, 236, 0.15)",
-              borderWidth: 2,
-              tension: 0.3,
-              cubicInterpolationMode: 'monotone',
               fill: true,
               pointBackgroundColor: "#b4befe", /* lavender */
               pointBorderColor: "#181825", /* mantle */
-              pointRadius: 3,
-              pointHoverRadius: 5,
               pointHoverBackgroundColor: "#cba6f7", /* mauve */
               pointHoverBorderColor: "#1e1e2e", /* base */
-              pointHoverBorderWidth: 2,
             },
           ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          interaction: {
-            intersect: false,
-            mode: "index",
-          },
           plugins: {
             legend: {
               display: false,
@@ -76,17 +66,6 @@
               titleColor: "#74c7ec", /* sapphire */
               bodyColor: "#cdd6f4", /* text */
               borderColor: "#6c7086", /* overlay0 */
-              borderWidth: 1,
-              cornerRadius: 6,
-              padding: 10,
-              displayColors: false,
-              titleFont: {
-                size: 14,
-                weight: 'bold',
-              },
-              bodyFont: {
-                size: 13,
-              },
               callbacks: {
                 title: function(tooltipItems) {
                   return `Step ${tooltipItems[0].label}`;
@@ -102,60 +81,26 @@
               title: {
                 display: true,
                 text: "Step",
-                font: {
-                  size: 13,
-                  weight: 500,
-                  family: "system-ui, sans-serif",
-                },
                 color: "#cdd6f4", /* text */
-                padding: 10,
-              },
-              grid: {
-                display: true,
-                color: "rgba(180, 190, 254, 0.12)",
-                tickBorderDash: [2, 4],
-              },
-              border: {
-                display: false,
               },
               ticks: {
                 color: "#cdd6f4", /* text */
-                font: {
-                  size: 12,
-                  family: "system-ui, sans-serif",
-                },
-                padding: 8,
-                maxRotation: 0,
+              },
+              grid: {
+                color: "rgba(180, 190, 254, 0.08)",
               },
             },
             y: {
               title: {
                 display: true,
                 text: label,
-                font: {
-                  size: 13,
-                  weight: 500,
-                  family: "system-ui, sans-serif",
-                },
                 color: "#cdd6f4", /* text */
-                padding: 10,
-              },
-              grid: {
-                display: true,
-                color: "rgba(180, 190, 254, 0.12)",
-                tickBorderDash: [2, 4],
-              },
-              border: {
-                display: false,
               },
               ticks: {
                 color: "#cdd6f4", /* text */
-                font: {
-                  size: 12,
-                  family: "system-ui, sans-serif",
-                },
-                padding: 8,
-                precision: 4,
+              },
+              grid: {
+                color: "rgba(180, 190, 254, 0.08)",
               },
             },
           },
@@ -176,10 +121,16 @@
       const loss = Object.groupBy(metrics, ({ name }) => name);
       const chart_targets = loss[metric];
 
-      if (chart_targets) {
+      if (chart_targets && chart_targets.length > 0) {
+        // Sort metrics by step
         chart_targets.sort((a, b) => (a.step ?? 0) - (b.step ?? 0));
-        const steps = chart_targets.map((l) => l.step ?? 0);
-        const values = chart_targets.map((l) => l.value);
+        
+        // Handle missing steps by using indices if step is undefined
+        const steps = chart_targets.map((l, index) => l.step !== undefined ? l.step : index);
+        
+        // Ensure all values are numbers
+        const values = chart_targets.map((l) => typeof l.value === 'number' ? l.value : parseFloat(l.value) || 0);
+        
         createChart(metric, steps, values);
       }
     } catch (error) {
@@ -217,7 +168,7 @@
           <div class="animate-pulse text-[#89dceb]">Loading data...</div>
         </div>
       {/if}
-      <div class="absolute inset-0 p-3">
+      <div class="absolute inset-0 p-4">
         <canvas bind:this={chartCanvas}></canvas>
       </div>
     </div>
@@ -233,11 +184,6 @@
 
 <style>
   canvas {
-    background-image: 
-      linear-gradient(rgba(180, 190, 254, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(180, 190, 254, 0.06) 1px, transparent 1px);
-    background-size: 20px 20px;
-    background-position: -1px -1px;
     background-color: transparent;
     border-radius: 4px;
   }
