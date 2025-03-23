@@ -44,17 +44,18 @@
             {
               label,
               data: y,
-              borderColor: "var(--color-ctp-blue)",
-              backgroundColor: "rgba(137, 180, 250, 0.12)",
+              borderColor: "#74c7ec", /* sapphire */
+              backgroundColor: "rgba(116, 199, 236, 0.15)",
               borderWidth: 2,
               tension: 0.3,
+              cubicInterpolationMode: 'monotone',
               fill: true,
-              pointBackgroundColor: "var(--color-ctp-lavender)",
-              pointBorderColor: "var(--color-ctp-mantle)",
+              pointBackgroundColor: "#b4befe", /* lavender */
+              pointBorderColor: "#181825", /* mantle */
               pointRadius: 3,
               pointHoverRadius: 5,
-              pointHoverBackgroundColor: "var(--color-ctp-mauve)",
-              pointHoverBorderColor: "var(--color-ctp-base)",
+              pointHoverBackgroundColor: "#cba6f7", /* mauve */
+              pointHoverBorderColor: "#1e1e2e", /* base */
               pointHoverBorderWidth: 2,
             },
           ],
@@ -71,10 +72,10 @@
               display: false,
             },
             tooltip: {
-              backgroundColor: "var(--color-ctp-crust)",
-              titleColor: "var(--color-ctp-blue)",
-              bodyColor: "var(--color-ctp-text)",
-              borderColor: "var(--color-ctp-surface1)",
+              backgroundColor: "#11111b", /* crust */
+              titleColor: "#74c7ec", /* sapphire */
+              bodyColor: "#cdd6f4", /* text */
+              borderColor: "#6c7086", /* overlay0 */
               borderWidth: 1,
               cornerRadius: 6,
               padding: 10,
@@ -106,19 +107,19 @@
                   weight: 500,
                   family: "system-ui, sans-serif",
                 },
-                color: "var(--color-ctp-lavender)",
+                color: "#cdd6f4", /* text */
                 padding: 10,
               },
               grid: {
                 display: true,
-                color: "rgba(180, 190, 254, 0.1)",
+                color: "rgba(180, 190, 254, 0.12)",
                 tickBorderDash: [2, 4],
               },
               border: {
                 display: false,
               },
               ticks: {
-                color: "var(--color-ctp-subtext0)",
+                color: "#cdd6f4", /* text */
                 font: {
                   size: 12,
                   family: "system-ui, sans-serif",
@@ -136,19 +137,19 @@
                   weight: 500,
                   family: "system-ui, sans-serif",
                 },
-                color: "var(--color-ctp-lavender)",
+                color: "#cdd6f4", /* text */
                 padding: 10,
               },
               grid: {
                 display: true,
-                color: "rgba(180, 190, 254, 0.1)",
+                color: "rgba(180, 190, 254, 0.12)",
                 tickBorderDash: [2, 4],
               },
               border: {
                 display: false,
               },
               ticks: {
-                color: "var(--color-ctp-subtext0)",
+                color: "#cdd6f4", /* text */
                 font: {
                   size: 12,
                   family: "system-ui, sans-serif",
@@ -195,10 +196,10 @@
       {#each experiment.availableMetrics as metric}
         <button
           class="px-3 py-1.5 text-sm font-medium rounded-md
-                 transition-all duration-150 ease-in-out focus-visible:ring-2 focus-visible:ring-ctp-blue/30
+                 transition-all duration-150 ease-in-out focus-visible:ring-2 focus-visible:ring-ctp-blue/40
                  {selectedMetric === metric
-            ? 'bg-ctp-blue text-ctp-base shadow-sm'
-            : 'bg-ctp-mantle text-ctp-subtext1 border border-ctp-surface0 hover:border-ctp-blue/50 hover:text-ctp-blue'}"
+            ? 'bg-ctp-blue text-ctp-base shadow-md'
+            : 'bg-ctp-mantle text-ctp-subtext0 border border-ctp-surface1 hover:border-ctp-blue/60 hover:text-ctp-blue hover:shadow-sm'}"
           onclick={() => setSelectedMetric(metric)}
         >
           {metric}
@@ -209,14 +210,14 @@
 
   {#if selectedMetric}
     <div
-      class="relative h-80 w-full rounded-md border border-ctp-surface1 bg-ctp-mantle overflow-hidden shadow-sm"
+      class="relative h-80 w-full rounded-md border border-ctp-surface1 bg-ctp-mantle overflow-hidden shadow-md"
     >
       {#if isLoading}
         <div class="absolute inset-0 flex items-center justify-center bg-ctp-mantle/80 backdrop-blur-sm z-10">
-          <div class="animate-pulse text-ctp-lavender">Loading data...</div>
+          <div class="animate-pulse text-[#89dceb]">Loading data...</div>
         </div>
       {/if}
-      <div class="absolute inset-0 p-2">
+      <div class="absolute inset-0 p-3">
         <canvas bind:this={chartCanvas}></canvas>
       </div>
     </div>
@@ -233,8 +234,8 @@
 <style>
   canvas {
     background-image: 
-      linear-gradient(rgba(180, 190, 254, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(180, 190, 254, 0.05) 1px, transparent 1px);
+      linear-gradient(rgba(180, 190, 254, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(180, 190, 254, 0.06) 1px, transparent 1px);
     background-size: 20px 20px;
     background-position: -1px -1px;
     background-color: transparent;
