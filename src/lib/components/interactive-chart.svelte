@@ -57,6 +57,12 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          interaction: {
+            mode: 'nearest',
+            intersect: false,
+            axis: 'x',
+            includeInvisible: true,
+          },
           plugins: {
             legend: {
               display: false,
@@ -66,6 +72,8 @@
               titleColor: "#74c7ec", /* sapphire */
               bodyColor: "#cdd6f4", /* text */
               borderColor: "#6c7086", /* overlay0 */
+              position: 'nearest',
+              caretPadding: 10,
               callbacks: {
                 title: function(tooltipItems) {
                   return `Step ${tooltipItems[0].label}`;
