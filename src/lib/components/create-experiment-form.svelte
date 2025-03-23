@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { HyperParam } from "$lib/types";
-  import { SquarePlus, CirclePlus } from "lucide-svelte";
+  import { Plus, X, Tag as TagIcon, Settings } from "lucide-svelte";
 
   let {
     toggleIsOpen,
@@ -27,151 +27,156 @@
 <form method="POST" action="?/create" class="flex flex-col gap-6">
   <!-- Name Input -->
   <div class="space-y-2">
-    <label class="text-sm font-medium text-gray-700" for="name"> Name </label>
+    <label class="text-sm font-medium text-ctp-text" for="name">Experiment Name</label>
     <input
       name="experiment-name"
       type="text"
-      class="w-full px-4 py-2 bg-gray-50 border-0
-             text-gray-900 placeholder-gray-400
-             focus:outline-hidden focus:ring-0 focus:bg-gray-100
-             transition-colors"
+      class="ctp-input"
+      placeholder="Enter experiment name"
     />
   </div>
 
   <!-- Description Input -->
   <div class="space-y-2">
-    <label class="text-sm font-medium text-gray-700" for="description">
+    <label class="text-sm font-medium text-ctp-text" for="description">
       Description
     </label>
-    <input
+    <textarea
       name="experiment-description"
-      type="text"
-      class="w-full px-4 py-2 bg-gray-50 border-0
-             text-gray-900 placeholder-gray-400
-             focus:outline-hidden focus:ring-0 focus:bg-gray-100
-             transition-colors"
-    />
+      rows="3"
+      class="ctp-input resize-none"
+      placeholder="Briefly describe this experiment"
+    ></textarea>
   </div>
 
-  <!-- Tags -->
-  <div class="flex flex-wrap items-center gap-3">
-    <span class="text-sm font-medium text-gray-700">Tags</span>
-
-    {#each tags as tag, i}
-      <input type="hidden" value={tag} name="tags.{i}" />
-      <span
-        class="px-3 py-1 text-sm bg-gray-50 text-gray-600
-            flex items-center gap-1 group"
-      >
-        {tag}
-        <button
-          class="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity"
-          onclick={() => tags.splice(i, 1)}
+  <!-- Tags Section -->
+  <div class="space-y-3">
+    <div class="flex items-center gap-2">
+      <TagIcon size={16} class="text-ctp-mauve" />
+      <h3 class="ctp-heading-3">Tags</h3>
+    </div>
+    
+    <div class="flex flex-wrap items-center gap-2">
+      {#each tags as tag, i}
+        <input type="hidden" value={tag} name="tags.{i}" />
+        <span
+          class="ctp-tag ctp-tag-mauve flex items-center gap-1.5 group border border-ctp-surface0"
         >
-          ×
-        </button>
-      </span>
-    {/each}
+          {tag}
+          <button
+            type="button"
+            class="text-ctp-subtext0 hover:text-ctp-red transition-colors"
+            onclick={() => tags.splice(i, 1)}
+            aria-label="Remove tag"
+          >
+            <X size={12} />
+          </button>
+        </span>
+      {/each}
 
-    {#if addingNewTag}
-      <div class="flex items-center gap-2">
-        <input
-          type="text"
-          bind:value={tag}
-          class="px-3 py-1 w-32 text-sm bg-gray-50
-               text-gray-900 placeholder-gray-400
-               focus:outline-hidden focus:ring-0 focus:bg-gray-100
-               transition-colors"
-          placeholder="New tag"
-          onkeydown={(e) => {
-            if (e.key === "Enter") {
+      {#if addingNewTag}
+        <div class="flex items-center gap-1">
+          <input
+            type="text"
+            bind:value={tag}
+            class="ctp-input px-3 py-1 w-32 text-xs"
+            placeholder="New tag"
+            onkeydown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                addTag();
+              }
+            }}
+          />
+          <button
+            type="button"
+            onclick={(e) => {
+              e.preventDefault();
               addTag();
-            }
-          }}
-        />
+            }}
+            class="ctp-btn-icon"
+          >
+            <Plus size={14} />
+          </button>
+        </div>
+      {:else}
         <button
+          type="button"
           onclick={(e) => {
             e.preventDefault();
-            addTag();
+            addingNewTag = true;
           }}
-          class="text-gray-400 hover:text-gray-600 transition-colors"
+          class="ctp-btn ctp-btn-xs ctp-btn-outline rounded-full"
         >
-          <CirclePlus size={16} />
+          <Plus size={12} />
+          Add Tag
         </button>
-      </div>
-    {/if}
-
-    {#if !addingNewTag}
-      <button
-        onclick={() => {
-          addingNewTag = true;
-        }}
-        class="text-gray-400 hover:text-gray-600 transition-colors"
-      >
-        <SquarePlus size={16} />
-      </button>
-    {/if}
+      {/if}
+    </div>
   </div>
 
   <!-- Hyperparameters Section -->
   <div class="space-y-3">
+    <div class="flex items-center gap-2">
+      <Settings size={16} class="text-ctp-mauve" />
+      <h3 class="ctp-heading-3">Parameters</h3>
+    </div>
+
+    {#if pairs.length === 0}
+      <div class="text-xs text-ctp-subtext0 bg-ctp-mantle p-3 rounded-md border border-ctp-surface0">
+        No parameters defined yet. Add parameters to track experiment configuration values.
+      </div>
+    {/if}
+
     {#each pairs as pair, i}
       <div class="flex gap-2 items-center">
         <input
-          class="flex-1 px-4 py-2 bg-gray-50 border-0
-                 text-gray-900 placeholder-gray-400
-                 focus:outline-hidden focus:ring-0 focus:bg-gray-100
-                 transition-colors"
+          class="ctp-input text-sm flex-1"
           name="hyperparams.{i}.key"
           placeholder="Parameter name"
           required
         />
         <input
-          class="flex-1 px-4 py-2 bg-gray-50 border-0
-                 text-gray-900 placeholder-gray-400
-                 focus:outline-hidden focus:ring-0 focus:bg-gray-100
-                 transition-colors"
+          class="ctp-input text-sm flex-1"
           name="hyperparams.{i}.value"
           placeholder="Value"
           required
         />
-        {#if pairs.length > 0}
-          <button
-            type="button"
-            class="text-gray-400 hover:text-gray-600 text-lg px-2"
-            onclick={() => pairs.splice(i, 1)}
-          >
-            ×
-          </button>
-        {/if}
+        <button
+          type="button"
+          class="p-1.5 text-ctp-subtext0 hover:text-ctp-red hover:bg-ctp-surface0 rounded transition-colors"
+          onclick={() => pairs.splice(i, 1)}
+        >
+          <X size={16} />
+        </button>
       </div>
     {/each}
 
     <button
       type="button"
-      class="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+      class="ctp-btn ctp-btn-sm ctp-btn-outline"
       onclick={() => (pairs = [...pairs, { key: "", value: "" }])}
     >
-      + Add Parameter
+      <Plus size={12} />
+      Add Parameter
     </button>
   </div>
 
   <!-- Action Buttons -->
-  <div class="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
+  <div class="flex justify-end gap-3 pt-4 mt-2 border-t border-ctp-surface0">
     <button
       onclick={toggleIsOpen}
       type="button"
-      class="px-5 py-2 text-sm text-gray-600 bg-gray-50
-             hover:bg-gray-100 transition-colors"
+      class="ctp-btn ctp-btn-secondary"
     >
       Cancel
     </button>
     <button
       type="submit"
-      class="px-5 py-2 text-sm text-gray-700 bg-gray-200
-             hover:bg-gray-300 transition-colors"
+      class="ctp-btn ctp-btn-primary"
     >
-      Create
+      <Plus size={16} />
+      Create Experiment
     </button>
   </div>
 </form>

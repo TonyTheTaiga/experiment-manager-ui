@@ -17,24 +17,22 @@
   <CreateExperimentModal {toggleIsOpen} />
 {/if}
 
-<header>
-  <nav
-    class="px-6 py-4 flex flex-row justify-end bg-white border-b border-gray-200"
-  >
-    <button
-      onclick={() => {
-        isOpen = true;
-      }}
-      class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-s-full transition-colors"
-      >(+) Experiment</button
+<div class="flex flex-col h-full">
+  <header>
+    <nav
+      class="px-6 py-4 flex flex-row justify-end bg-ctp-mantle border-b border-ctp"
     >
-  </nav>
-</header>
+      <button
+        onclick={() => {
+          isOpen = true;
+        }}
+        class="ctp-btn ctp-btn-primary rounded-s-full"
+        ><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg> New Experiment</button
+      >
+    </nav>
+  </header>
 
-<main class="mx-4 my-4">
-  <ExperimentsList {experiments} />
-</main>
-
-<style>
-
-</style>
+  <main class="p-4 flex-1">
+    <ExperimentsList {experiments} />
+  </main>
+</div>
