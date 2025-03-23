@@ -20,7 +20,7 @@
     {#each experiments as experiment}
       <div
         class={`
-                    bg-white rounded-sm p-4
+                    bg-gray-800 rounded-sm p-4
                     ${
                       selectedId === experiment.id
                         ? "md:col-span-2 lg:col-span-4 row-span-2 order-first"

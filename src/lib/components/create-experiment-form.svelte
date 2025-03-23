@@ -27,40 +27,40 @@
 <form method="POST" action="?/create" class="flex flex-col gap-6">
   <!-- Name Input -->
   <div class="space-y-2">
-    <label class="text-sm font-medium text-gray-700" for="name"> Name </label>
+    <label class="text-sm font-medium text-gray-300" for="name"> Name </label>
     <input
       name="experiment-name"
       type="text"
-      class="w-full px-4 py-2 bg-gray-50 border-0
-             text-gray-900 placeholder-gray-400
-             focus:outline-hidden focus:ring-0 focus:bg-gray-100
+      class="w-full px-4 py-2 bg-gray-700 border-0
+             text-gray-100 placeholder-gray-400
+             focus:outline-hidden focus:ring-0 focus:bg-gray-600
              transition-colors"
     />
   </div>
 
   <!-- Description Input -->
   <div class="space-y-2">
-    <label class="text-sm font-medium text-gray-700" for="description">
+    <label class="text-sm font-medium text-gray-300" for="description">
       Description
     </label>
     <input
       name="experiment-description"
       type="text"
-      class="w-full px-4 py-2 bg-gray-50 border-0
-             text-gray-900 placeholder-gray-400
-             focus:outline-hidden focus:ring-0 focus:bg-gray-100
+      class="w-full px-4 py-2 bg-gray-700 border-0
+             text-gray-100 placeholder-gray-400
+             focus:outline-hidden focus:ring-0 focus:bg-gray-600
              transition-colors"
     />
   </div>
 
   <!-- Tags -->
   <div class="flex flex-wrap items-center gap-3">
-    <span class="text-sm font-medium text-gray-700">Tags</span>
+    <span class="text-sm font-medium text-gray-300">Tags</span>
 
     {#each tags as tag, i}
       <input type="hidden" value={tag} name="tags.{i}" />
       <span
-        class="px-3 py-1 text-sm bg-gray-50 text-gray-600
+        class="px-3 py-1 text-sm bg-gray-700 text-gray-300
             flex items-center gap-1 group"
       >
         {tag}
@@ -78,9 +78,9 @@
         <input
           type="text"
           bind:value={tag}
-          class="px-3 py-1 w-32 text-sm bg-gray-50
-               text-gray-900 placeholder-gray-400
-               focus:outline-hidden focus:ring-0 focus:bg-gray-100
+          class="px-3 py-1 w-32 text-sm bg-gray-700
+               text-gray-100 placeholder-gray-400
+               focus:outline-hidden focus:ring-0 focus:bg-gray-600
                transition-colors"
           placeholder="New tag"
           onkeydown={(e) => {
@@ -94,7 +94,7 @@
             e.preventDefault();
             addTag();
           }}
-          class="text-gray-400 hover:text-gray-600 transition-colors"
+          class="text-gray-400 hover:text-gray-200 transition-colors"
         >
           <CirclePlus size={16} />
         </button>
@@ -106,7 +106,7 @@
         onclick={() => {
           addingNewTag = true;
         }}
-        class="text-gray-400 hover:text-gray-600 transition-colors"
+        class="text-gray-400 hover:text-gray-200 transition-colors"
       >
         <SquarePlus size={16} />
       </button>
@@ -118,18 +118,18 @@
     {#each pairs as pair, i}
       <div class="flex gap-2 items-center">
         <input
-          class="flex-1 px-4 py-2 bg-gray-50 border-0
-                 text-gray-900 placeholder-gray-400
-                 focus:outline-hidden focus:ring-0 focus:bg-gray-100
+          class="flex-1 px-4 py-2 bg-gray-700 border-0
+                 text-gray-100 placeholder-gray-400
+                 focus:outline-hidden focus:ring-0 focus:bg-gray-600
                  transition-colors"
           name="hyperparams.{i}.key"
           placeholder="Parameter name"
           required
         />
         <input
-          class="flex-1 px-4 py-2 bg-gray-50 border-0
-                 text-gray-900 placeholder-gray-400
-                 focus:outline-hidden focus:ring-0 focus:bg-gray-100
+          class="flex-1 px-4 py-2 bg-gray-700 border-0
+                 text-gray-100 placeholder-gray-400
+                 focus:outline-hidden focus:ring-0 focus:bg-gray-600
                  transition-colors"
           name="hyperparams.{i}.value"
           placeholder="Value"
@@ -138,7 +138,7 @@
         {#if pairs.length > 0}
           <button
             type="button"
-            class="text-gray-400 hover:text-gray-600 text-lg px-2"
+            class="text-gray-400 hover:text-gray-200 text-lg px-2"
             onclick={() => pairs.splice(i, 1)}
           >
             ×
@@ -149,7 +149,7 @@
 
     <button
       type="button"
-      class="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+      class="text-sm text-gray-400 hover:text-gray-200 transition-colors"
       onclick={() => (pairs = [...pairs, { key: "", value: "" }])}
     >
       + Add Parameter
@@ -157,19 +157,19 @@
   </div>
 
   <!-- Action Buttons -->
-  <div class="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
+  <div class="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-700">
     <button
       onclick={toggleIsOpen}
       type="button"
-      class="px-5 py-2 text-sm text-gray-600 bg-gray-50
-             hover:bg-gray-100 transition-colors"
+      class="px-5 py-2 text-sm text-gray-300 bg-gray-700
+             hover:bg-gray-600 transition-colors"
     >
       Cancel
     </button>
     <button
       type="submit"
-      class="px-5 py-2 text-sm text-gray-700 bg-gray-200
-             hover:bg-gray-300 transition-colors"
+      class="px-5 py-2 text-sm text-white bg-blue-600
+             hover:bg-blue-700 transition-colors"
     >
       Create
     </button>

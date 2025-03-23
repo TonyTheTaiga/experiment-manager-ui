@@ -39,8 +39,8 @@
             {
               label,
               data: y,
-              borderColor: "#6B7280",
-              backgroundColor: "#F3F4F6",
+              borderColor: "#60a5fa",
+              backgroundColor: "rgba(96, 165, 250, 0.2)",
               borderWidth: 1.5,
               tension: 0.2,
               fill: true,
@@ -59,10 +59,10 @@
               display: false, // Hide legend for cleaner look
             },
             tooltip: {
-              backgroundColor: "#ffffff",
-              titleColor: "#1e293b",
-              bodyColor: "#475569",
-              borderColor: "#e2e8f0",
+              backgroundColor: "#1f2937",
+              titleColor: "#e5e7eb",
+              bodyColor: "#d1d5db",
+              borderColor: "#374151",
               borderWidth: 1,
               padding: 8,
               displayColors: false,
@@ -77,14 +77,14 @@
                   size: 12,
                   weight: 400,
                 },
-                color: "#6B7280",
+                color: "#9ca3af",
               },
               grid: {
                 display: true,
-                color: "#f1f5f9",
+                color: "rgba(75, 85, 99, 0.4)",
               },
               ticks: {
-                color: "#9CA3AF",
+                color: "#d1d5db",
                 font: {
                   size: 11,
                 },
@@ -98,14 +98,14 @@
                   size: 12,
                   weight: 400,
                 },
-                color: "#6B7280",
+                color: "#9ca3af",
               },
               grid: {
                 display: true,
-                color: "#f1f5f9",
+                color: "rgba(75, 85, 99, 0.4)",
               },
               ticks: {
-                color: "#9CA3AF",
+                color: "#d1d5db",
                 font: {
                   size: 11,
                 },
@@ -142,13 +142,13 @@
     {#each experiment.availableMetrics as metric}
         <button
         class="px-3 py-1.5 text-sm font-medium
-                rounded-md border border-gray-200
+                rounded-md border border-gray-700
                 transition-all duration-150 ease-in-out
-                hover:border-gray-300 hover:bg-gray-50 hover:shadow-xs
+                hover:border-gray-600 hover:bg-gray-700 hover:shadow-xs
                 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20
                 {selectedMetric === metric
-            ? 'bg-red-50 text-gray-600 border-red-200 shadow-xs'
-            : 'bg-white text-gray-600'}"
+            ? 'bg-blue-900/40 text-blue-300 border-blue-700 shadow-xs'
+            : 'bg-gray-800 text-gray-300'}"
         onclick={() => setSelectedMetric(metric)}
         >
         {metric}
@@ -159,9 +159,9 @@
 
 {#if selectedMetric}
     <div
-    class="relative h-64 w-full rounded-xs border border-gray-200 bg-gray-50/50 overflow-hidden"
+    class="relative h-64 w-full rounded-xs border border-gray-700 bg-gray-800/50 overflow-hidden"
     >
-    <div class="absolute inset-0 bg-white m-[1px] rounded-xs">
+    <div class="absolute inset-0 bg-gray-800 m-[1px] rounded-xs">
         <canvas bind:this={chartCanvas} class="p-2"></canvas>
     </div>
     </div>
@@ -171,7 +171,7 @@
 
 <style>
   canvas {
-    background-image: radial-gradient(#f1f5f9 1px, transparent 1px);
+    background-image: radial-gradient(rgba(75, 85, 99, 0.4) 1px, transparent 1px);
     background-size: 20px 20px;
     background-position: -10px -10px;
   }
