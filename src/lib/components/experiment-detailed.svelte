@@ -112,7 +112,6 @@
       overflow-y: auto;
     }
 
-    /* Use :global to style elements rendered from markdown */
     .preview :global(h1) {
       font-size: 2rem;
       font-weight: bold;
