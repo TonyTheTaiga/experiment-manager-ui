@@ -8,16 +8,16 @@
   let aiAnalysis: string | null = $state(null);
 </script>
 
-<article class="ctp-card shadow-lg">
+<article class="bg-[var(--color-ctp-base)] border border-[var(--color-ctp-surface1)] rounded-lg overflow-hidden shadow-lg">
   <!-- Header with actions -->
-  <header class="ctp-card-header">
-    <h2 class="ctp-heading-1">
+  <header class="p-4 bg-[var(--color-ctp-mantle)] border-b border-[var(--color-ctp-surface0)] flex justify-between items-center">
+    <h2 class="text-xl font-semibold text-[var(--color-ctp-text)]">
       {experiment.name}
     </h2>
     <div class="flex items-center gap-3">
       <button
         onclick={() => toggleToggleId(experiment.id)}
-        class="ctp-btn-icon"
+        class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
         aria-label="Minimize"
       >
         <Minimize2 size={16} />
@@ -26,7 +26,7 @@
         <input type="hidden" name="id" value={experiment.id} />
         <button
           type="submit"
-          class="ctp-btn-icon hover:text-ctp-red"
+          class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
           aria-label="Delete"
         >
           <X size={16} />
@@ -36,8 +36,8 @@
   </header>
 
   <!-- Metadata section -->
-  <div class="ctp-card-body border-b border-ctp-surface0">
-    <div class="flex items-center gap-6 mb-4 ctp-text-dim text-sm">
+  <div class="p-5 border-b border-[var(--color-ctp-surface0)]">
+    <div class="flex items-center gap-6 mb-4 text-[var(--color-ctp-subtext0)] text-sm">
       <div class="flex items-center gap-1.5">
         <Clock size={14} />
         <time>
@@ -56,7 +56,7 @@
           <Tag size={14} />
           <div class="flex flex-wrap gap-2">
             {#each experiment.tags as tag}
-              <span class="ctp-tag ctp-tag-mauve">
+              <span class="inline-flex items-center px-2 py-0.5 text-xs rounded-full bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-mauve)]">
                 {tag}
               </span>
             {/each}
@@ -66,7 +66,7 @@
     </div>
 
     {#if experiment.description}
-      <p class="ctp-text text-sm py-2 border-l-2 border-ctp-mauve pl-3 my-3 max-w-prose leading-relaxed">
+      <p class="text-[var(--color-ctp-text)] text-sm py-2 border-l-2 border-[var(--color-ctp-mauve)] pl-3 my-3 max-w-prose leading-relaxed">
         {experiment.description}
       </p>
     {/if}
@@ -74,16 +74,16 @@
 
   <!-- Parameters section -->
   {#if experiment.hyperparams}
-    <div class="ctp-card-body border-b border-ctp-surface0">
+    <div class="p-5 border-b border-[var(--color-ctp-surface0)]">
       <div class="flex items-center gap-2 mb-4">
-        <Settings size={16} class="text-ctp-mauve" />
-        <h3 class="ctp-heading-2">Parameters</h3>
+        <Settings size={16} class="text-[var(--color-ctp-mauve)]" />
+        <h3 class="text-lg font-semibold text-[var(--color-ctp-mauve)]">Parameters</h3>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {#each experiment.hyperparams as param}
-          <div class="flex items-center justify-between bg-ctp-mantle p-3 rounded-md">
-            <span class="text-sm font-medium text-ctp-subtext1">{param.key}</span>
-            <span class="text-sm text-ctp-text px-2 py-1 bg-ctp-surface0 rounded">{param.value}</span>
+          <div class="flex items-center justify-between bg-[var(--color-ctp-mantle)] p-3 rounded-md">
+            <span class="text-sm font-medium text-[var(--color-ctp-subtext1)]">{param.key}</span>
+            <span class="text-sm text-[var(--color-ctp-text)] px-2 py-1 bg-[var(--color-ctp-surface0)] rounded">{param.value}</span>
           </div>
         {/each}
       </div>
@@ -92,9 +92,9 @@
 
   <!-- Metrics section -->
   {#if experiment.availableMetrics}
-    <div class="border-b border-ctp-surface0">
-      <div class="ctp-card-body pb-0">
-        <h3 class="ctp-heading-2">Charts</h3>
+    <div class="border-b border-[var(--color-ctp-surface0)]">
+      <div class="p-5 pb-0">
+        <h3 class="text-lg font-semibold text-[var(--color-ctp-mauve)]">Charts</h3>
       </div>
       <InteractiveChart {experiment} />
     </div>
@@ -102,17 +102,17 @@
 
   <!-- AI Analysis section -->
   <div>
-    <div class="ctp-card-body pb-0">
-      <h3 class="ctp-heading-2">AI Analysis</h3>
+    <div class="p-5 pb-0">
+      <h3 class="text-lg font-semibold text-[var(--color-ctp-mauve)]">AI Analysis</h3>
     </div>
-    <div class="ctp-card-body">
+    <div class="p-5">
       {#if aiAnalysis}
-        <div class="markdown-preview rounded-md overflow-hidden border border-ctp-surface1 shadow-inner">{@html marked(aiAnalysis)}</div>
+        <div class="markdown-preview rounded-md overflow-hidden border border-[var(--color-ctp-surface1)] shadow-inner">{@html marked(aiAnalysis)}</div>
       {:else}
-        <div class="flex flex-col items-center justify-center p-8 bg-ctp-mantle rounded-md">
-          <p class="ctp-text-dim text-sm mb-4">No analysis available yet</p>
+        <div class="flex flex-col items-center justify-center p-8 bg-[var(--color-ctp-mantle)] rounded-md">
+          <p class="text-[var(--color-ctp-subtext0)] text-sm mb-4">No analysis available yet</p>
           <button
-            class="ctp-btn ctp-btn-primary"
+            class="inline-flex items-center justify-center gap-2 px-4 py-2 font-medium rounded-md bg-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:bg-[var(--color-ctp-lavender)] transition-colors"
             onclick={async () => {
               console.log("AI Analysis triggered");
               let response = await fetch(`/api/experiments/${experiment.id}/analysis`);

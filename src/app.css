@@ -11,7 +11,7 @@
 @layer base {
   :root {
     --color-gray-200: #e5e7eb;
-    
+
     /* Catppuccin Mocha */
     --color-ctp-base: #1e1e2e;
     --color-ctp-mantle: #181825;
@@ -51,10 +51,5 @@
   ::backdrop,
   ::file-selector-button {
     border-color: var(--color-gray-200, currentColor);
-  }
-  
-  body {
-    background-color: var(--color-ctp-base);
-    color: var(--color-ctp-text);
   }
 }

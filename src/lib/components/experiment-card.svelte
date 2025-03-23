@@ -12,10 +12,10 @@
 
 <div
   class="
-    rounded-lg border border-ctp-surface1 overflow-hidden
+    rounded-lg border border-[var(--color-ctp-surface1)] overflow-hidden
     {targetId === experiment.id
       ? 'md:col-span-2 lg:col-span-4 row-span-2 order-first'
-      : 'order-none bg-ctp-base hover:shadow-md transition-shadow duration-200'
+      : 'order-none bg-[var(--color-ctp-base)] hover:shadow-md transition-shadow duration-200'
     }
   "
 >

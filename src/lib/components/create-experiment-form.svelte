@@ -27,24 +27,24 @@
 <form method="POST" action="?/create" class="flex flex-col gap-6">
   <!-- Name Input -->
   <div class="space-y-2">
-    <label class="text-sm font-medium text-ctp-text" for="name">Experiment Name</label>
+    <label class="text-sm font-medium text-[var(--color-ctp-text)]" for="name">Experiment Name</label>
     <input
       name="experiment-name"
       type="text"
-      class="ctp-input"
+      class="w-full px-3.5 py-2.5 bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors"
       placeholder="Enter experiment name"
     />
   </div>
 
   <!-- Description Input -->
   <div class="space-y-2">
-    <label class="text-sm font-medium text-ctp-text" for="description">
+    <label class="text-sm font-medium text-[var(--color-ctp-text)]" for="description">
       Description
     </label>
     <textarea
       name="experiment-description"
       rows="3"
-      class="ctp-input resize-none"
+      class="w-full px-3.5 py-2.5 bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors resize-none"
       placeholder="Briefly describe this experiment"
     ></textarea>
   </div>
@@ -52,20 +52,20 @@
   <!-- Tags Section -->
   <div class="space-y-3">
     <div class="flex items-center gap-2">
-      <TagIcon size={16} class="text-ctp-mauve" />
-      <h3 class="ctp-heading-3">Tags</h3>
+      <TagIcon size={16} class="text-[var(--color-ctp-mauve)]" />
+      <h3 class="text-lg font-semibold text-[var(--color-ctp-blue)]">Tags</h3>
     </div>
     
     <div class="flex flex-wrap items-center gap-2">
       {#each tags as tag, i}
         <input type="hidden" value={tag} name="tags.{i}" />
         <span
-          class="ctp-tag ctp-tag-mauve flex items-center gap-1.5 group border border-ctp-surface0"
+          class="inline-flex items-center px-2 py-0.5 text-xs rounded-full bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-mauve)] border border-[var(--color-ctp-surface0)] group"
         >
           {tag}
           <button
             type="button"
-            class="text-ctp-subtext0 hover:text-ctp-red transition-colors"
+            class="text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] transition-colors ml-1.5"
             onclick={() => tags.splice(i, 1)}
             aria-label="Remove tag"
           >
@@ -79,7 +79,7 @@
           <input
             type="text"
             bind:value={tag}
-            class="ctp-input px-3 py-1 w-32 text-xs"
+            class="w-32 px-3 py-1 text-xs bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors"
             placeholder="New tag"
             onkeydown={(e) => {
               if (e.key === "Enter") {
@@ -94,7 +94,7 @@
               e.preventDefault();
               addTag();
             }}
-            class="ctp-btn-icon"
+            class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
           >
             <Plus size={14} />
           </button>
@@ -106,7 +106,7 @@
             e.preventDefault();
             addingNewTag = true;
           }}
-          class="ctp-btn ctp-btn-xs ctp-btn-outline rounded-full"
+          class="inline-flex items-center gap-1 py-0.5 px-2 text-xs rounded-full bg-transparent text-[var(--color-ctp-mauve)] border border-[var(--color-ctp-mauve)] hover:bg-[var(--color-ctp-mauve)]/10 transition-colors"
         >
           <Plus size={12} />
           Add Tag
@@ -118,12 +118,12 @@
   <!-- Hyperparameters Section -->
   <div class="space-y-3">
     <div class="flex items-center gap-2">
-      <Settings size={16} class="text-ctp-mauve" />
-      <h3 class="ctp-heading-3">Parameters</h3>
+      <Settings size={16} class="text-[var(--color-ctp-mauve)]" />
+      <h3 class="text-lg font-semibold text-[var(--color-ctp-blue)]">Parameters</h3>
     </div>
 
     {#if pairs.length === 0}
-      <div class="text-xs text-ctp-subtext0 bg-ctp-mantle p-3 rounded-md border border-ctp-surface0">
+      <div class="text-xs text-[var(--color-ctp-subtext0)] bg-[var(--color-ctp-mantle)] p-3 rounded-md border border-[var(--color-ctp-surface0)]">
         No parameters defined yet. Add parameters to track experiment configuration values.
       </div>
     {/if}
@@ -131,20 +131,20 @@
     {#each pairs as pair, i}
       <div class="flex gap-2 items-center">
         <input
-          class="ctp-input text-sm flex-1"
+          class="w-full px-3.5 py-2 text-sm bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors flex-1"
           name="hyperparams.{i}.key"
           placeholder="Parameter name"
           required
         />
         <input
-          class="ctp-input text-sm flex-1"
+          class="w-full px-3.5 py-2 text-sm bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors flex-1"
           name="hyperparams.{i}.value"
           placeholder="Value"
           required
         />
         <button
           type="button"
-          class="p-1.5 text-ctp-subtext0 hover:text-ctp-red hover:bg-ctp-surface0 rounded transition-colors"
+          class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] hover:bg-[var(--color-ctp-surface0)] rounded transition-colors"
           onclick={() => pairs.splice(i, 1)}
         >
           <X size={16} />
@@ -154,7 +154,7 @@
 
     <button
       type="button"
-      class="ctp-btn ctp-btn-sm ctp-btn-outline"
+      class="inline-flex items-center gap-1.5 py-1.5 px-3 text-sm font-medium rounded-md bg-transparent text-[var(--color-ctp-mauve)] border border-[var(--color-ctp-mauve)] hover:bg-[var(--color-ctp-mauve)]/10 transition-colors"
       onclick={() => (pairs = [...pairs, { key: "", value: "" }])}
     >
       <Plus size={12} />
@@ -163,17 +163,17 @@
   </div>
 
   <!-- Action Buttons -->
-  <div class="flex justify-end gap-3 pt-4 mt-2 border-t border-ctp-surface0">
+  <div class="flex justify-end gap-3 pt-4 mt-2 border-t border-[var(--color-ctp-surface0)]">
     <button
       onclick={toggleIsOpen}
       type="button"
-      class="ctp-btn ctp-btn-secondary"
+      class="inline-flex items-center justify-center px-4 py-2 font-medium rounded-md bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-text)] border border-[var(--color-ctp-surface1)] hover:bg-[var(--color-ctp-surface1)] transition-colors"
     >
       Cancel
     </button>
     <button
       type="submit"
-      class="ctp-btn ctp-btn-primary"
+      class="inline-flex items-center justify-center gap-2 px-4 py-2 font-medium rounded-md bg-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:bg-[var(--color-ctp-lavender)] transition-colors"
     >
       <Plus size={16} />
       Create Experiment
