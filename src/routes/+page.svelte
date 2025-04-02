@@ -5,10 +5,10 @@
 	import type { PageData } from "./$types";
 	import { Plus } from "lucide-svelte";
 
-	let isOpen: boolean = $state(false);
 	let { data }: { data: PageData } = $props();
 	let experiments: Experiment[] = $state(data.experiments);
 
+	let isOpen: boolean = $state(false);
 	function toggleIsOpen() {
 		isOpen = !isOpen;
 	}
