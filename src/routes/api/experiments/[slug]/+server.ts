@@ -1,12 +1,18 @@
 import { json } from "@sveltejs/kit";
 import { getExperiment, updateExperiment } from "$lib/server/database";
 
-export async function GET(event) {
-	const experiment = await getExperiment(event.params["slug"]);
+export async function GET({ params: { slug } }: { params: { slug: string } }) {
+	const experiment = await getExperiment(slug);
 	return json(experiment);
 }
 
-export async function POST({ params: { slug }, request }) {
+export async function POST({
+	params: { slug },
+	request,
+}: {
+	params: { slug: string };
+	request: Request;
+}) {
 	let data = await request.json();
 	await updateExperiment(slug, {
 		name: data.name,
