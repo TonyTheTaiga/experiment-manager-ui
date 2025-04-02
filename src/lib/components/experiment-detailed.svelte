@@ -2,15 +2,25 @@
 	import type { Experiment } from "$lib/types";
 	import { Minimize2, X, Clock, Tag, Settings, Pencil } from "lucide-svelte";
 	import InteractiveChart from "./interactive-chart.svelte";
+	import EditExperimentModal from "./edit-experiment-modal.svelte";
 	import { marked } from "marked";
 
 	let {
-		experiment,
+		experiment = $bindable(),
 		toggleToggleId,
 	}: { experiment: Experiment; toggleToggleId: (id: string) => void } =
 		$props();
-	let aiAnalysis: string | null = $state(null);
+	let aiAnalysis = $state<string | null>(null);
+	let editMode = $state<boolean>(false);
+
+	function toggleEditMode() {
+		editMode = !editMode;
+	}
 </script>
+
+{#if editMode}
+	<EditExperimentModal bind:experiment {toggleEditMode} />
+{/if}
 
 <article
 	class="bg-[var(--color-ctp-base)] border border-[var(--color-ctp-surface1)] rounded-lg overflow-hidden shadow-lg"
@@ -23,6 +33,14 @@
 			{experiment.name}
 		</h2>
 		<div class="flex items-center gap-3">
+			<button
+				onclick={() => {
+					editMode = true;
+				}}
+				class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
+			>
+				<Pencil size={16} />
+			</button>
 			<button
 				onclick={() => toggleToggleId(experiment.id)}
 				class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"

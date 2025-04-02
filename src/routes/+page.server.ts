@@ -7,6 +7,7 @@ const API_ROUTES = {
 	GET_EXPERIMENTS: "/api/experiments",
 	CREATE_EXPERIMENT: "/api/experiments/create",
 	DELETE_EXPERIMENT: "/api/experiments/delete",
+	UPDATE_EXPERIMENT: "/api/experiments/update",
 } as const;
 
 interface FormDataResult {
@@ -115,7 +116,37 @@ async function handleDelete(request: Request, fetch: Function) {
 	throw redirect(303, "/");
 }
 
+async function handleUpdate(request: Request, fetch: Function) {
+	const form = await request.formData();
+	const {
+		"experiment-id": id,
+		"experiment-name": name,
+		"experiment-description": description,
+		hyperparams,
+		tags,
+	} = parseFormData(form);
+
+	if (!id || !name || !description) {
+		return fail(400, { message: "ID, name, and description are required" });
+	}
+
+	const response = await fetch(`/api/experiments/${id}`, {
+		method: "POST",
+		body: JSON.stringify({ name, description }),
+	});
+
+	if (!response.ok) {
+		return fail(500, { message: "Failed to update experiment" });
+	}
+
+	return {
+		success: true,
+		message: "Experiment updated successfully!",
+	};
+}
+
 export const actions: Actions = {
 	create: async ({ request, fetch }) => handleCreate(request, fetch),
 	delete: async ({ request, fetch }) => handleDelete(request, fetch),
+	update: async ({ request, fetch }) => handleUpdate(request, fetch),
 };

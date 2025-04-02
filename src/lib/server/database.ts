@@ -147,6 +147,23 @@ class DatabaseClient {
 		}
 	}
 
+	static async updateExperiment(
+		id: string,
+		update: { [key: string]: any },
+	): Promise<void> {
+		const { data, error } = await DatabaseClient.getInstance()
+			.from("experiment")
+			.update(update)
+			.eq("id", id)
+			.select();
+
+		if (error) {
+			throw new Error(
+				`Failed to update experiment with ID ${id}: ${error.message}`,
+			);
+		}
+	}
+
 	static async getMetrics(experimentId: string): Promise<Metric[]> {
 		const { data, error } = await DatabaseClient.getInstance()
 			.from("metric")
@@ -208,6 +225,7 @@ export const {
 	getExperiment,
 	getExperimentAndMetrics,
 	deleteExperiment,
+	updateExperiment,
 	getMetrics,
 	createMetric,
 	batchCreateMetric,
