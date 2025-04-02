@@ -18,8 +18,9 @@
 		toggleToggleId,
 	}: { experiment: Experiment; toggleToggleId: (id: string) => void } =
 		$props();
-	let aiAnalysis: string | null = $state(null);
+
 	let aiSuggestions = $state(null);
+	let aiAnalysis = $state<string | null>(null);
 	let editMode = $state<boolean>(false);
 
 	function toggleEditMode() {
