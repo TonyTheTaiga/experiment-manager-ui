@@ -3,6 +3,7 @@
 	import ExperimentsList from "$lib/components/experiments-list.svelte";
 	import type { Experiment } from "$lib/types";
 	import type { PageData } from "./$types";
+	import { Plus } from "lucide-svelte";
 
 	let isOpen: boolean = $state(false);
 	let { data }: { data: PageData } = $props();
@@ -27,18 +28,7 @@
 					isOpen = true;
 				}}
 				class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:bg-[var(--color-ctp-lavender)] transition-colors font-medium"
-				><svg
-					xmlns="http://www.w3.org/2000/svg"
-					width="16"
-					height="16"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					><path d="M5 12h14" /><path d="M12 5v14" /></svg
-				> New Experiment</button
+				><Plus size={16} /> New Experiment</button
 			>
 		</nav>
 	</header>
