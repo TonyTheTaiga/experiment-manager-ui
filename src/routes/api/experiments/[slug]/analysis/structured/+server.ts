@@ -30,8 +30,6 @@ export async function GET({ params: { slug } }: { params: { slug: string } }) {
     }
   
     const prompt = formatExperimentForHyperparameterAnalysis(experiment);
-    console.log(prompt);
-    console.log(experiment.experiment.hyperparams.map(h => h.key));
   
     const analysis = await generateJSON(prompt);
     const formattedAnalysis = formatHyperparameterAnalysis(experiment.experiment.hyperparams.map(h => h.key), analysis);

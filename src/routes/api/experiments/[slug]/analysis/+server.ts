@@ -10,7 +10,6 @@ export async function GET({ params: { slug } }: { params: { slug: string } }) {
 
   const prompt = formatExperimentForLLM(experiment);
   console.log(prompt);
-  console.log(slug)
 
   const analysis = await generateText(prompt);
   return new Response(JSON.stringify({ analysis }));
