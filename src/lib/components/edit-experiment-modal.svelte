@@ -18,6 +18,7 @@
 	class="fixed inset-0 bg-[var(--color-ctp-crust)]/60 backdrop-blur-sm
          flex items-center justify-center p-4 z-50"
 >
+	<!-- HEADER -->
 	<div
 		class="bg-[var(--color-ctp-base)] w-full max-w-xl rounded-lg border border-[var(--color-ctp-surface1)] shadow-lg overflow-hidden"
 	>
@@ -36,6 +37,7 @@
 			</button>
 		</div>
 
+		<!-- FORM -->
 		<div class="p-6">
 			<form
 				method="POST"
@@ -174,5 +176,6 @@
 				</div>
 			</form>
 		</div>
+		<!-- END FORM -->
 	</div>
 </div>

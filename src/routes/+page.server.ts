@@ -122,7 +122,6 @@ async function handleUpdate(request: Request, fetch: Function) {
 		"experiment-id": id,
 		"experiment-name": name,
 		"experiment-description": description,
-		hyperparams,
 		tags,
 	} = parseFormData(form);
 
