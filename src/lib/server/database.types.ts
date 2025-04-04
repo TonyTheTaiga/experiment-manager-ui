@@ -36,36 +36,36 @@ export type Database = {
         }
         Relationships: []
       }
-      "experiment-references": {
+      experiment_references: {
         Row: {
-          created_at: string
-          from: string
+          created_at: string | null
+          from_experiment: string
           id: number
-          to: string
+          to_experiment: string
         }
         Insert: {
-          created_at?: string
-          from: string
+          created_at?: string | null
+          from_experiment: string
           id?: number
-          to: string
+          to_experiment: string
         }
         Update: {
-          created_at?: string
-          from?: string
+          created_at?: string | null
+          from_experiment?: string
           id?: number
-          to?: string
+          to_experiment?: string
         }
         Relationships: [
           {
-            foreignKeyName: "experiment-references_from_fkey"
-            columns: ["from"]
+            foreignKeyName: "experiment_references_from_experiment_fkey"
+            columns: ["from_experiment"]
             isOneToOne: false
             referencedRelation: "experiment"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "experiment-references_to_fkey"
-            columns: ["to"]
+            foreignKeyName: "experiment_references_to_experiment_fkey"
+            columns: ["to_experiment"]
             isOneToOne: false
             referencedRelation: "experiment"
             referencedColumns: ["id"]
