@@ -44,13 +44,13 @@
             {
               label,
               data: y,
-              borderColor: "#74c7ec" /* sapphire */,
+              borderColor: "#74c7ec", /* sapphire */
               backgroundColor: "rgba(116, 199, 236, 0.15)",
               fill: true,
-              pointBackgroundColor: "#b4befe" /* lavender */,
-              pointBorderColor: "#181825" /* mantle */,
-              pointHoverBackgroundColor: "#cba6f7" /* mauve */,
-              pointHoverBorderColor: "#1e1e2e" /* base */,
+              pointBackgroundColor: "#b4befe", /* lavender */
+              pointBorderColor: "#181825", /* mantle */
+              pointHoverBackgroundColor: "#cba6f7", /* mauve */
+              pointHoverBorderColor: "#1e1e2e", /* base */
             },
           ],
         },
@@ -58,9 +58,9 @@
           responsive: true,
           maintainAspectRatio: false,
           interaction: {
-            mode: "nearest",
+            mode: 'nearest',
             intersect: false,
-            axis: "x",
+            axis: 'x',
             includeInvisible: true,
           },
           plugins: {
@@ -68,20 +68,20 @@
               display: false,
             },
             tooltip: {
-              backgroundColor: "#11111b" /* crust */,
-              titleColor: "#74c7ec" /* sapphire */,
-              bodyColor: "#cdd6f4" /* text */,
-              borderColor: "#6c7086" /* overlay0 */,
-              position: "nearest",
+              backgroundColor: "#11111b", /* crust */
+              titleColor: "#74c7ec", /* sapphire */
+              bodyColor: "#cdd6f4", /* text */
+              borderColor: "#6c7086", /* overlay0 */
+              position: 'nearest',
               caretPadding: 10,
               callbacks: {
-                title: function (tooltipItems) {
+                title: function(tooltipItems) {
                   return `Step ${tooltipItems[0].label}`;
                 },
-                label: function (context) {
+                label: function(context) {
                   return `${context.dataset.label}: ${context.formattedValue}`;
-                },
-              },
+                }
+              }
             },
           },
           scales: {
@@ -89,10 +89,10 @@
               title: {
                 display: true,
                 text: "Step",
-                color: "#cdd6f4" /* text */,
+                color: "#cdd6f4", /* text */
               },
               ticks: {
-                color: "#cdd6f4" /* text */,
+                color: "#cdd6f4", /* text */
               },
               grid: {
                 color: "rgba(180, 190, 254, 0.08)",
@@ -102,10 +102,10 @@
               title: {
                 display: true,
                 text: label,
-                color: "#cdd6f4" /* text */,
+                color: "#cdd6f4", /* text */
               },
               ticks: {
-                color: "#cdd6f4" /* text */,
+                color: "#cdd6f4", /* text */
               },
               grid: {
                 color: "rgba(180, 190, 254, 0.08)",
@@ -123,7 +123,7 @@
   async function setSelectedMetric(metric: string) {
     selectedMetric = metric;
     isLoading = true;
-
+    
     try {
       const metrics = (await loadMetrics()) as Metric[];
       const loss = Object.groupBy(metrics, ({ name }) => name);
@@ -132,17 +132,13 @@
       if (chart_targets && chart_targets.length > 0) {
         // Sort metrics by step
         chart_targets.sort((a, b) => (a.step ?? 0) - (b.step ?? 0));
-
+        
         // Handle missing steps by using indices if step is undefined
-        const steps = chart_targets.map((l, index) =>
-          l.step !== undefined ? l.step : index
-        );
-
+        const steps = chart_targets.map((l, index) => l.step !== undefined ? l.step : index);
+        
         // Ensure all values are numbers
-        const values = chart_targets.map((l) =>
-          typeof l.value === "number" ? l.value : parseFloat(l.value) || 0
-        );
-
+        const values = chart_targets.map((l) => typeof l.value === 'number' ? l.value : parseFloat(l.value) || 0);
+        
         createChart(metric, steps, values);
       }
     } catch (error) {
@@ -159,9 +155,9 @@
       {#each experiment.availableMetrics as metric}
         <button
           class={`py-1.5 px-3 text-sm font-medium rounded-md transition-colors ${
-            selectedMetric === metric
-              ? "bg-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:bg-[var(--color-ctp-lavender)]"
-              : "bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-text)] border border-[var(--color-ctp-surface1)] hover:bg-[var(--color-ctp-blue)] hover:text-[var(--color-ctp-crust)] hover:border-[var(--color-ctp-blue)]"
+            selectedMetric === metric 
+              ? 'bg-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:bg-[var(--color-ctp-lavender)]' 
+              : 'bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-text)] border border-[var(--color-ctp-surface1)] hover:bg-[var(--color-ctp-blue)] hover:text-[var(--color-ctp-crust)] hover:border-[var(--color-ctp-blue)]'
           }`}
           onclick={() => setSelectedMetric(metric)}
         >
@@ -176,9 +172,7 @@
       class="relative h-80 w-full rounded-md border border-[var(--color-ctp-surface1)] bg-[var(--color-ctp-mantle)] overflow-hidden shadow-md"
     >
       {#if isLoading}
-        <div
-          class="absolute inset-0 flex items-center justify-center bg-[var(--color-ctp-mantle)]/80 backdrop-blur-sm z-10"
-        >
+        <div class="absolute inset-0 flex items-center justify-center bg-[var(--color-ctp-mantle)]/80 backdrop-blur-sm z-10">
           <div class="animate-pulse text-[#89dceb]">Loading data...</div>
         </div>
       {/if}
@@ -187,9 +181,7 @@
       </div>
     </div>
   {:else if experiment.availableMetrics && experiment.availableMetrics.length > 0}
-    <div
-      class="flex flex-col items-center justify-center h-80 w-full rounded-md border border-[var(--color-ctp-surface1)] bg-[var(--color-ctp-mantle)] p-8"
-    >
+    <div class="flex flex-col items-center justify-center h-80 w-full rounded-md border border-[var(--color-ctp-surface1)] bg-[var(--color-ctp-mantle)] p-8">
       <BarChart4 size={32} class="text-[var(--color-ctp-overlay0)] mb-4" />
       <p class="text-[var(--color-ctp-subtext0)] text-sm text-center max-w-md">
         Select a metric from above to view the chart data
