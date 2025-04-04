@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { X, Plus } from "lucide-svelte";
+	import { X, Save } from "lucide-svelte";
 	import { enhance } from "$app/forms";
 
 	let { experiment = $bindable(), toggleEditMode, form } = $props();
@@ -93,7 +93,7 @@
 						type="submit"
 						class="inline-flex items-center justify-center gap-2 px-4 py-2 font-medium rounded-md bg-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:bg-[var(--color-ctp-lavender)] transition-colors"
 					>
-						<Plus size={16} />
+						<Save size={16} />
 						Update Experiment
 					</button>
 				</div>
