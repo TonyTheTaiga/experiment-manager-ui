@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+  commands:
+    biome-format:
+      glob: "*.{js,ts,jsx,tsx,json,svelte}"
+      run: npx biome format --write {staged_files}
+    biome-lint:
+      glob: "*.{js,ts,jsx,tsx,json,svelte}"
+      run: npx biome lint --write --unsafe {staged_files}
+
+commit-msg:
+  commands:
+    lint-commit-msg:
+      run: npx biome check --write --unsafe {1}

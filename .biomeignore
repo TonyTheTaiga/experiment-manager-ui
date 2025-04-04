@@ -1,0 +1,11 @@
+node_modules/
+build/
+.svelte-kit/
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+*.lock
+*.env*
+.pnpm-store/
+pnpm-lock.yaml
+*.d.ts 
