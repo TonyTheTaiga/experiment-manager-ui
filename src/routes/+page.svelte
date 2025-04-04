@@ -1,17 +1,17 @@
 <script lang="ts">
-	import CreateExperimentModal from "$lib/components/create-experiment-modal.svelte";
-	import ExperimentsList from "$lib/components/experiments-list.svelte";
-	import type { Experiment } from "$lib/types";
-	import type { PageData } from "./$types";
-	import { Plus } from "lucide-svelte";
+import CreateExperimentModal from '$lib/components/create-experiment-modal.svelte';
+import ExperimentsList from '$lib/components/experiments-list.svelte';
+import type { Experiment } from '$lib/types';
+import { Plus } from 'lucide-svelte';
+import type { PageData } from './$types';
 
-	let { data }: { data: PageData } = $props();
-	let experiments: Experiment[] = $state(data.experiments);
+const { data }: { data: PageData } = $props();
+const experiments: Experiment[] = $state(data.experiments);
 
-	let isOpen: boolean = $state(false);
-	function toggleIsOpen() {
-		isOpen = !isOpen;
-	}
+let isOpen: boolean = $state(false);
+function toggleIsOpen() {
+  isOpen = !isOpen;
+}
 </script>
 
 {#if isOpen}

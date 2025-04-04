@@ -1,12 +1,12 @@
 <script lang="ts">
-  import CreateExperimentForm from "./create-experiment-form.svelte";
-  import { X } from "lucide-svelte";
-  
-  let {
-    toggleIsOpen,
-  }: {
-    toggleIsOpen: () => void;
-  } = $props();
+import { X } from 'lucide-svelte';
+import CreateExperimentForm from './create-experiment-form.svelte';
+
+const {
+  toggleIsOpen,
+}: {
+  toggleIsOpen: () => void;
+} = $props();
 </script>
 
 <div

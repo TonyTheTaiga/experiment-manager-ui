@@ -1,17 +1,17 @@
 <script lang="ts">
-	import type { Experiment } from "$lib/types";
-	import ExperimentCard from "./experiment-card.svelte";
+import type { Experiment } from '$lib/types';
+import ExperimentCard from './experiment-card.svelte';
 
-	let { experiments = $bindable() }: { experiments: Experiment[] } = $props();
+const { experiments = $bindable() }: { experiments: Experiment[] } = $props();
 
-	let selectedId = $state<string | null>(null);
-	function toggleToggleId(id: string) {
-		if (selectedId === id) {
-			selectedId = null;
-		} else {
-			selectedId = id;
-		}
-	}
+let selectedId = $state<string | null>(null);
+function toggleToggleId(id: string) {
+  if (selectedId === id) {
+    selectedId = null;
+  } else {
+    selectedId = id;
+  }
+}
 </script>
 
 <section>

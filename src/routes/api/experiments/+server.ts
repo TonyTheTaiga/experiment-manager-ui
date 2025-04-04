@@ -1,15 +1,15 @@
-import { json, error } from "@sveltejs/kit";
-import { getExperiments } from "$lib/server/database.js";
+import { getExperiments } from '$lib/server/database.js';
+import { error, json } from '@sveltejs/kit';
 
 export async function GET() {
-	try {
-		const experiments = await getExperiments();
-		return json(experiments);
-	} catch (err) {
-		if (err instanceof Error) {
-			throw error(500, err.message);
-		}
+  try {
+    const experiments = await getExperiments();
+    return json(experiments);
+  } catch (err) {
+    if (err instanceof Error) {
+      throw error(500, err.message);
+    }
 
-		throw error(500, "Internal Error");
-	}
+    throw error(500, 'Internal Error');
+  }
 }

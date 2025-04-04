@@ -1,12 +1,11 @@
 <script lang="ts">
-  import type { Experiment } from "$lib/types";
-  import { Maximize2, Tag, Clock, BarChart4 } from "lucide-svelte";
+import type { Experiment } from '$lib/types';
+import { BarChart4, Clock, Maximize2, Tag } from 'lucide-svelte';
 
-  let {
-    experiment,
-    toggleToggleId,
-  }: { experiment: Experiment; toggleToggleId: (id: string) => void } =
-    $props();
+const {
+  experiment,
+  toggleToggleId,
+}: { experiment: Experiment; toggleToggleId: (id: string) => void } = $props();
 </script>
 
 <article class="p-4">

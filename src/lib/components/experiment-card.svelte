@@ -1,17 +1,17 @@
 <script lang="ts">
-	import type { Experiment } from "$lib/types";
-	import ExperimentSimple from "./experiment-simple.svelte";
-	import ExperimentDetailed from "./experiment-detailed.svelte";
+import type { Experiment } from '$lib/types';
+import ExperimentDetailed from './experiment-detailed.svelte';
+import ExperimentSimple from './experiment-simple.svelte';
 
-	let {
-		experiment = $bindable(),
-		toggleToggleId,
-		targetId,
-	}: {
-		experiment: Experiment;
-		toggleToggleId: (id: string) => void;
-		targetId: string | null;
-	} = $props();
+const {
+  experiment = $bindable(),
+  toggleToggleId,
+  targetId,
+}: {
+  experiment: Experiment;
+  toggleToggleId: (id: string) => void;
+  targetId: string | null;
+} = $props();
 </script>
 
 <div

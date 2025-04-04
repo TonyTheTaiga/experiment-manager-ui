@@ -6,9 +6,4 @@ pre-commit:
       run: npx biome format --write {staged_files}
     biome-lint:
       glob: "*.{js,ts,jsx,tsx,json,svelte}"
-      run: npx biome lint --write --unsafe {staged_files}
-
-commit-msg:
-  commands:
-    lint-commit-msg:
-      run: npx biome check --write --unsafe {1}
+      run: npx biome lint --write {staged_files}

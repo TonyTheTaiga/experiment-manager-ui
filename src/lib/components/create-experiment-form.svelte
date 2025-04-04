@@ -1,27 +1,27 @@
 <script lang="ts">
-  import type { HyperParam } from "$lib/types";
-  import { Plus, X, Tag as TagIcon, Settings } from "lucide-svelte";
+import type { HyperParam } from '$lib/types';
+import { Plus, Settings, Tag as TagIcon, X } from 'lucide-svelte';
 
-  let {
-    toggleIsOpen,
-  }: {
-    toggleIsOpen: () => void;
-  } = $props();
+const {
+  toggleIsOpen,
+}: {
+  toggleIsOpen: () => void;
+} = $props();
 
-  let pairs = $state<HyperParam[]>([]);
+const pairs = $state<HyperParam[]>([]);
 
-  // Tags stuff
-  let addingNewTag = $state<boolean>(false);
-  let tag = $state<string | null>(null);
-  let tags = $state<string[]>([]);
+// Tags stuff
+let addingNewTag = $state<boolean>(false);
+let tag = $state<string | null>(null);
+let tags = $state<string[]>([]);
 
-  function addTag() {
-    if (tag) {
-      tags = [...tags, tag];
-      tag = null;
-      addingNewTag = false;
-    }
+function addTag() {
+  if (tag) {
+    tags = [...tags, tag];
+    tag = null;
+    addingNewTag = false;
   }
+}
 </script>
 
 <form method="POST" action="?/create" class="flex flex-col gap-6">
