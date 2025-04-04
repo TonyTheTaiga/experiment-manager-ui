@@ -1,6 +1,7 @@
 import { generateText } from "$lib/server/llm";
 import { getExperimentAndMetrics } from "$lib/server/database";
-import type { ExperimentAndMetrics, Metric } from "$lib/types";
+import type { ExperimentAndMetrics } from "$lib/types";
+import { formatExperimentForLLM } from "$lib/server/analysis/prompts";
 
 /**
  * Formats experiment and metrics data for LLM analysis, grouping metrics by name
@@ -122,6 +123,7 @@ function formatExperimentForLLM(data: ExperimentAndMetrics): string {
 
 	return formattedText;
 }
+
 export async function GET({ params: { slug } }: { params: { slug: string } }) {
 	const experiment = (await getExperimentAndMetrics(
 		slug,
