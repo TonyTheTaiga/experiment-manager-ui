@@ -1,24 +1,24 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "extends": ["./biome.json"],
-  "linter": {
-    "ignore": [".svelte-kit/**/*", "build/**/*", "node_modules/**/*", "**/*.d.ts", "**/*.svelte"],
-    "rules": {
-      "suspicious": {
-        "noExplicitAny": "off"
-      },
-      "complexity": {
-        "noBannedTypes": "off",
-        "noStaticOnlyClass": "off",
-        "noForEach": "off"
-      },
-      "style": {
-        "useTemplate": "off",
-        "useConst": "warn"
-      }
-    }
-  },
-  "formatter": {
-    "ignore": [".svelte-kit/**/*", "build/**/*", "node_modules/**/*", "**/*.svelte"]
-  }
+	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"extends": ["./biome.json"],
+	"linter": {
+		"ignore": [".svelte-kit/**/*", "build/**/*", "node_modules/**/*", "**/*.d.ts", "**/*.svelte"],
+		"rules": {
+			"suspicious": {
+				"noExplicitAny": "off"
+			},
+			"complexity": {
+				"noBannedTypes": "off",
+				"noStaticOnlyClass": "off",
+				"noForEach": "off"
+			},
+			"style": {
+				"useTemplate": "off",
+				"useConst": "warn"
+			}
+		}
+	},
+	"formatter": {
+		"ignore": [".svelte-kit/**/*", "build/**/*", "node_modules/**/*", "**/*.svelte"]
+	}
 }
