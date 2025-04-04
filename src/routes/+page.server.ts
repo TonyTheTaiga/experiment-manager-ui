@@ -122,7 +122,6 @@ async function handleUpdate(request: Request, fetch: Function) {
 		"experiment-id": id,
 		"experiment-name": name,
 		"experiment-description": description,
-		hyperparams,
 		tags,
 	} = parseFormData(form);
 
@@ -132,7 +131,7 @@ async function handleUpdate(request: Request, fetch: Function) {
 
 	const response = await fetch(`/api/experiments/${id}`, {
 		method: "POST",
-		body: JSON.stringify({ name, description }),
+		body: JSON.stringify({ name, description, tags }),
 	});
 
 	if (!response.ok) {

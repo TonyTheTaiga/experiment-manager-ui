@@ -17,6 +17,7 @@ export async function POST({
 	await updateExperiment(slug, {
 		name: data.name,
 		description: data.description,
+		tags: data.tags,
 	});
 	return json({ success: true });
 }
