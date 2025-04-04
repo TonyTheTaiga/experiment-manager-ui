@@ -1,17 +1,17 @@
 <script lang="ts">
-import { enhance } from '$app/forms';
-import { Plus, Save, TagIcon, X } from 'lucide-svelte';
+	import { X, Save, TagIcon, Plus } from "lucide-svelte";
+	import { enhance } from "$app/forms";
 
-const { experiment = $bindable(), toggleEditMode } = $props();
+	let { experiment = $bindable(), toggleEditMode } = $props();
 
-const addingNewTag = $state(false);
-let tag = $state<string | null>(null);
+	let addingNewTag = $state(false);
+	let tag = $state<string | null>(null);
 
-function addTag() {
-  if (!tag) return;
-  experiment.tags.push(tag);
-  tag = null;
-}
+	function addTag() {
+		if (!tag) return;
+		experiment.tags.push(tag);
+		tag = null;
+	}
 </script>
 
 <div
