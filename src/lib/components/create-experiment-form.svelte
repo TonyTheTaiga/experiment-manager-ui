@@ -22,6 +22,8 @@
 			addingNewTag = false;
 		}
 	}
+
+	// Ref Stuff
 </script>
 
 <form method="POST" action="?/create" class="flex flex-col gap-6">
