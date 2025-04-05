@@ -26,31 +26,48 @@
 
   <!-- Description -->
   {#if experiment.description}
-    <p class="text-[var(--color-ctp-subtext0)] text-sm leading-relaxed mb-4 line-clamp-2">
+    <p
+      class="text-[var(--color-ctp-subtext0)] text-sm leading-relaxed mb-4 line-clamp-2"
+    >
       {experiment.description}
     </p>
   {/if}
 
   <!-- Metrics indicator -->
   {#if experiment.availableMetrics && experiment.availableMetrics.length > 0}
-    <div class="flex items-center gap-1.5 text-[var(--color-ctp-subtext1)] text-xs mb-3">
+    <div
+      class="flex items-center gap-1.5 text-[var(--color-ctp-subtext1)] text-xs mb-3"
+    >
       <BarChart4 size={14} />
-      <span>{experiment.availableMetrics.length} metric{experiment.availableMetrics.length !== 1 ? 's' : ''} available</span>
+      <span
+        >{experiment.availableMetrics.length} metric{experiment.availableMetrics
+          .length !== 1
+          ? "s"
+          : ""} available</span
+      >
     </div>
   {/if}
 
   <!-- Footer info -->
-  <div class="flex flex-wrap items-center justify-between gap-2 mt-auto pt-2 border-t border-[var(--color-ctp-surface0)]">
+  <div
+    class="flex flex-wrap items-center justify-between gap-2 mt-auto pt-2 border-t border-[var(--color-ctp-surface0)]"
+  >
     <!-- Tags -->
     {#if experiment.tags && experiment.tags.length > 0}
-      <div class="flex items-center gap-1.5 text-xs text-[var(--color-ctp-subtext0)]">
+      <div
+        class="flex items-center gap-1.5 text-xs text-[var(--color-ctp-subtext0)]"
+      >
         <Tag size={12} />
         {#each experiment.tags.slice(0, 2) as tag, i}
-          <span class="px-1.5 py-0.5 bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-lavender)] rounded-full">
+          <span
+            class="px-1.5 py-0.5 bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-lavender)] rounded-full"
+          >
             {tag}
           </span>
           {#if i === 0 && experiment.tags.length > 2}
-            <span class="text-[var(--color-ctp-subtext0)]">+{experiment.tags.length - 1}</span>
+            <span class="text-[var(--color-ctp-subtext0)]"
+              >+{experiment.tags.length - 1}</span
+            >
           {/if}
         {/each}
       </div>
@@ -58,7 +75,9 @@
 
     <!-- Created At -->
     {#if experiment?.createdAt}
-      <time class="flex items-center gap-1 text-xs text-[var(--color-ctp-subtext0)]">
+      <time
+        class="flex items-center gap-1 text-xs text-[var(--color-ctp-subtext0)]"
+      >
         <Clock size={12} />
         {new Date(experiment.createdAt).toLocaleDateString("en-US", {
           month: "short",

@@ -27,7 +27,9 @@
 <form method="POST" action="?/create" class="flex flex-col gap-6">
   <!-- Name Input -->
   <div class="space-y-2">
-    <label class="text-sm font-medium text-[var(--color-ctp-text)]" for="name">Experiment Name</label>
+    <label class="text-sm font-medium text-[var(--color-ctp-text)]" for="name"
+      >Experiment Name</label
+    >
     <input
       name="experiment-name"
       type="text"
@@ -38,7 +40,10 @@
 
   <!-- Description Input -->
   <div class="space-y-2">
-    <label class="text-sm font-medium text-[var(--color-ctp-text)]" for="description">
+    <label
+      class="text-sm font-medium text-[var(--color-ctp-text)]"
+      for="description"
+    >
       Description
     </label>
     <textarea
@@ -55,7 +60,7 @@
       <TagIcon size={16} class="text-[var(--color-ctp-mauve)]" />
       <h3 class="text-lg font-semibold text-[var(--color-ctp-blue)]">Tags</h3>
     </div>
-    
+
     <div class="flex flex-wrap items-center gap-2">
       {#each tags as tag, i}
         <input type="hidden" value={tag} name="tags.{i}" />
@@ -119,12 +124,17 @@
   <div class="space-y-3">
     <div class="flex items-center gap-2">
       <Settings size={16} class="text-[var(--color-ctp-mauve)]" />
-      <h3 class="text-lg font-semibold text-[var(--color-ctp-blue)]">Parameters</h3>
+      <h3 class="text-lg font-semibold text-[var(--color-ctp-blue)]">
+        Parameters
+      </h3>
     </div>
 
     {#if pairs.length === 0}
-      <div class="text-xs text-[var(--color-ctp-subtext0)] bg-[var(--color-ctp-mantle)] p-3 rounded-md border border-[var(--color-ctp-surface0)]">
-        No parameters defined yet. Add parameters to track experiment configuration values.
+      <div
+        class="text-xs text-[var(--color-ctp-subtext0)] bg-[var(--color-ctp-mantle)] p-3 rounded-md border border-[var(--color-ctp-surface0)]"
+      >
+        No parameters defined yet. Add parameters to track experiment
+        configuration values.
       </div>
     {/if}
 
@@ -163,7 +173,9 @@
   </div>
 
   <!-- Action Buttons -->
-  <div class="flex justify-end gap-3 pt-4 mt-2 border-t border-[var(--color-ctp-surface0)]">
+  <div
+    class="flex justify-end gap-3 pt-4 mt-2 border-t border-[var(--color-ctp-surface0)]"
+  >
     <button
       onclick={toggleIsOpen}
       type="button"
