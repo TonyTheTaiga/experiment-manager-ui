@@ -28,7 +28,8 @@
 					isOpen = true;
 				}}
 				class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:bg-[var(--color-ctp-lavender)] transition-colors font-medium"
-				><Plus size={16} /> New Experiment</button
+			>
+				<Plus size={16} /> New Experiment</button
 			>
 		</nav>
 	</header>

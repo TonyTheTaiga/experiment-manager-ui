@@ -47,7 +47,6 @@
 					experiment.name = formData.get("experiment-name");
 					experiment.description = formData.get("experiment-description");
 					return async ({ result, update }) => {
-						console.log(result);
 						toggleEditMode();
 					};
 				}}

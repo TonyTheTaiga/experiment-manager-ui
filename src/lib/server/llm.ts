@@ -2,9 +2,8 @@ import { PUBLIC_ANTHROPIC_KEY } from "$env/static/public";
 import Anthropic from "@anthropic-ai/sdk";
 import type { Tool } from "@anthropic-ai/sdk/resources/index";
 
-
 const client = new Anthropic({
-	apiKey: PUBLIC_ANTHROPIC_KEY,
+  apiKey: PUBLIC_ANTHROPIC_KEY,
 });
 
 const MODEL = "claude-3-7-sonnet-20250219";
