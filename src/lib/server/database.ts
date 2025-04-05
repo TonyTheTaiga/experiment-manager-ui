@@ -212,7 +212,6 @@ class DatabaseClient {
 				}
 			}
 		}
-
 		throw new Error(
 			`Failed to write metrics after ${maxRetries} retries: ${lastError?.message}`,
 		);
