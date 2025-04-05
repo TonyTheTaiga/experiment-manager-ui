@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { HyperParam } from "$lib/types";
+  import type { HyperParam, Experiment } from "../types";
   import { Plus, X, Tag as TagIcon, Settings } from "lucide-svelte";
 
   let {
@@ -9,11 +9,12 @@
   } = $props();
 
   let pairs = $state<HyperParam[]>([]);
-
-  // Tags stuff
   let addingNewTag = $state<boolean>(false);
   let tag = $state<string | null>(null);
   let tags = $state<string[]>([]);
+  let experimentList = $state<Experiment[]>([]);
+  $inspect(experimentList);
+  let isSearching = $state<boolean>(false);
 
   function addTag() {
     if (tag) {
@@ -22,11 +23,42 @@
       addingNewTag = false;
     }
   }
+
+  async function getExperiments(query: string) {
+    const response = await fetch("/api/experiments", {
+      method: "GET",
+    });
+    experimentList = (await response.json()) as Experiment[];
+  }
+
+  let charList = [];
+  async function handleKeyDown(event: KeyboardEvent) {
+    if (event.key === "Backspace") {
+      const { selectionStart, selectionEnd } = event.target as HTMLInputElement;
+      if (selectionStart !== null && selectionEnd !== null) {
+        if (selectionStart !== selectionEnd) {
+          charList.splice(selectionStart, selectionEnd - selectionStart);
+        } else if (selectionStart > 0) {
+          charList.splice(selectionStart - 1, 1);
+        }
+      } else {
+        charList.pop();
+      }
+      return;
+    }
+
+    console.log(event.key);
+    charList.push(event.key);
+    if (charList.length % 3 === 0) {
+      await getExperiments(charList.join(""));
+      console.log("charList", charList);
+    }
+  }
 </script>
 
 <form method="POST" action="?/create" class="flex flex-col gap-6">
   <!-- Name Input -->
-  <div class="space-y-2">
+  <div class="space-y-3">
     <label class="text-sm font-medium text-[var(--color-ctp-text)]" for="name"
       >Experiment Name</label
     >
@@ -39,7 +71,7 @@
   </div>
 
   <!-- Description Input -->
-  <div class="space-y-2">
+  <div class="space-y-3">
     <label
       class="text-sm font-medium text-[var(--color-ctp-text)]"
       for="description"
@@ -129,15 +161,6 @@
       </h3>
     </div>
 
-    {#if pairs.length === 0}
-      <div
-        class="text-xs text-[var(--color-ctp-subtext0)] bg-[var(--color-ctp-mantle)] p-3 rounded-md border border-[var(--color-ctp-surface0)]"
-      >
-        No parameters defined yet. Add parameters to track experiment
-        configuration values.
-      </div>
-    {/if}
-
     {#each pairs as pair, i}
       <div class="flex gap-2 items-center">
         <input
@@ -170,6 +193,48 @@
       <Plus size={12} />
       Add Parameter
     </button>
+  </div>
+
+  <!-- References -->
+  <div class="space-y-4">
+    <div class="flex items-center gap-2">
+      <Settings size={16} class="text-[var(--color-ctp-mauve)]" />
+      <h3 class="text-lg font-semibold text-[var(--color-ctp-blue)]">
+        References
+      </h3>
+    </div>
+
+    <div>
+      {#if isSearching}
+        <div
+          class="flex flex-col space-y-2 p-4 border border-[var(--color-ctp-surface0)] rounded-md"
+        >
+          <input
+            placeholder=""
+            class="w-full px-3.5 py-2.5 bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors"
+            onfocus={() => {
+              getExperiments("");
+            }}
+            onkeydown={async (event) => await handleKeyDown(event)}
+          />
+          <ul>
+            {#each experimentList as experiment}
+              <li>{experiment.name}</li>
+            {/each}
+          </ul>
+        </div>
+      {:else}
+        <button
+          class="inline-flex items-center gap-1.5 py-1.5 px-3 text-sm font-medium rounded-md bg-transparent text-[var(--color-ctp-mauve)] border border-[var(--color-ctp-mauve)] hover:bg-[var(--color-ctp-mauve)]/10 transition-colors"
+          onclick={async () => {
+            isSearching = true;
+          }}
+        >
+          <Plus size={12} />
+          Add Reference
+        </button>
+      {/if}
+    </div>
   </div>
 
   <!-- Action Buttons -->
