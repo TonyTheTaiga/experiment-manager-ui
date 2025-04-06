@@ -56,10 +56,15 @@ class DatabaseClient {
     };
   }
 
-  static async getExperiments(): Promise<Experiment[]> {
+  static async getExperiments(query: string | null): Promise<Experiment[]> {
+    if (!query) {
+      query = "";
+    }
+
     const { data, error } = await DatabaseClient.getInstance()
       .from("experiment")
       .select("*, metric (name)")
+      .ilike("name", `%${query}%`)
       .order("created_at", { ascending: false });
 
     if (error) {

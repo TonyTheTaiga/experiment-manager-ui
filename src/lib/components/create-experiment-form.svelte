@@ -14,7 +14,7 @@
   let tags = $state<string[]>([]);
   let experimentList = $state<Experiment[]>([]);
   $inspect(experimentList);
-  let isSearching = $state<boolean>(false);
+  let reference = $state<Experiment | null>(null);
 
   function addTag() {
     if (tag) {
@@ -24,34 +24,47 @@
     }
   }
 
-  async function getExperiments(query: string) {
-    const response = await fetch("/api/experiments", {
-      method: "GET",
-    });
-    experimentList = (await response.json()) as Experiment[];
+  async function getExperiments(query: string | null) {
+    console.log(query);
+    let url = `/api/experiments`;
+    if (query) {
+      url += `?startwith=${encodeURIComponent(query)}`;
+    }
+
+    await fetch(url, { method: "GET" })
+      .then((res) => res.json())
+      .then((data) => {
+        experimentList = data as Experiment[];
+      });
   }
 
-  let charList = [];
+  const charList: string[] = [];
+
   async function handleKeyDown(event: KeyboardEvent) {
+    const input = event.target as HTMLInputElement;
+
     if (event.key === "Backspace") {
-      const { selectionStart, selectionEnd } = event.target as HTMLInputElement;
+      const { selectionStart, selectionEnd } = input;
+
       if (selectionStart !== null && selectionEnd !== null) {
-        if (selectionStart !== selectionEnd) {
-          charList.splice(selectionStart, selectionEnd - selectionStart);
-        } else if (selectionStart > 0) {
-          charList.splice(selectionStart - 1, 1);
-        }
+        const deleteCount =
+          selectionStart !== selectionEnd ? selectionEnd - selectionStart : 1;
+        const deleteIndex =
+          selectionStart !== selectionEnd ? selectionStart : selectionStart - 1;
+
+        if (deleteIndex >= 0) charList.splice(deleteIndex, deleteCount);
       } else {
         charList.pop();
       }
-      return;
+    } else if (/^[a-z0-9]$/i.test(event.key)) {
+      charList.push(event.key);
     }
 
-    console.log(event.key);
-    charList.push(event.key);
-    if (charList.length % 3 === 0) {
+    if (charList.length && charList.length % 2 === 0) {
       await getExperiments(charList.join(""));
       console.log("charList", charList);
+    } else if (charList.length === 0) {
+      experimentList = [];
     }
   }
 </script>
@@ -205,35 +218,36 @@
     </div>
 
     <div>
-      {#if isSearching}
-        <div
-          class="flex flex-col space-y-2 p-4 border border-[var(--color-ctp-surface0)] rounded-md"
-        >
-          <input
-            placeholder=""
-            class="w-full px-3.5 py-2.5 bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors"
-            onfocus={() => {
-              getExperiments("");
-            }}
-            onkeydown={async (event) => await handleKeyDown(event)}
-          />
+      {#if reference}
+        {reference.name}
+      {/if}
+    </div>
+
+    <div>
+      <div
+        class="flex flex-col space-y-2 p-2 border border-[var(--color-ctp-surface0)] rounded-md"
+      >
+        <input
+          id="search-input"
+          placeholder="Search for references..."
+          class="w-full px-2.5 py-1.5 bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors"
+          onkeydown={async (event) => await handleKeyDown(event)}
+        />
+        {#if experimentList.length > 0}
           <ul>
             {#each experimentList as experiment}
-              <li>{experiment.name}</li>
+              <button
+                onclick={(event) => {
+                  event.preventDefault();
+                  reference = experiment;
+                }}
+              >
+                {experiment.name}
+              </button>
             {/each}
           </ul>
-        </div>
-      {:else}
-        <button
-          class="inline-flex items-center gap-1.5 py-1.5 px-3 text-sm font-medium rounded-md bg-transparent text-[var(--color-ctp-mauve)] border border-[var(--color-ctp-mauve)] hover:bg-[var(--color-ctp-mauve)]/10 transition-colors"
-          onclick={async () => {
-            isSearching = true;
-          }}
-        >
-          <Plus size={12} />
-          Add Reference
-        </button>
-      {/if}
+        {/if}
+      </div>
     </div>
   </div>
 
