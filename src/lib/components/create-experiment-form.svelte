@@ -15,13 +15,10 @@
     toggleIsOpen: () => void;
   } = $props();
 
-  let pairs = $state<HyperParam[]>([]);
+  let hyperparams = $state<HyperParam[]>([]);
   let addingNewTag = $state<boolean>(false);
   let tag = $state<string | null>(null);
   let tags = $state<string[]>([]);
-  let experimentList = $state<Experiment[]>([]);
-  $inspect(experimentList);
-  let reference = $state<Experiment | null>(null);
 
   function addTag() {
     if (tag) {
@@ -30,6 +27,13 @@
       addingNewTag = false;
     }
   }
+
+  let experimentList = $state<Experiment[]>([]);
+  $inspect(experimentList);
+  let reference = $state<Experiment | null>(null);
+  let searchInput = $state<string>("");
+  const charList: string[] = [];
+  let selectedIndex = $state<number>(-1);
 
   async function getExperiments(query: string | null) {
     console.log(query);
@@ -44,9 +48,6 @@
         experimentList = data as Experiment[];
       });
   }
-
-  const charList: string[] = [];
-  let selectedIndex = $state<number>(-1);
 
   async function handleKeyDown(event: KeyboardEvent) {
     const input = event.target as HTMLInputElement;
@@ -64,6 +65,7 @@
         event.preventDefault();
         reference = experimentList[selectedIndex];
         selectedIndex = -1;
+        resetSearch();
         return;
       } else if (event.key === "Escape") {
         event.preventDefault();
@@ -98,6 +100,14 @@
       experimentList = [];
       selectedIndex = -1;
     }
+  }
+
+  function resetSearch() {
+    experimentList = [];
+    while (charList.length > 0) {
+      charList.pop();
+    }
+    searchInput = "";
   }
 </script>
 
@@ -231,7 +241,7 @@
       </div>
 
       <div class="space-y-3">
-        {#each pairs as pair, i}
+        {#each hyperparams as pair, i}
           <div class="flex gap-3 items-center">
             <input
               class="w-full px-4 py-3 text-sm bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-sapphire)] transition-all flex-1 placeholder-[var(--color-ctp-overlay0)] shadow-sm"
@@ -248,7 +258,7 @@
             <button
               type="button"
               class="p-2 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] hover:bg-[var(--color-ctp-red)]/10 rounded-full transition-all"
-              onclick={() => pairs.splice(i, 1)}
+              onclick={() => hyperparams.splice(i, 1)}
             >
               <X size={18} />
             </button>
@@ -258,7 +268,8 @@
         <button
           type="button"
           class="inline-flex items-center gap-2 py-2 px-4 text-sm font-medium rounded-lg bg-[var(--color-ctp-sapphire)]/10 text-[var(--color-ctp-sapphire)] border border-dashed border-[var(--color-ctp-sapphire)]/50 hover:bg-[var(--color-ctp-sapphire)]/20 transition-all"
-          onclick={() => (pairs = [...pairs, { key: "", value: "" }])}
+          onclick={() =>
+            (hyperparams = [...hyperparams, { key: "", value: "" }])}
         >
           <Plus size={16} />
           Add Parameter
@@ -299,6 +310,7 @@
         <div>
           <input
             id="search-input"
+            bind:value={searchInput}
             placeholder="Search for references..."
             class="w-full px-4 py-3 bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-lavender)] transition-all placeholder-[var(--color-ctp-overlay0)] shadow-sm"
             onkeydown={async (event) => await handleKeyDown(event)}
@@ -317,6 +329,7 @@
                   onclick={(e) => {
                     e.preventDefault();
                     reference = experiment;
+                    resetSearch();
                   }}
                 >
                   {experiment.name}
