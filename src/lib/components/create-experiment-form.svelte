@@ -60,7 +60,7 @@
       charList.push(event.key);
     }
 
-    if (charList.length && charList.length % 2 === 0) {
+    if (charList.length && charList.length > 0) {
       await getExperiments(charList.join(""));
       console.log("charList", charList);
     } else if (charList.length === 0) {
@@ -131,17 +131,17 @@
             bind:value={tag}
             class="w-32 px-3 py-1 text-xs bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors"
             placeholder="New tag"
-            onkeydown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
+            onkeydown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
                 addTag();
               }
             }}
           />
           <button
             type="button"
-            onclick={(e) => {
-              e.preventDefault();
+            onclick={(event) => {
+              event.preventDefault();
               addTag();
             }}
             class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
@@ -152,8 +152,8 @@
       {:else}
         <button
           type="button"
-          onclick={(e) => {
-            e.preventDefault();
+          onclick={(event) => {
+            event.preventDefault();
             addingNewTag = true;
           }}
           class="inline-flex items-center gap-1 py-0.5 px-2 text-xs rounded-full bg-transparent text-[var(--color-ctp-mauve)] border border-[var(--color-ctp-mauve)] hover:bg-[var(--color-ctp-mauve)]/10 transition-colors"
@@ -216,29 +216,30 @@
         References
       </h3>
     </div>
-
     <div>
       {#if reference}
         {reference.name}
       {/if}
     </div>
-
-    <div>
-      <div
-        class="flex flex-col space-y-2 p-2 border border-[var(--color-ctp-surface0)] rounded-md"
-      >
+    <div class="flex flex-col space-y-2 relative">
+      <div class="p-2 border border-[var(--color-ctp-surface0)] rounded-md">
         <input
           id="search-input"
           placeholder="Search for references..."
           class="w-full px-2.5 py-1.5 bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors"
           onkeydown={async (event) => await handleKeyDown(event)}
         />
-        {#if experimentList.length > 0}
-          <ul>
+      </div>
+      {#if experimentList.length > 0}
+        <div
+          class="absolute top-full left-0 right-0 z-10 mt-1 p-2 border border-[var(--color-ctp-surface0)] bg-[var(--color-ctp-base)] rounded-md shadow-lg max-h-60 overflow-y-auto"
+        >
+          <ul class="flex flex-col">
             {#each experimentList as experiment}
               <button
-                onclick={(event) => {
-                  event.preventDefault();
+                class="hover:bg-[var(--color-ctp-mantle)] text-left p-2 rounded"
+                onclick={(e) => {
+                  e.preventDefault();
                   reference = experiment;
                 }}
               >
@@ -246,8 +247,8 @@
               </button>
             {/each}
           </ul>
-        {/if}
-      </div>
+        </div>
+      {/if}
     </div>
   </div>
 
