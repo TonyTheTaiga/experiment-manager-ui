@@ -222,6 +222,19 @@ class DatabaseClient {
       `Failed to write metrics after ${maxRetries} retries: ${lastError?.message}`,
     );
   }
+
+  static async createReference(fromExperiment: string, toExperiment: string) {
+    const { error } = await DatabaseClient.getInstance()
+      .from("experiment_references")
+      .insert({
+        from_experiment: fromExperiment,
+        to_experiment: toExperiment,
+      });
+
+    if (error) {
+      throw new Error(`Failed to create reference: ${error.message}`);
+    }
+  }
 }
 
 export const {
@@ -234,4 +247,5 @@ export const {
   getMetrics,
   createMetric,
   batchCreateMetric,
+  createReference,
 } = DatabaseClient;

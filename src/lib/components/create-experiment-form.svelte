@@ -28,8 +28,8 @@
     }
   }
 
-  let experimentList = $state<Experiment[]>([]);
-  $inspect(experimentList);
+  let searchResults = $state<Experiment[]>([]);
+  // $inspect(searchResults);
   let reference = $state<Experiment | null>(null);
   let searchInput = $state<string>("");
   const charList: string[] = [];
@@ -45,17 +45,17 @@
     await fetch(url, { method: "GET" })
       .then((res) => res.json())
       .then((data) => {
-        experimentList = data as Experiment[];
+        searchResults = data as Experiment[];
       });
   }
 
   async function handleKeyDown(event: KeyboardEvent) {
     const input = event.target as HTMLInputElement;
 
-    if (experimentList.length > 0) {
+    if (searchResults.length > 0) {
       if (event.key === "ArrowDown") {
         event.preventDefault();
-        selectedIndex = Math.min(selectedIndex + 1, experimentList.length - 1);
+        selectedIndex = Math.min(selectedIndex + 1, searchResults.length - 1);
         return;
       } else if (event.key === "ArrowUp") {
         event.preventDefault();
@@ -63,13 +63,13 @@
         return;
       } else if (event.key === "Enter" && selectedIndex >= 0) {
         event.preventDefault();
-        reference = experimentList[selectedIndex];
+        reference = searchResults[selectedIndex];
         selectedIndex = -1;
         resetSearch();
         return;
       } else if (event.key === "Escape") {
         event.preventDefault();
-        experimentList = [];
+        searchResults = [];
         selectedIndex = -1;
         return;
       }
@@ -97,13 +97,13 @@
       console.log("charList", charList);
       selectedIndex = -1;
     } else if (charList.length === 0) {
-      experimentList = [];
+      searchResults = [];
       selectedIndex = -1;
     }
   }
 
   function resetSearch() {
-    experimentList = [];
+    searchResults = [];
     while (charList.length > 0) {
       charList.pop();
     }
@@ -279,6 +279,10 @@
 
     <!-- References -->
     <div class="space-y-4">
+      {#if reference}
+        <input class="hidden" name="reference-id" bind:value={reference.id} />
+      {/if}
+
       <div
         class="flex items-center gap-3 pb-2 border-b border-[var(--color-ctp-surface0)]"
       >
@@ -316,12 +320,12 @@
             onkeydown={async (event) => await handleKeyDown(event)}
           />
         </div>
-        {#if experimentList.length > 0}
+        {#if searchResults.length > 0}
           <div
             class="absolute top-full left-0 right-0 z-10 mt-1 p-2 border-0 bg-[var(--color-ctp-base)] rounded-lg shadow-xl max-h-60 overflow-y-auto"
           >
             <ul class="flex flex-col">
-              {#each experimentList as experiment, index}
+              {#each searchResults as experiment, index}
                 <button
                   class="{selectedIndex === index
                     ? 'bg-[var(--color-ctp-lavender)]/10 text-[var(--color-ctp-lavender)]'
