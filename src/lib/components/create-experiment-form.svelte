@@ -1,6 +1,13 @@
 <script lang="ts">
-  import type { HyperParam } from "$lib/types";
-  import { Plus, X, Tag as TagIcon, Settings } from "lucide-svelte";
+  import type { HyperParam, Experiment } from "../types";
+  import {
+    Plus,
+    X,
+    Tag as TagIcon,
+    Settings,
+    Beaker,
+    Link,
+  } from "lucide-svelte";
 
   let {
     toggleIsOpen,
@@ -8,9 +15,7 @@
     toggleIsOpen: () => void;
   } = $props();
 
-  let pairs = $state<HyperParam[]>([]);
-
-  // Tags stuff
+  let hyperparams = $state<HyperParam[]>([]);
   let addingNewTag = $state<boolean>(false);
   let tag = $state<string | null>(null);
   let tags = $state<string[]>([]);
@@ -22,172 +27,341 @@
       addingNewTag = false;
     }
   }
+
+  let searchResults = $state<Experiment[]>([]);
+  // $inspect(searchResults);
+  let reference = $state<Experiment | null>(null);
+  let searchInput = $state<string>("");
+  const charList: string[] = [];
+  let selectedIndex = $state<number>(-1);
+
+  async function getExperiments(query: string | null) {
+    console.log(query);
+    let url = `/api/experiments`;
+    if (query) {
+      url += `?startwith=${encodeURIComponent(query)}`;
+    }
+
+    await fetch(url, { method: "GET" })
+      .then((res) => res.json())
+      .then((data) => {
+        searchResults = data as Experiment[];
+      });
+  }
+
+  async function handleKeyDown(event: KeyboardEvent) {
+    const input = event.target as HTMLInputElement;
+
+    if (searchResults.length > 0) {
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        selectedIndex = Math.min(selectedIndex + 1, searchResults.length - 1);
+        return;
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        selectedIndex = Math.max(selectedIndex - 1, 0);
+        return;
+      } else if (event.key === "Enter" && selectedIndex >= 0) {
+        event.preventDefault();
+        reference = searchResults[selectedIndex];
+        selectedIndex = -1;
+        resetSearch();
+        return;
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        searchResults = [];
+        selectedIndex = -1;
+        return;
+      }
+    }
+
+    if (event.key === "Backspace") {
+      const { selectionStart, selectionEnd } = input;
+
+      if (selectionStart !== null && selectionEnd !== null) {
+        const deleteCount =
+          selectionStart !== selectionEnd ? selectionEnd - selectionStart : 1;
+        const deleteIndex =
+          selectionStart !== selectionEnd ? selectionStart : selectionStart - 1;
+
+        if (deleteIndex >= 0) charList.splice(deleteIndex, deleteCount);
+      } else {
+        charList.pop();
+      }
+    } else if (/^[a-z0-9]$/i.test(event.key)) {
+      charList.push(event.key);
+    }
+
+    if (charList.length && charList.length > 0) {
+      await getExperiments(charList.join(""));
+      console.log("charList", charList);
+      selectedIndex = -1;
+    } else if (charList.length === 0) {
+      searchResults = [];
+      selectedIndex = -1;
+    }
+  }
+
+  function resetSearch() {
+    searchResults = [];
+    while (charList.length > 0) {
+      charList.pop();
+    }
+    searchInput = "";
+  }
 </script>
 
-<form method="POST" action="?/create" class="flex flex-col gap-6">
-  <!-- Name Input -->
-  <div class="space-y-2">
-    <label class="text-sm font-medium text-[var(--color-ctp-text)]" for="name"
-      >Experiment Name</label
-    >
-    <input
-      name="experiment-name"
-      type="text"
-      class="w-full px-3.5 py-2.5 bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors"
-      placeholder="Enter experiment name"
-    />
-  </div>
+<form
+  method="POST"
+  action="?/create"
+  class="flex flex-col gap-8 p-6 bg-[var(--color-ctp-mantle)] rounded-xl border border-[var(--color-ctp-surface0)] shadow-lg"
+>
+  <div class="flex flex-col gap-8">
+    <!-- Basic Information Section -->
+    <div class="space-y-5">
+      <div
+        class="flex items-center gap-3 pb-2 border-b border-[var(--color-ctp-surface0)]"
+      >
+        <Beaker size={18} class="text-[var(--color-ctp-mauve)]" />
+        <h3 class="text-xl font-medium text-[var(--color-ctp-text)]">
+          Basic Information
+        </h3>
+      </div>
 
-  <!-- Description Input -->
-  <div class="space-y-2">
-    <label
-      class="text-sm font-medium text-[var(--color-ctp-text)]"
-      for="description"
-    >
-      Description
-    </label>
-    <textarea
-      name="experiment-description"
-      rows="3"
-      class="w-full px-3.5 py-2.5 bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors resize-none"
-      placeholder="Briefly describe this experiment"
-    ></textarea>
-  </div>
+      <!-- Name Input -->
+      <div class="space-y-2">
+        <label
+          class="text-sm font-medium text-[var(--color-ctp-subtext0)]"
+          for="experiment-name"
+        >
+          Experiment Name
+        </label>
+        <input
+          name="experiment-name"
+          type="text"
+          class="w-full px-4 py-3 bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-mauve)] transition-all placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+          placeholder="Enter experiment name"
+        />
+      </div>
 
-  <!-- Tags Section -->
-  <div class="space-y-3">
-    <div class="flex items-center gap-2">
-      <TagIcon size={16} class="text-[var(--color-ctp-mauve)]" />
-      <h3 class="text-lg font-semibold text-[var(--color-ctp-blue)]">Tags</h3>
+      <!-- Description Input -->
+      <div class="space-y-2">
+        <label
+          class="text-sm font-medium text-[var(--color-ctp-subtext0)]"
+          for="experiment-description"
+        >
+          Description
+        </label>
+        <textarea
+          name="experiment-description"
+          rows="3"
+          class="w-full px-4 py-3 bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-blue)] transition-all resize-none placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+          placeholder="Briefly describe this experiment"
+        ></textarea>
+      </div>
     </div>
 
-    <div class="flex flex-wrap items-center gap-2">
-      {#each tags as tag, i}
-        <input type="hidden" value={tag} name="tags.{i}" />
-        <span
-          class="inline-flex items-center px-2 py-0.5 text-xs rounded-full bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-mauve)] border border-[var(--color-ctp-surface0)] group"
-        >
-          {tag}
-          <button
-            type="button"
-            class="text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] transition-colors ml-1.5"
-            onclick={() => tags.splice(i, 1)}
-            aria-label="Remove tag"
-          >
-            <X size={12} />
-          </button>
-        </span>
-      {/each}
+    <!-- Tags Section -->
+    <div class="space-y-4">
+      <div
+        class="flex items-center gap-3 pb-2 border-b border-[var(--color-ctp-surface0)]"
+      >
+        <TagIcon size={18} class="text-[var(--color-ctp-pink)]" />
+        <h3 class="text-xl font-medium text-[var(--color-ctp-text)]">Tags</h3>
+      </div>
 
-      {#if addingNewTag}
-        <div class="flex items-center gap-1">
-          <input
-            type="text"
-            bind:value={tag}
-            class="w-32 px-3 py-1 text-xs bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors"
-            placeholder="New tag"
-            onkeydown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
+      <div class="flex flex-wrap items-center gap-2">
+        {#each tags as tag, i}
+          <input type="hidden" value={tag} name="tags.{i}" />
+          <span
+            class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-[var(--color-ctp-pink)]/10 text-[var(--color-ctp-pink)] border-0 group"
+          >
+            {tag}
+            <button
+              type="button"
+              class="text-[var(--color-ctp-pink)]/70 hover:text-[var(--color-ctp-red)] transition-colors ml-2"
+              onclick={() => tags.splice(i, 1)}
+              aria-label="Remove tag"
+            >
+              <X size={14} />
+            </button>
+          </span>
+        {/each}
+
+        {#if addingNewTag}
+          <div class="flex items-center gap-1">
+            <input
+              type="text"
+              bind:value={tag}
+              class="w-40 px-3 py-2 text-sm bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-pink)] transition-all placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+              placeholder="New tag"
+              onkeydown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  addTag();
+                }
+              }}
+            />
+            <button
+              type="button"
+              onclick={(event) => {
+                event.preventDefault();
                 addTag();
-              }
-            }}
-          />
+              }}
+              class="p-2 rounded-full text-[var(--color-ctp-pink)] hover:bg-[var(--color-ctp-pink)]/10 transition-all"
+            >
+              <Plus size={16} />
+            </button>
+          </div>
+        {:else}
           <button
             type="button"
-            onclick={(e) => {
-              e.preventDefault();
-              addTag();
+            onclick={(event) => {
+              event.preventDefault();
+              addingNewTag = true;
             }}
-            class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
+            class="inline-flex items-center gap-1 py-1 px-3 text-sm rounded-full bg-transparent text-[var(--color-ctp-pink)] border border-dashed border-[var(--color-ctp-pink)]/50 hover:bg-[var(--color-ctp-pink)]/10 transition-all"
           >
             <Plus size={14} />
+            Add Tag
           </button>
-        </div>
-      {:else}
-        <button
-          type="button"
-          onclick={(e) => {
-            e.preventDefault();
-            addingNewTag = true;
-          }}
-          class="inline-flex items-center gap-1 py-0.5 px-2 text-xs rounded-full bg-transparent text-[var(--color-ctp-mauve)] border border-[var(--color-ctp-mauve)] hover:bg-[var(--color-ctp-mauve)]/10 transition-colors"
-        >
-          <Plus size={12} />
-          Add Tag
-        </button>
-      {/if}
-    </div>
-  </div>
-
-  <!-- Hyperparameters Section -->
-  <div class="space-y-3">
-    <div class="flex items-center gap-2">
-      <Settings size={16} class="text-[var(--color-ctp-mauve)]" />
-      <h3 class="text-lg font-semibold text-[var(--color-ctp-blue)]">
-        Parameters
-      </h3>
+        {/if}
+      </div>
     </div>
 
-    {#if pairs.length === 0}
+    <!-- Hyperparameters Section -->
+    <div class="space-y-4">
       <div
-        class="text-xs text-[var(--color-ctp-subtext0)] bg-[var(--color-ctp-mantle)] p-3 rounded-md border border-[var(--color-ctp-surface0)]"
+        class="flex items-center gap-3 pb-2 border-b border-[var(--color-ctp-surface0)]"
       >
-        No parameters defined yet. Add parameters to track experiment
-        configuration values.
+        <Settings size={18} class="text-[var(--color-ctp-sapphire)]" />
+        <h3 class="text-xl font-medium text-[var(--color-ctp-text)]">
+          Parameters
+        </h3>
       </div>
-    {/if}
 
-    {#each pairs as pair, i}
-      <div class="flex gap-2 items-center">
-        <input
-          class="w-full px-3.5 py-2 text-sm bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors flex-1"
-          name="hyperparams.{i}.key"
-          placeholder="Parameter name"
-          required
-        />
-        <input
-          class="w-full px-3.5 py-2 text-sm bg-[var(--color-ctp-mantle)] border border-[var(--color-ctp-surface0)] rounded-md text-[var(--color-ctp-text)] focus:outline-none focus:border-[var(--color-ctp-mauve)] focus:ring-1 focus:ring-[var(--color-ctp-mauve)] transition-colors flex-1"
-          name="hyperparams.{i}.value"
-          placeholder="Value"
-          required
-        />
+      <div class="space-y-3">
+        {#each hyperparams as pair, i}
+          <div class="flex gap-3 items-center">
+            <input
+              class="w-full px-4 py-3 text-sm bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-sapphire)] transition-all flex-1 placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+              name="hyperparams.{i}.key"
+              placeholder="Parameter name"
+              required
+            />
+            <input
+              class="w-full px-4 py-3 text-sm bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-sapphire)] transition-all flex-1 placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+              name="hyperparams.{i}.value"
+              placeholder="Value"
+              required
+            />
+            <button
+              type="button"
+              class="p-2 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] hover:bg-[var(--color-ctp-red)]/10 rounded-full transition-all"
+              onclick={() => hyperparams.splice(i, 1)}
+            >
+              <X size={18} />
+            </button>
+          </div>
+        {/each}
+
         <button
           type="button"
-          class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] hover:bg-[var(--color-ctp-surface0)] rounded transition-colors"
-          onclick={() => pairs.splice(i, 1)}
+          class="inline-flex items-center gap-2 py-2 px-4 text-sm font-medium rounded-lg bg-[var(--color-ctp-sapphire)]/10 text-[var(--color-ctp-sapphire)] border border-dashed border-[var(--color-ctp-sapphire)]/50 hover:bg-[var(--color-ctp-sapphire)]/20 transition-all"
+          onclick={() =>
+            (hyperparams = [...hyperparams, { key: "", value: "" }])}
         >
-          <X size={16} />
+          <Plus size={16} />
+          Add Parameter
         </button>
       </div>
-    {/each}
+    </div>
 
-    <button
-      type="button"
-      class="inline-flex items-center gap-1.5 py-1.5 px-3 text-sm font-medium rounded-md bg-transparent text-[var(--color-ctp-mauve)] border border-[var(--color-ctp-mauve)] hover:bg-[var(--color-ctp-mauve)]/10 transition-colors"
-      onclick={() => (pairs = [...pairs, { key: "", value: "" }])}
-    >
-      <Plus size={12} />
-      Add Parameter
-    </button>
+    <!-- References -->
+    <div class="space-y-4">
+      {#if reference}
+        <input class="hidden" name="reference-id" bind:value={reference.id} />
+      {/if}
+
+      <div
+        class="flex items-center gap-3 pb-2 border-b border-[var(--color-ctp-surface0)]"
+      >
+        <Link size={18} class="text-[var(--color-ctp-lavender)]" />
+        <h3 class="text-xl font-medium text-[var(--color-ctp-text)]">
+          References
+        </h3>
+      </div>
+
+      <div>
+        {#if reference}
+          <span
+            class="inline-flex items-center px-3 py-1.5 text-sm rounded-lg bg-[var(--color-ctp-lavender)]/10 text-[var(--color-ctp-lavender)] border-0"
+          >
+            {reference.name}
+            <button
+              type="button"
+              class="text-[var(--color-ctp-lavender)]/70 hover:text-[var(--color-ctp-red)] transition-colors ml-2"
+              onclick={() => (reference = null)}
+              aria-label="Remove reference"
+            >
+              <X size={14} />
+            </button>
+          </span>
+        {/if}
+      </div>
+
+      <div class="flex flex-col space-y-2 relative">
+        <div>
+          <input
+            id="search-input"
+            bind:value={searchInput}
+            placeholder="Search for references..."
+            class="w-full px-4 py-3 bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-lavender)] transition-all placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+            onkeydown={async (event) => await handleKeyDown(event)}
+          />
+        </div>
+        {#if searchResults.length > 0}
+          <div
+            class="absolute top-full left-0 right-0 z-10 mt-1 p-2 border-0 bg-[var(--color-ctp-base)] rounded-lg shadow-xl max-h-60 overflow-y-auto"
+          >
+            <ul class="flex flex-col">
+              {#each searchResults as experiment, index}
+                <button
+                  class="{selectedIndex === index
+                    ? 'bg-[var(--color-ctp-lavender)]/10 text-[var(--color-ctp-lavender)]'
+                    : ''} hover:bg-[var(--color-ctp-lavender)]/10 text-left px-3 py-2 rounded-lg text-[var(--color-ctp-text)] hover:text-[var(--color-ctp-lavender)] transition-colors"
+                  onclick={(e) => {
+                    e.preventDefault();
+                    reference = experiment;
+                    resetSearch();
+                  }}
+                >
+                  {experiment.name}
+                </button>
+              {/each}
+            </ul>
+          </div>
+        {/if}
+      </div>
+    </div>
   </div>
 
   <!-- Action Buttons -->
   <div
-    class="flex justify-end gap-3 pt-4 mt-2 border-t border-[var(--color-ctp-surface0)]"
+    class="flex justify-end gap-3 pt-6 mt-2 border-t border-[var(--color-ctp-surface0)]"
   >
     <button
       onclick={toggleIsOpen}
       type="button"
-      class="inline-flex items-center justify-center px-4 py-2 font-medium rounded-md bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-text)] border border-[var(--color-ctp-surface1)] hover:bg-[var(--color-ctp-surface1)] transition-colors"
+      class="inline-flex items-center justify-center px-5 py-2.5 font-medium rounded-lg bg-transparent text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
     >
       Cancel
     </button>
     <button
       type="submit"
-      class="inline-flex items-center justify-center gap-2 px-4 py-2 font-medium rounded-md bg-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:bg-[var(--color-ctp-lavender)] transition-colors"
+      class="inline-flex items-center justify-center gap-2 px-5 py-2.5 font-medium rounded-lg bg-gradient-to-r from-[var(--color-ctp-blue)] to-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:shadow-lg transition-all"
     >
-      <Plus size={16} />
+      <Plus size={18} />
       Create Experiment
     </button>
   </div>

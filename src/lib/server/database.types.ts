@@ -36,6 +36,42 @@ export type Database = {
         };
         Relationships: [];
       };
+      experiment_references: {
+        Row: {
+          created_at: string | null;
+          from_experiment: string;
+          id: number;
+          to_experiment: string;
+        };
+        Insert: {
+          created_at?: string | null;
+          from_experiment: string;
+          id?: number;
+          to_experiment: string;
+        };
+        Update: {
+          created_at?: string | null;
+          from_experiment?: string;
+          id?: number;
+          to_experiment?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "experiment_references_from_experiment_fkey";
+            columns: ["from_experiment"];
+            isOneToOne: false;
+            referencedRelation: "experiment";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "experiment_references_to_experiment_fkey";
+            columns: ["to_experiment"];
+            isOneToOne: false;
+            referencedRelation: "experiment";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       metric: {
         Row: {
           created_at: string;

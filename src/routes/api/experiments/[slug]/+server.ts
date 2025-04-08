@@ -19,5 +19,11 @@ export async function POST({
     description: data.description,
     tags: data.tags,
   });
-  return json({ success: true });
+  return new Response(
+    JSON.stringify({ message: "Experiment updated successfully" }),
+    {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    },
+  );
 }

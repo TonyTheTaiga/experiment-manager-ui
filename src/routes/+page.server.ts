@@ -8,6 +8,7 @@ const API_ROUTES = {
   CREATE_EXPERIMENT: "/api/experiments/create",
   DELETE_EXPERIMENT: "/api/experiments/delete",
   UPDATE_EXPERIMENT: "/api/experiments/update",
+  CREATE_REFERENCE: "/api/experiments/[slug]/ref",
 } as const;
 
 interface FormDataResult {
@@ -76,6 +77,7 @@ async function handleCreate(request: Request, fetch: Function) {
   const {
     "experiment-name": name,
     "experiment-description": description,
+    "reference-id": referenceId,
     hyperparams,
     tags,
   } = parseFormData(form);
@@ -91,6 +93,23 @@ async function handleCreate(request: Request, fetch: Function) {
 
   if (!response.ok) {
     return fail(500, { message: "Failed to create experiment" });
+  }
+
+  if (referenceId) {
+    const {
+      experiment: { id },
+    } = await response.json();
+    const referenceResponse = await fetch(
+      API_ROUTES.CREATE_REFERENCE.replace("[slug]", id),
+      {
+        method: "POST",
+        body: JSON.stringify({ referenceId }),
+      },
+    );
+
+    if (!referenceResponse.ok) {
+      return fail(500, { message: "Failed to create reference" });
+    }
   }
 
   throw redirect(303, "/");
