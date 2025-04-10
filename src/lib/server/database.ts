@@ -236,19 +236,24 @@ class DatabaseClient {
     }
   }
 
-  static async getReferenceChain(experimentUuid: string): Promise<Experiment[]> {
-    const { data, error } = await DatabaseClient.getInstance().rpc('get_experiment_chain', { target_experiment_id: experimentUuid })
+  static async getReferenceChain(
+    experimentUuid: string,
+  ): Promise<Experiment[]> {
+    const { data, error } = await DatabaseClient.getInstance().rpc(
+      "get_experiment_chain",
+      { target_experiment_id: experimentUuid },
+    );
     if (error) {
       throw new Error(`Failed to get references: ${error.message}`);
     }
-    return data.map(item => ({
+    return data.map((item) => ({
       id: item.id,
       name: item.name,
       description: item.description,
       hyperparams: item.hyperparams as unknown as HyperParam[],
       tags: item.tags,
-      createdAt: new Date(item.created_at)
-    }))
+      createdAt: new Date(item.created_at),
+    }));
   }
 }
 

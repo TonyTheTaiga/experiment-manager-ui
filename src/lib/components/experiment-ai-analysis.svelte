@@ -5,7 +5,7 @@
   let {
     experiment = $bindable(),
     aiSuggestions = $bindable(),
-  }: { 
+  }: {
     experiment: Experiment;
     aiSuggestions: any;
   } = $props();
@@ -17,12 +17,12 @@
 
     try {
       const results = await Promise.allSettled([
-        fetch(`/api/experiments/${experiment.id}/analysis`).then(
+        fetch(`/api/experiments/${experiment.id}/analysis`).then((res) =>
+          res.json(),
+        ),
+        fetch(`/api/experiments/${experiment.id}/analysis/structured`).then(
           (res) => res.json(),
         ),
-        fetch(
-          `/api/experiments/${experiment.id}/analysis/structured`,
-        ).then((res) => res.json()),
       ]);
 
       // Process results independently

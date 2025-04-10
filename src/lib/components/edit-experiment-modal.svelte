@@ -2,15 +2,17 @@
   import { X, Save, TagIcon, Plus } from "lucide-svelte";
   import { enhance } from "$app/forms";
 
-  let { experiment = $bindable(), toggleEditMode } = $props();
+  let { experiment = $bindable(), editMode = $bindable() } = $props();
 
   let addingNewTag = $state(false);
   let tag = $state<string | null>(null);
 
-  function addTag() {
-    if (!tag) return;
-    experiment.tags.push(tag);
-    tag = null;
+  function addTag(e: KeyboardEvent | MouseEvent) {
+    e.preventDefault();
+    if (tag && tag !== "") {
+      experiment.tags.push(tag);
+      tag = null;
+    }
   }
 </script>
 
@@ -26,12 +28,16 @@
     <div
       class="px-6 py-4 border-b border-[var(--color-ctp-surface0)] flex justify-between items-center"
     >
-      <h2 class="text-xl font-medium text-[var(--color-ctp-text)] flex items-center gap-2">
+      <h2
+        class="text-xl font-medium text-[var(--color-ctp-text)] flex items-center gap-2"
+      >
         <Save size={18} class="text-[var(--color-ctp-mauve)]" />
         Edit Experiment
       </h2>
       <button
-        onclick={toggleEditMode}
+        onclick={() => {
+          editMode = !editMode;
+        }}
         class="p-2 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)]/50 rounded-full transition-all"
         aria-label="Close modal"
       >
@@ -49,7 +55,7 @@
           experiment.name = formData.get("experiment-name");
           experiment.description = formData.get("experiment-description");
           return async ({ result, update }) => {
-            toggleEditMode();
+            editMode = !editMode;
           };
         }}
       >
@@ -59,7 +65,7 @@
           name="experiment-id"
           value={experiment.id}
         />
-        
+
         <!-- Basic Info Section -->
         <div class="space-y-5">
           <!-- Name Input -->
@@ -99,7 +105,9 @@
 
         <!-- Tags Section -->
         <div class="space-y-4">
-          <div class="flex items-center gap-3 pb-2 border-b border-[var(--color-ctp-surface0)]">
+          <div
+            class="flex items-center gap-3 pb-2 border-b border-[var(--color-ctp-surface0)]"
+          >
             <TagIcon size={18} class="text-[var(--color-ctp-pink)]" />
             <h3 class="text-xl font-medium text-[var(--color-ctp-text)]">
               Tags
@@ -131,19 +139,11 @@
                   bind:value={tag}
                   class="w-40 px-3 py-2 text-sm bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-mauve)] transition-all placeholder-[var(--color-ctp-overlay0)] shadow-sm"
                   placeholder="New tag"
-                  onkeydown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      addTag();
-                    }
-                  }}
+                  onkeydown={addTag}
                 />
                 <button
                   type="button"
-                  onclick={(e) => {
-                    e.preventDefault();
-                    addTag();
-                  }}
+                  onclick={addTag}
                   class="p-2 rounded-full text-[var(--color-ctp-mauve)] hover:bg-[var(--color-ctp-mauve)]/10 transition-all"
                 >
                   <Plus size={16} />
@@ -170,7 +170,9 @@
           class="flex justify-end gap-3 pt-6 mt-2 border-t border-[var(--color-ctp-surface0)]"
         >
           <button
-            onclick={toggleEditMode}
+            onclick={() => {
+              editMode = !editMode;
+            }}
             type="button"
             class="inline-flex items-center justify-center px-5 py-2.5 font-medium rounded-lg bg-transparent text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
           >

@@ -28,14 +28,10 @@
 
   let aiSuggestions = $state(null);
   let editMode = $state<boolean>(false);
-
-  function toggleEditMode() {
-    editMode = !editMode;
-  }
 </script>
 
 {#if editMode}
-  <EditExperimentModal bind:experiment {toggleEditMode} />
+  <EditExperimentModal bind:experiment bind:editMode />
 {/if}
 
 <article
