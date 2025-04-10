@@ -8,7 +8,7 @@ export async function GET({
   params: { slug: string };
 }) {
   const references = await getReferenceChain(slug);
-  return json(references)
+  return json(references.map(experiment => experiment.id))
 }
 
 

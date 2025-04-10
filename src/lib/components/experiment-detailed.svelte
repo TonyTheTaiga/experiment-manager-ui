@@ -65,9 +65,8 @@
             const response = await fetch(
               `/api/experiments/${experiment.id}/ref`,
             );
-            const data = (await response.json()) as Experiment[];
-            console.log(data);
-            highlighted = data.map((experiment) => experiment.id);
+            const data = (await response.json()) as string[];
+            highlighted = data;
           }
         }}
         class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] rounded-full transition-colors flex-shrink-0"
