@@ -25,7 +25,6 @@
           <ExperimentDetailed
             bind:selectedId
             bind:experiment={experiments[idx]}
-            {setSelectedId}
           />
         {/if}
       </div>
