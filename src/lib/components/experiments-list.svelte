@@ -1,6 +1,5 @@
 <script lang="ts">
   import type { Experiment } from "$lib/types";
-  import ExperimentCard from "./experiment-card.svelte";
   import ExperimentSimple from "./experiment-simple.svelte";
   import ExperimentDetailed from "./experiment-detailed.svelte";
   import { Cpu } from "lucide-svelte";
