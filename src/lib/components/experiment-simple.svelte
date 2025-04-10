@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Experiment } from "$lib/types";
-  import { Maximize2, Tag, Clock, ChartLine } from "lucide-svelte";
+  import { Maximize2, Tag, Clock, ChartLine, Eye } from "lucide-svelte";
 
   let {
     experiment,
@@ -15,13 +15,20 @@
     <h3 class="font-medium text-lg text-[var(--color-ctp-text)] truncate pr-4">
       {experiment.name}
     </h3>
-    <button
-      onclick={() => toggleToggleId(experiment.id)}
-      class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] rounded-full transition-colors flex-shrink-0"
-      aria-label="Expand details"
-    >
-      <Maximize2 size={16} />
-    </button>
+    <div class="space-x-2">
+      <button
+        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] rounded-full transition-colors flex-shrink-0"
+      >
+        <Eye size={16} />
+      </button>
+      <button
+        onclick={() => toggleToggleId(experiment.id)}
+        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] rounded-full transition-colors flex-shrink-0"
+        aria-label="Expand details"
+      >
+        <Maximize2 size={16} />
+      </button>
+    </div>
   </div>
 
   <!-- Description -->

@@ -130,19 +130,13 @@
       const chart_targets = loss[metric];
 
       if (chart_targets && chart_targets.length > 0) {
-        // Sort metrics by step
         chart_targets.sort((a, b) => (a.step ?? 0) - (b.step ?? 0));
-
-        // Handle missing steps by using indices if step is undefined
         const steps = chart_targets.map((l, index) =>
           l.step !== undefined ? l.step : index,
         );
-
-        // Ensure all values are numbers
         const values = chart_targets.map((l) =>
           typeof l.value === "number" ? l.value : parseFloat(l.value) || 0,
         );
-
         createChart(metric, steps, values);
       }
     } catch (error) {

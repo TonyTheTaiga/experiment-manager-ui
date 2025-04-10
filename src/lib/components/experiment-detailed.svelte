@@ -179,6 +179,3 @@
   <!-- AI Analysis section -->
   <!-- <ExperimentAiAnalysis {experiment} bind:aiSuggestions /> -->
 </article>
-
-<style>
-</style>

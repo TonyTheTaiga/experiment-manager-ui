@@ -45,6 +45,10 @@
     --color-gray-200: #374151;
   }
 
+  button {
+    cursor: pointer;
+  }
+
   *,
   ::after,
   ::before,
@@ -53,3 +57,4 @@
     border-color: var(--color-gray-200, currentColor);
   }
 }
+
