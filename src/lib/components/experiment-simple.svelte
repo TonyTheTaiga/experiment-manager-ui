@@ -1,12 +1,23 @@
 <script lang="ts">
   import type { Experiment } from "$lib/types";
-  import { Maximize2, Tag, Clock, ChartLine, Eye } from "lucide-svelte";
+  import {
+    Maximize2,
+    Tag,
+    Clock,
+    ChartLine,
+    Eye,
+    EyeClosed,
+  } from "lucide-svelte";
 
   let {
     experiment,
-    toggleToggleId,
-  }: { experiment: Experiment; toggleToggleId: (id: string) => void } =
-    $props();
+    selectedId = $bindable(),
+    highlighted = $bindable(),
+  }: {
+    experiment: Experiment;
+    selectedId: string | null;
+    highlighted: string[];
+  } = $props();
 </script>
 
 <article class="p-4">
@@ -17,12 +28,34 @@
     </h3>
     <div class="space-x-2">
       <button
+        onclick={async () => {
+          if (highlighted.at(-1) === experiment.id) {
+            highlighted = [];
+          } else {
+            const response = await fetch(
+              `/api/experiments/${experiment.id}/ref`,
+            );
+            const data = (await response.json()) as string[];
+            console.log(data);
+            highlighted = data;
+          }
+        }}
         class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] rounded-full transition-colors flex-shrink-0"
       >
-        <Eye size={16} />
+        {#if highlighted.at(-1) === experiment.id}
+          <EyeClosed size={16} />
+        {:else}
+          <Eye size={16} />
+        {/if}
       </button>
       <button
-        onclick={() => toggleToggleId(experiment.id)}
+        onclick={() => {
+          if (selectedId === experiment.id) {
+            selectedId = null;
+          } else {
+            selectedId = experiment.id;
+          }
+        }}
         class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] rounded-full transition-colors flex-shrink-0"
         aria-label="Expand details"
       >
