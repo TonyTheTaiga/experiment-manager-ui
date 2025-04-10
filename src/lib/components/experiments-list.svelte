@@ -4,30 +4,34 @@
   import ExperimentDetailed from "./experiment-detailed.svelte";
   import { Cpu } from "lucide-svelte";
 
-  let { experiments = $bindable() }: { experiments: Experiment[] } = $props();
+  const { experiments = $bindable() }: { experiments: Experiment[] } = $props();
   let selectedId = $state<string | null>(null);
+  let highlighted = $state<string[]>([]);
 </script>
 
 <section>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
     {#each experiments as experiment, idx (experiment.id)}
-      <div
-        class="
+      {#if highlighted.length === 0 || highlighted.includes(experiment.id)}
+        <div
+          class="
             rounded-lg border border-[var(--color-ctp-surface1)] overflow-hidden
             {selectedId === experiment.id
-          ? 'md:col-span-2 lg:col-span-4 row-span-2 order-first'
-          : 'order-none bg-[var(--color-ctp-base)] hover:shadow-md transition-shadow duration-200'}
+            ? 'md:col-span-2 lg:col-span-4 row-span-2 order-first'
+            : 'order-none bg-[var(--color-ctp-base)] hover:shadow-md transition-shadow duration-200'}
           "
-      >
-        {#if selectedId !== experiment.id}
-          <ExperimentSimple bind:selectedId {experiment} />
-        {:else}
-          <ExperimentDetailed
-            bind:selectedId
-            bind:experiment={experiments[idx]}
-          />
-        {/if}
-      </div>
+        >
+          {#if selectedId !== experiment.id}
+            <ExperimentSimple bind:selectedId bind:highlighted {experiment} />
+          {:else}
+            <ExperimentDetailed
+              bind:selectedId
+              bind:highlighted
+              bind:experiment={experiments[idx]}
+            />
+          {/if}
+        </div>
+      {/if}
     {/each}
   </div>
 

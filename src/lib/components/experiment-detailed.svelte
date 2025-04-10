@@ -9,6 +9,8 @@
     Pencil,
     Info,
     ChartLine,
+    Eye,
+    EyeClosed,
   } from "lucide-svelte";
   import InteractiveChart from "./interactive-chart.svelte";
   import EditExperimentModal from "./edit-experiment-modal.svelte";
@@ -17,7 +19,12 @@
   let {
     experiment = $bindable(),
     selectedId = $bindable(),
-  }: { experiment: Experiment; selectedId: string | null } = $props();
+    highlighted = $bindable(),
+  }: {
+    experiment: Experiment;
+    selectedId: string | null;
+    highlighted: string[];
+  } = $props();
 
   let aiSuggestions = $state(null);
   let editMode = $state<boolean>(false);
@@ -49,6 +56,27 @@
         class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
       >
         <Pencil size={16} />
+      </button>
+      <button
+        onclick={async () => {
+          if (highlighted.at(-1) === experiment.id) {
+            highlighted = [];
+          } else {
+            const response = await fetch(
+              `/api/experiments/${experiment.id}/ref`,
+            );
+            const data = (await response.json()) as Experiment[];
+            console.log(data);
+            highlighted = data.map((experiment) => experiment.id);
+          }
+        }}
+        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] rounded-full transition-colors flex-shrink-0"
+      >
+        {#if highlighted.at(-1) === experiment.id}
+          <EyeClosed size={16} />
+        {:else}
+          <Eye size={16} />
+        {/if}
       </button>
       <button
         onclick={() => {
