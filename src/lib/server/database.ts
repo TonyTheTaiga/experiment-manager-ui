@@ -235,6 +235,14 @@ class DatabaseClient {
       throw new Error(`Failed to create reference: ${error.message}`);
     }
   }
+
+  static async getReferenceChain(experimentUuid: string): Promise<void> {
+    const { data, error } = await DatabaseClient.getInstance().rpc('get_experiment_chain', { target_experiment_id: experimentUuid })
+    if (error) {
+      throw new Error(`Failed to get references: ${error.message}`);
+    }
+    console.log(data);
+  }
 }
 
 export const {

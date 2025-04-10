@@ -16,9 +16,8 @@
 
   let {
     experiment = $bindable(),
-    toggleToggleId,
-  }: { experiment: Experiment; toggleToggleId: (id: string) => void } =
-    $props();
+    setSelectedId,
+  }: { experiment: Experiment; setSelectedId: (id: string) => void } = $props();
 
   let aiSuggestions = $state(null);
   let editMode = $state<boolean>(false);
@@ -52,7 +51,7 @@
         <Pencil size={16} />
       </button>
       <button
-        onclick={() => toggleToggleId(experiment.id)}
+        onclick={() => setSelectedId(experiment.id)}
         class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
         aria-label="Minimize"
       >
