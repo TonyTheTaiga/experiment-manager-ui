@@ -7,7 +7,7 @@
   let { experiments = $bindable() }: { experiments: Experiment[] } = $props();
 
   let selectedId = $state<string | null>(null);
-  function toggleToggleId(id: string) {
+  function setSelectedId(id: string) {
     if (selectedId === id) {
       selectedId = null;
     } else {
@@ -28,11 +28,11 @@
           "
       >
         {#if selectedId !== experiment.id}
-          <ExperimentSimple {experiment} {toggleToggleId} />
+          <ExperimentSimple {experiment} {setSelectedId} />
         {:else}
           <ExperimentDetailed
             bind:experiment={experiments[idx]}
-            {toggleToggleId}
+            {setSelectedId}
           />
         {/if}
       </div>
