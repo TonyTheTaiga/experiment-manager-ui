@@ -8,7 +8,7 @@
     Settings,
     Pencil,
     Info,
-    BarChart4,
+    ChartLine,
   } from "lucide-svelte";
   import InteractiveChart from "./interactive-chart.svelte";
   import EditExperimentModal from "./edit-experiment-modal.svelte";
@@ -166,7 +166,7 @@
     <div class="border-b border-[var(--color-ctp-surface0)]">
       <div class="p-5 pb-0">
         <div class="flex items-center gap-2">
-          <BarChart4 size={16} class="text-[var(--color-ctp-mauve)]" />
+          <ChartLine size={16} class="text-[var(--color-ctp-mauve)]" />
           <h3 class="text-lg font-semibold text-[var(--color-ctp-mauve)]">
             Charts
           </h3>

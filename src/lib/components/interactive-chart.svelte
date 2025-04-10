@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Experiment, Metric } from "$lib/types";
   import Chart from "chart.js/auto";
-  import { BarChart4 } from "lucide-svelte";
+  import { ChartLine } from "lucide-svelte";
 
   let chartInstance: Chart | null = null;
   let chartCanvas: HTMLCanvasElement | null = $state(null);
@@ -190,7 +190,7 @@
     <div
       class="flex flex-col items-center justify-center h-80 w-full rounded-md border border-[var(--color-ctp-surface1)] bg-[var(--color-ctp-mantle)] p-8"
     >
-      <BarChart4 size={32} class="text-[var(--color-ctp-overlay0)] mb-4" />
+      <ChartLine size={32} class="text-[var(--color-ctp-overlay0)] mb-4" />
       <p class="text-[var(--color-ctp-subtext0)] text-sm text-center max-w-md">
         Select a metric from above to view the chart data
       </p>

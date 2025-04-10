@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Experiment } from "$lib/types";
-  import { Maximize2, Tag, Clock, BarChart4 } from "lucide-svelte";
+  import { Maximize2, Tag, Clock, ChartLine } from "lucide-svelte";
 
   let {
     experiment,
@@ -38,7 +38,7 @@
     <div
       class="flex items-center gap-1.5 text-[var(--color-ctp-subtext1)] text-xs mb-3"
     >
-      <BarChart4 size={14} />
+      <ChartLine size={14} />
       <span
         >{experiment.availableMetrics.length} metric{experiment.availableMetrics
           .length !== 1
