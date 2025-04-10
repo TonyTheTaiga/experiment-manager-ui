@@ -4,8 +4,8 @@
 
   let {
     experiment,
-    setSelectedId,
-  }: { experiment: Experiment; setSelectedId: (id: string) => void } = $props();
+    selectedId = $bindable(),
+  }: { experiment: Experiment; selectedId: string | null } = $props();
 </script>
 
 <article class="p-4">
@@ -21,7 +21,13 @@
         <Eye size={16} />
       </button>
       <button
-        onclick={() => setSelectedId(experiment.id)}
+        onclick={() => {
+          if (selectedId === experiment.id) {
+            selectedId = null;
+          } else {
+            selectedId = experiment.id;
+          }
+        }}
         class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] rounded-full transition-colors flex-shrink-0"
         aria-label="Expand details"
       >

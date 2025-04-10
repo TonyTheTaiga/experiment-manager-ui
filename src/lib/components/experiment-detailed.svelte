@@ -16,8 +16,8 @@
 
   let {
     experiment = $bindable(),
-    setSelectedId,
-  }: { experiment: Experiment; setSelectedId: (id: string) => void } = $props();
+    selectedId = $bindable(),
+  }: { experiment: Experiment; selectedId: string | null } = $props();
 
   let aiSuggestions = $state(null);
   let editMode = $state<boolean>(false);
@@ -51,7 +51,13 @@
         <Pencil size={16} />
       </button>
       <button
-        onclick={() => setSelectedId(experiment.id)}
+        onclick={() => {
+          if (selectedId === experiment.id) {
+            selectedId = null;
+          } else {
+            selectedId = experiment.id;
+          }
+        }}
         class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
         aria-label="Minimize"
       >

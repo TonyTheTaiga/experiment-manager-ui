@@ -5,15 +5,7 @@
   import { Cpu } from "lucide-svelte";
 
   let { experiments = $bindable() }: { experiments: Experiment[] } = $props();
-
   let selectedId = $state<string | null>(null);
-  function setSelectedId(id: string) {
-    if (selectedId === id) {
-      selectedId = null;
-    } else {
-      selectedId = id;
-    }
-  }
 </script>
 
 <section>
@@ -28,9 +20,10 @@
           "
       >
         {#if selectedId !== experiment.id}
-          <ExperimentSimple {experiment} {setSelectedId} />
+          <ExperimentSimple bind:selectedId {experiment} />
         {:else}
           <ExperimentDetailed
+            bind:selectedId
             bind:experiment={experiments[idx]}
             {setSelectedId}
           />
