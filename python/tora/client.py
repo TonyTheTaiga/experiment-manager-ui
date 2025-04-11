@@ -11,7 +11,7 @@ class Singleton:
         return cls._instance
 
 
-class Essistant(Singleton):
+class Client(Singleton):
     def __init__(
         self,
         name: str,
