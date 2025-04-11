@@ -12,26 +12,27 @@
 <section>
   <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
     {#each experiments as experiment, idx (experiment.id)}
-      {#if highlighted.length === 0 || highlighted.includes(experiment.id)}
-        <div
-          class="
+      <div
+        class="
             rounded-lg border border-[var(--color-ctp-surface1)] overflow-hidden
             {selectedId === experiment.id
-            ? 'md:col-span-2 lg:col-span-4 row-span-2 order-first'
-            : 'order-none bg-[var(--color-ctp-base)] hover:shadow-md transition-shadow duration-200'}
+          ? 'md:col-span-2 lg:col-span-4 row-span-2 order-first'
+          : 'order-none bg-[var(--color-ctp-base)] hover:shadow-md transition-shadow duration-200'}
+            {highlighted.length > 0 && !highlighted.includes(experiment.id)
+          ? 'opacity-40'
+          : ''}
           "
-        >
-          {#if selectedId !== experiment.id}
-            <ExperimentSimple bind:selectedId bind:highlighted {experiment} />
-          {:else}
-            <ExperimentDetailed
-              bind:selectedId
-              bind:highlighted
-              bind:experiment={experiments[idx]}
-            />
-          {/if}
-        </div>
-      {/if}
+      >
+        {#if selectedId !== experiment.id}
+          <ExperimentSimple bind:selectedId bind:highlighted {experiment} />
+        {:else}
+          <ExperimentDetailed
+            bind:selectedId
+            bind:highlighted
+            bind:experiment={experiments[idx]}
+          />
+        {/if}
+      </div>
     {/each}
   </div>
 
