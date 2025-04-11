@@ -1,0 +1,32 @@
+{
+	"/": [
+		"src/routes/+page.server.ts"
+	],
+	"/api/experiments": [
+		"src/routes/api/experiments/+server.ts"
+	],
+	"/api/experiments/create": [
+		"src/routes/api/experiments/create/+server.ts"
+	],
+	"/api/experiments/delete": [
+		"src/routes/api/experiments/delete/+server.ts"
+	],
+	"/api/experiments/[slug]": [
+		"src/routes/api/experiments/[slug]/+server.ts"
+	],
+	"/api/experiments/[slug]/analysis": [
+		"src/routes/api/experiments/[slug]/analysis/+server.ts"
+	],
+	"/api/experiments/[slug]/analysis/structured": [
+		"src/routes/api/experiments/[slug]/analysis/structured/+server.ts"
+	],
+	"/api/experiments/[slug]/metrics": [
+		"src/routes/api/experiments/[slug]/metrics/+server.ts"
+	],
+	"/api/experiments/[slug]/metrics/batch": [
+		"src/routes/api/experiments/[slug]/metrics/batch/+server.ts"
+	],
+	"/api/experiments/[slug]/ref": [
+		"src/routes/api/experiments/[slug]/ref/+server.ts"
+	]
+}
