@@ -17,7 +17,7 @@
             rounded-lg border border-[var(--color-ctp-surface1)] overflow-hidden
             {selectedId === experiment.id
           ? 'md:col-span-2 lg:col-span-4 row-span-2 order-first'
-          : 'order-none bg-[var(--color-ctp-base)] hover:shadow-md transition-shadow duration-200'}
+          : 'order-none bg-[var(--color-ctp-base)] hover:shadow-md'}
             {highlighted.length > 0 && !highlighted.includes(experiment.id)
           ? 'opacity-40'
           : ''}
