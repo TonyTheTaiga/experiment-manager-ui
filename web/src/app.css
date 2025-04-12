@@ -9,8 +9,10 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
-  :root {
+  @theme {
     --color-gray-200: #e5e7eb;
+
+    --color-dark: #0a0a0f;
 
     /* Catppuccin Mocha */
     --color-ctp-base: #1e1e2e;
@@ -57,4 +59,3 @@
     border-color: var(--color-gray-200, currentColor);
   }
 }
-
