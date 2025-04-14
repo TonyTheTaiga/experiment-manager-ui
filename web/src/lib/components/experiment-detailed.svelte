@@ -35,7 +35,7 @@
 {/if}
 
 <article
-  class="bg-[var(--color-ctp-base)] border border-[var(--color-ctp-surface1)] rounded-lg overflow-hidden shadow-lg"
+  class="bg-[var(--color-ctp-base)] rounded-lg overflow-hidden shadow-lg"
 >
   <!-- Header with actions -->
   <header
@@ -191,7 +191,7 @@
 
   <!-- Metrics section -->
   {#if experiment.availableMetrics}
-    <div class="border-b border-[var(--color-ctp-surface0)]">
+    <div>
       <div class="p-5 pb-0">
         <div class="flex items-center gap-2">
           <ChartLine size={16} class="text-[var(--color-ctp-mauve)]" />
