@@ -5,7 +5,7 @@ pre-commit:
       glob: "*.{js,ts,svelte,json,css,html}"
       run: pnpm prettier --write {staged_files}
       stage_fixed: true
-    
+
     check:
       files: git diff --name-only --staged --diff-filter=d
       glob: "*.{js,ts,svelte}"
