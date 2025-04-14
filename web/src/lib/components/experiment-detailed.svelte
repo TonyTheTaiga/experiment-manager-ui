@@ -73,6 +73,16 @@
           <Eye size={16} />
         {/if}
       </button>
+      <form method="POST" action="?/delete" class="flex items-center">
+        <input type="hidden" name="id" value={experiment.id} />
+        <button
+          type="submit"
+          class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
+          aria-label="Delete"
+        >
+          <X size={16} />
+        </button>
+      </form>
       <button
         onclick={() => {
           if (selectedId === experiment.id) {
@@ -86,16 +96,6 @@
       >
         <Minimize2 size={16} />
       </button>
-      <form method="POST" action="?/delete" class="flex items-center">
-        <input type="hidden" name="id" value={experiment.id} />
-        <button
-          type="submit"
-          class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
-          aria-label="Delete"
-        >
-          <X size={16} />
-        </button>
-      </form>
     </div>
   </header>
 
