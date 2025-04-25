@@ -11,6 +11,7 @@
     ChartLine,
     Eye,
     EyeClosed,
+    Sparkle,
   } from "lucide-svelte";
   import InteractiveChart from "./interactive-chart.svelte";
   import EditExperimentModal from "./edit-experiment-modal.svelte";
@@ -45,6 +46,14 @@
       {experiment.name}
     </h2>
     <div class="flex items-center gap-3">
+      <button
+        class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] active:rotate-90 transition-transform"
+        onclick={async () => {
+          console.log("hello, world");
+        }}
+      >
+        <Sparkle size={16} />
+      </button>
       <button
         onclick={() => {
           editMode = true;
