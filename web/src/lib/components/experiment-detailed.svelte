@@ -15,8 +15,7 @@
   } from "lucide-svelte";
   import InteractiveChart from "./interactive-chart.svelte";
   import EditExperimentModal from "./edit-experiment-modal.svelte";
-  import ExperimentAiAnalysis from "./experiment-ai-analysis.svelte";
-
+  
   let {
     experiment = $bindable(),
     selectedId = $bindable(),
@@ -49,7 +48,9 @@
       <button
         class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] active:rotate-90 transition-transform"
         onclick={async () => {
-          console.log("hello, world");
+          const response = await fetch(`/api/ai/analysis?experimentId=${experiment.id}`);
+          const data = await response.json();
+          console.log(data);
         }}
       >
         <Sparkle size={16} />

@@ -14,6 +14,7 @@ export async function GET({ url }: { url: URL }) {
   const system = createSystemPrompt();
   const user = createUserPrompt(data);
 
+  console.log(user);
   try {
     const client = createAnthropicClient();
     const msg = await client.messages.create({
@@ -27,10 +28,8 @@ export async function GET({ url }: { url: URL }) {
       ? msg.content[0].text
       : JSON.stringify({ error: 'invalid model response' });
 
-
-    console.log(raw);
-
     const parsed = parseOutput(raw);
+
     return new Response(JSON.stringify(parsed), { headers: { 'Content-Type': 'application/json' } });
   } catch (err) {
     console.error('LLM analysis error', err);
@@ -38,9 +37,8 @@ export async function GET({ url }: { url: URL }) {
   }
 }
 
-function createSystemPrompt(): string {
-  const BASE = 'You are a helpful assistant tasked to analyze and compile a report of machine learning experiments.';
-  return `${BASE}\nOutput a structured JSON analysis with keys: summary, performance, insights, recommendations. Only JSON.`;
+function createSystemPrompt() : string {
+  return 'You are a ML lead tasked to analyze and compile a report of machine learning experiments for stakeholders as well as model trainers.\nOutput a structured JSON analysis with keys: summary, performance, insights, recommendations, hyperparameter_tuning (Should be a dictionary of hyperparameters and recommendation for next experiment).';
 }
 
 function createUserPrompt({ experiment, metrics }: ExperimentAndMetrics): string {
@@ -70,23 +68,62 @@ function createUserPrompt({ experiment, metrics }: ExperimentAndMetrics): string
       (acc[m.name] ||= []).push(m);
       return acc;
     }, {});
-
-    for (const [name, entries] of Object.entries(grouped)) {
-      const values = entries.map(e => e.value);
-      const latest = values.at(-1) ?? 0;
+  
+    Object.entries(grouped).forEach(([name, entries]) => {
+      lines.push(`\n### ${name}`);
+      const sortedEntries = [...entries].sort((a, b) => {
+        if (a.step !== undefined && b.step !== undefined) {
+          return a.step - b.step;
+        }
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      });
+  
+      const hasSteps = sortedEntries.some(e => e.step !== undefined);
+      if (hasSteps) {
+        lines.push('| Step | Value |');
+        lines.push('| ---- | ----- |');
+        sortedEntries.forEach(m => {
+          lines.push(`| ${m.step ?? "N/A"} | ${m.value} |`);
+        });
+      } else {
+        lines.push(`Values: ${sortedEntries.map(m => m.value).join(", ")}`);
+        lines.push(`Latest value: ${sortedEntries.at(-1)?.value ?? 'N/A'}`);
+      }
+  
+      const metricWithMetadata = sortedEntries.find(
+        (m) => m.metadata && Object.keys(m.metadata).length > 0
+      );
+      if (metricWithMetadata?.metadata) {
+        lines.push('Metadata example:');
+        lines.push('```');
+        lines.push(JSON.stringify(metricWithMetadata.metadata, null, 2));
+        lines.push('```');
+      }
+    });
+  
+    lines.push('\n## Summary Statistics');
+    Object.entries(grouped).forEach(([name, entries]) => {
+      const values = entries.map(m => m.value);
       const min = Math.min(...values);
       const max = Math.max(...values);
       const avg = values.reduce((sum, v) => sum + v, 0) / values.length;
-
-      lines.push(
-        `### ${name}`,
-        `- Latest: ${latest}`,
-        `- Min: ${min}`,
-        `- Max: ${max}`,
-        `- Avg: ${avg.toFixed(4)}`,
-        `- Count: ${values.length}`
-      );
-    }
+  
+      lines.push(`\n### ${name}`);
+      lines.push(`- Count: ${values.length}`);
+      lines.push(`- Min: ${min}`);
+      lines.push(`- Max: ${max}`);
+      lines.push(`- Average: ${avg.toFixed(4)}`);
+  
+      if (values.length > 1) {
+        const first = values[0];
+        const last = values.at(-1)!;
+        const change = last - first;
+        const percentChange = (change / Math.abs(first)) * 100;
+  
+        lines.push(`- Change: ${change > 0 ? "+" : ""}${change.toFixed(4)} (${percentChange > 0 ? "+" : ""}${percentChange.toFixed(2)}%)`);
+        lines.push(`- Trend: ${change > 0 ? "Increasing" : change < 0 ? "Decreasing" : "Stable"}`);
+      }
+    });
   }
 
   lines.push(
@@ -98,7 +135,6 @@ function createUserPrompt({ experiment, metrics }: ExperimentAndMetrics): string
 }
 
 function parseOutput(raw: string) {
-  // Remove markdown code fences if present
   let jsonText = raw.trim();
   if (jsonText.startsWith('```json')) {
     jsonText = jsonText.slice(7).trim();

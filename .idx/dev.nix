@@ -3,7 +3,7 @@
   packages = [
     pkgs.nodejs_20
     pkgs.pnpm
-    pkgs.uv
+    pkgs.python313Full
   ];
   idx.extensions = [
     "svelte.svelte-vscode"
