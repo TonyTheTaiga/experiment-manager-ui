@@ -10,18 +10,9 @@
   ];
   idx.previews = {
     previews = {
-      web = {
-        command = [
-          "npm"
-          "run"
-          "dev"
-          "--"
-          "--port"
-          "$PORT"
-          "--host"
-          "0.0.0.0"
-        ];
-        manager = "web";
+      web = {        
+        command = ["sh" "-c" "cd web && npm run dev -- --port $PORT --host 0.0.0.0"];
+        manager = "web";        
       };
     };
   };
