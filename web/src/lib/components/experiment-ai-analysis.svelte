@@ -17,10 +17,11 @@
 
     try {
       const results = await Promise.allSettled([
-        fetch(`/api/experiments/${experiment.id}/analysis`).then((res) =>
+        fetch(`/api/ai/analysis?experimentId=${experiment.id}`).then((res) =>
           res.json(),
         ),
-        fetch(`/api/experiments/${experiment.id}/analysis/structured`).then(
+        // Keeping this as structured endpoint for now
+        fetch(`/api/ai/analysis/structured?experimentId=${experiment.id}`).then(
           (res) => res.json(),
         ),
       ]);

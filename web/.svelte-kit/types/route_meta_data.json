@@ -2,6 +2,9 @@
 	"/": [
 		"src/routes/+page.server.ts"
 	],
+	"/api/ai/analysis": [
+		"src/routes/api/ai/analysis/+server.ts"
+	],
 	"/api/experiments": [
 		"src/routes/api/experiments/+server.ts"
 	],
@@ -13,9 +16,6 @@
 	],
 	"/api/experiments/[slug]": [
 		"src/routes/api/experiments/[slug]/+server.ts"
-	],
-	"/api/experiments/[slug]/analysis": [
-		"src/routes/api/experiments/[slug]/analysis/+server.ts"
 	],
 	"/api/experiments/[slug]/metrics": [
 		"src/routes/api/experiments/[slug]/metrics/+server.ts"
