@@ -1,118 +1,119 @@
-import { generateJSON } from "$lib/server/llm";
-import { getExperimentAndMetrics } from "$lib/server/database";
-import type { ExperimentAndMetrics } from "$lib/types";
+import { getExperimentAndMetrics } from '$lib/server/database';
+import type { ExperimentAndMetrics } from '$lib/types';
+import { createAnthropicClient } from '$lib/server/llm';
 
-/**
- * Structured analysis API endpoint
- * Returns JSON-structured analysis of experiment data
- */
+const MODEL = 'claude-3-7-sonnet-20250219';
+
 export async function GET({ url }: { url: URL }) {
-  const experimentId = url.searchParams.get("experimentId");
-
+  const experimentId = url.searchParams.get('experimentId');
   if (!experimentId) {
-    return new Response(JSON.stringify({ error: "experimentId is required" }), {
-      status: 400,
-    });
+    return new Response(JSON.stringify({ error: 'experimentId is required' }), { status: 400 });
   }
 
-  const experiment = (await getExperimentAndMetrics(
-    experimentId,
-  )) as ExperimentAndMetrics;
+  const data = (await getExperimentAndMetrics(experimentId)) as ExperimentAndMetrics;
+  const system = createSystemPrompt();
+  const user = createUserPrompt(data);
 
-  // Format experiment data for LLM
-  const formattedData = formatExperimentStructured(experiment);
-
-  // Generate JSON analysis
-  const analysis = await generateJSON(formattedData);
-
-  // Parse the JSON response to return as actual JSON
   try {
-    const parsedAnalysis = JSON.parse(analysis);
-    return new Response(JSON.stringify(parsedAnalysis), {
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const client = createAnthropicClient();
+    const msg = await client.messages.create({
+      model: MODEL,
+      system,
+      messages: [{ role: 'user', content: user }],
+      max_tokens: 1024,
     });
-  } catch (error) {
-    console.error("Failed to parse LLM response as JSON:", error);
-    return new Response(
-      JSON.stringify({
-        error: "Failed to generate structured analysis",
-        raw: analysis,
-      }),
-      { status: 500 },
-    );
+
+    const raw = msg.content[0].type === 'text'
+      ? msg.content[0].text
+      : JSON.stringify({ error: 'invalid model response' });
+
+
+    console.log(raw);
+
+    const parsed = parseOutput(raw);
+    return new Response(JSON.stringify(parsed), { headers: { 'Content-Type': 'application/json' } });
+  } catch (err) {
+    console.error('LLM analysis error', err);
+    return new Response(JSON.stringify({ error: 'structured analysis failed' }), { status: 500 });
   }
 }
 
-/**
- * Formats experiment data specifically for structured analysis
- */
-function formatExperimentStructured(data: ExperimentAndMetrics): string {
-  const { experiment, metrics } = data;
+function createSystemPrompt(): string {
+  const BASE = 'You are a helpful assistant tasked to analyze and compile a report of machine learning experiments.';
+  return `${BASE}\nOutput a structured JSON analysis with keys: summary, performance, insights, recommendations. Only JSON.`;
+}
 
-  // Begin with experiment overview
-  let formatted = `# Experiment Analysis Request\n\n`;
-  formatted += `Analyze experiment: ${experiment.name} (ID: ${experiment.id})\n\n`;
+function createUserPrompt({ experiment, metrics }: ExperimentAndMetrics): string {
+  const lines: string[] = [
+    '# Experiment Analysis Request',
+    `Analyze experiment: ${experiment.name} (ID: ${experiment.id})`,
+  ];
 
-  // Add description if available
   if (experiment.description) {
-    formatted += `## Description\n${experiment.description}\n\n`;
+    lines.push('## Description', experiment.description);
   }
-
-  // Add tags
-  if (experiment.tags && experiment.tags.length > 0) {
-    formatted += `## Tags\n${experiment.tags.join(", ")}\n\n`;
+  if (experiment.tags?.length) {
+    lines.push('## Tags', experiment.tags.join(', '));
   }
-
-  // Add hyperparameters
-  if (experiment.hyperparams && experiment.hyperparams.length > 0) {
-    formatted += `## Hyperparameters\n`;
-    experiment.hyperparams.forEach((param) => {
-      formatted += `- ${param.key}: ${param.value}\n`;
+  if (experiment.hyperparams?.length) {
+    lines.push('## Hyperparameters');
+    experiment.hyperparams.forEach(({ key, value }) => {
+      lines.push(`- ${key}: ${value}`);
     });
-    formatted += "\n";
   }
 
-  // Add metrics summary
-  formatted += `## Metrics Summary\n`;
-
-  if (metrics.length === 0) {
-    formatted += "No metrics recorded.\n\n";
+  lines.push('## Metrics Summary');
+  if (!metrics.length) {
+    lines.push('No metrics recorded.');
   } else {
-    // Group metrics by name
-    const metricsByName = metrics.reduce(
-      (acc, m) => {
-        if (!acc[m.name]) acc[m.name] = [];
-        acc[m.name].push(m);
-        return acc;
-      },
-      {} as Record<string, typeof metrics>,
-    );
+    const grouped = metrics.reduce<Record<string, typeof metrics>>((acc, m) => {
+      (acc[m.name] ||= []).push(m);
+      return acc;
+    }, {});
 
-    // Add summary stats for each metric
-    Object.entries(metricsByName).forEach(([name, values]) => {
-      const numericValues = values.map((m) => m.value);
-      const min = Math.min(...numericValues);
-      const max = Math.max(...numericValues);
-      const avg =
-        numericValues.reduce((sum, val) => sum + val, 0) / numericValues.length;
-      const latest = values[values.length - 1].value;
+    for (const [name, entries] of Object.entries(grouped)) {
+      const values = entries.map(e => e.value);
+      const latest = values.at(-1) ?? 0;
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const avg = values.reduce((sum, v) => sum + v, 0) / values.length;
 
-      formatted += `### ${name}\n`;
-      formatted += `- Latest: ${latest}\n`;
-      formatted += `- Min: ${min}\n`;
-      formatted += `- Max: ${max}\n`;
-      formatted += `- Avg: ${avg.toFixed(4)}\n`;
-      formatted += `- Count: ${values.length}\n\n`;
-    });
+      lines.push(
+        `### ${name}`,
+        `- Latest: ${latest}`,
+        `- Min: ${min}`,
+        `- Max: ${max}`,
+        `- Avg: ${avg.toFixed(4)}`,
+        `- Count: ${values.length}`
+      );
+    }
   }
 
-  // Add analysis guidance
-  formatted += `## Analysis Request\n`;
-  formatted += `Please analyze this experiment data and provide insights on performance, trends, and potential improvements.\n`;
-  formatted += `Focus on providing specific, actionable recommendations based on the metrics and parameters.\n`;
+  lines.push(
+    '## Analysis Request',
+    'Please analyze this experiment data and provide insights on performance, trends, and improvements.'
+  );
 
-  return formatted;
+  return lines.join('\n\n');
+}
+
+function parseOutput(raw: string) {
+  // Remove markdown code fences if present
+  let jsonText = raw.trim();
+  if (jsonText.startsWith('```json')) {
+    jsonText = jsonText.slice(7).trim();
+  } else if (jsonText.startsWith('```')) {
+    jsonText = jsonText.slice(3).trim();
+  }
+  if (jsonText.endsWith('```')) {
+    jsonText = jsonText.slice(0, -3).trim();
+  }
+
+  try {
+    return JSON.parse(jsonText);
+  } catch (e) {
+    console.warn(`Failed to parse JSON output: ${e}`);
+    throw e;
+  }
 }
 
