@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Experiment } from "$lib/types";
+  import type { Experiment, ExperimentAnalysis } from "$lib/types";
   import {
     Minimize2,
     X,
@@ -15,7 +15,7 @@
   } from "lucide-svelte";
   import InteractiveChart from "./interactive-chart.svelte";
   import EditExperimentModal from "./edit-experiment-modal.svelte";
-  
+
   let {
     experiment = $bindable(),
     selectedId = $bindable(),
@@ -26,7 +26,6 @@
     highlighted: string[];
   } = $props();
 
-  let aiSuggestions = $state(null);
   let editMode = $state<boolean>(false);
 </script>
 
@@ -48,8 +47,11 @@
       <button
         class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] active:rotate-90 transition-transform"
         onclick={async () => {
-          const response = await fetch(`/api/ai/analysis?experimentId=${experiment.id}`);
-          const data = await response.json();
+          console.log('getting AI analysis');
+          const response = await fetch(
+            `/api/ai/analysis?experimentId=${experiment.id}`,
+          );
+          const data = await response.json() as ExperimentAnalysis;
           console.log(data);
         }}
       >

@@ -29,3 +29,15 @@ export interface HyperParam {
   key: string;
   value: string | number;
 }
+
+export interface HPRecommendation {
+  recommendation: string;
+  level: number;
+}
+
+export interface ExperimentAnalysis {
+  summary: string;
+  insights: string[];
+  recommendations: string[];
+  hyperparameter_recommendations: Record<string, HPRecommendation>;
+}
