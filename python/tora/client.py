@@ -20,7 +20,7 @@ class Client(Singleton):
         tags: list[str] | None = None,
         max_buffer_len: int = 25,
     ):
-        self._client = httpx.Client(base_url="https://happyplace-dot-taigaishida-217622.wl.r.appspot.com/api")
+        self._client = httpx.Client(base_url="http://localhost:5173/api")
 
         self._name = name
         self._description = description
@@ -51,8 +51,6 @@ class Client(Singleton):
 
         req = self._client.post("/experiments/create", json=data, headers={"Content-Type": "application/json"})
         req.raise_for_status()
-        print(req.json())
-
         return req.json()["experiment"]["id"]
 
     def log(self, name, value, step: int | None = None, metadata: dict | None = None):
@@ -67,7 +65,10 @@ class Client(Singleton):
             json=self._buffer,
             timeout=120,
         )
-        req.raise_for_status()
+        try:
+            req.raise_for_status()
+        except Exception as e:
+            print(e, req.json())
         self._buffer = []
 
     def shutdown(self):

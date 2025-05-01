@@ -1,5 +1,9 @@
 <script lang="ts">
-  import type { Experiment, ExperimentAnalysis } from "$lib/types";
+  import type {
+    Experiment,
+    ExperimentAnalysis,
+    HPRecommendation,
+  } from "$lib/types";
   import {
     Minimize2,
     X,
@@ -27,15 +31,14 @@
   } = $props();
 
   let editMode = $state<boolean>(false);
+  let recommendations = $state<Record<string, HPRecommendation> | null>(null);
 </script>
 
 {#if editMode}
   <EditExperimentModal bind:experiment bind:editMode />
 {/if}
 
-<article
-  class="bg-[var(--color-ctp-base)] rounded-lg overflow-hidden shadow-lg"
->
+<article class="bg-[var(--color-ctp-base)] overflow-hidden shadow-lg">
   <!-- Header with actions -->
   <header
     class="p-4 bg-[var(--color-ctp-mantle)] border-b border-[var(--color-ctp-surface0)] flex justify-between items-center"
@@ -45,14 +48,13 @@
     </h2>
     <div class="flex items-center gap-3">
       <button
-        class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] active:rotate-90 transition-transform"
+        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] transition-transform active:rotate-90"
         onclick={async () => {
-          console.log('getting AI analysis');
           const response = await fetch(
             `/api/ai/analysis?experimentId=${experiment.id}`,
           );
-          const data = await response.json() as ExperimentAnalysis;
-          console.log(data);
+          const data = (await response.json()) as ExperimentAnalysis;
+          recommendations = data.hyperparameter_recommendations;
         }}
       >
         <Sparkle size={16} />
@@ -61,7 +63,7 @@
         onclick={() => {
           editMode = true;
         }}
-        class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
+        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)]"
       >
         <Pencil size={16} />
       </button>
@@ -77,7 +79,7 @@
             highlighted = data;
           }
         }}
-        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] rounded-full transition-colors flex-shrink-0"
+        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)]"
       >
         {#if highlighted.at(-1) === experiment.id}
           <EyeClosed size={16} />
@@ -89,7 +91,7 @@
         <input type="hidden" name="id" value={experiment.id} />
         <button
           type="submit"
-          class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
+          class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)]"
           aria-label="Delete"
         >
           <X size={16} />
@@ -103,7 +105,7 @@
             selectedId = experiment.id;
           }
         }}
-        class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
+        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)]"
         aria-label="Minimize"
       >
         <Minimize2 size={16} />
@@ -135,7 +137,7 @@
           <div class="flex flex-wrap gap-2">
             {#each experiment.tags as tag}
               <span
-                class="inline-flex items-center px-2 py-0.5 text-xs rounded-full bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-mauve)]"
+                class="inline-flex items-center px-2 py-0.5 text-xs bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-mauve)]"
               >
                 {tag}
               </span>
@@ -165,36 +167,29 @@
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {#each experiment.hyperparams as param}
-          <div
-            class="flex items-center bg-[var(--color-ctp-mantle)] p-3 rounded-md"
-          >
+          <div class="flex items-center bg-[var(--color-ctp-mantle)] p-3">
             <span class="text-sm font-medium text-[var(--color-ctp-subtext1)]"
               >{param.key}</span
             >
             <div class="flex-grow"></div>
             <span
-              class="text-sm text-[var(--color-ctp-text)] px-2 py-1 bg-[var(--color-ctp-surface0)] rounded"
+              class="text-sm text-[var(--color-ctp-text)] px-2 py-1 bg-[var(--color-ctp-surface0)]"
               >{param.value}</span
             >
-            <div class="flex items-center ml-2 relative group">
-              {#if aiSuggestions && aiSuggestions[param.key]}
-                <Info
-                  size={16}
-                  class="text-[var(--color-ctp-mauve)] cursor-pointer hover:text-pink-400 transition-colors"
-                />
-                <div
-                  class="absolute bottom-full right-0 mb-2 w-60 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10"
-                >
-                  <div
-                    class="bg-[var(--color-ctp-base)] text-[var(--color-ctp-text)] text-xs rounded-lg p-3 shadow-lg border border-[var(--color-ctp-surface1)]"
-                  >
-                    {aiSuggestions[param.key]}
-                  </div>
-                </div>
-              {:else}
+            {#if recommendations}
+              <div class="items-center pl-2 relative group">
                 <Info size={16} class="text-gray-400" />
-              {/if}
-            </div>
+                <div
+                  role="tooltip"
+                  class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block
+               max-w-xs break-words whitespace-normal rounded-md p-2
+               bg-[var(--color-ctp-mantle)] text-[var(--color-ctp-text)] text-sm
+               shadow-lg z-50"
+                >
+                  {recommendations[param.key].recommendation}
+                </div>
+              </div>
+            {/if}
           </div>
         {/each}
       </div>

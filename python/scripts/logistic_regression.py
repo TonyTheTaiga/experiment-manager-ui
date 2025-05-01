@@ -43,7 +43,8 @@ if __name__ == "__main__":
     from sklearn.datasets import load_breast_cancer
     from sklearn.preprocessing import StandardScaler
 
-    from essistant import Essistant
+    from tora.client import Client as Essistant
+
 
     data = load_breast_cancer()
     X, y = data.data, data.target  # pyright: ignore

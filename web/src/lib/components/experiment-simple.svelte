@@ -41,7 +41,7 @@
             highlighted = data;
           }
         }}
-        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] rounded-full transition-colors flex-shrink-0"
+        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)]"
       >
         {#if highlighted.at(-1) === experiment.id}
           <EyeClosed size={16} />
@@ -53,7 +53,7 @@
         <input type="hidden" name="id" value={experiment.id} />
         <button
           type="submit"
-          class="p-1.5 rounded-full text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
+          class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)]"
           aria-label="Delete"
         >
           <X size={16} />
@@ -67,7 +67,7 @@
             selectedId = experiment.id;
           }
         }}
-        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] rounded-full transition-colors flex-shrink-0"
+        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)]"
         aria-label="Expand details"
       >
         <Maximize2 size={16} />
@@ -111,7 +111,7 @@
         <Tag size={12} />
         {#each experiment.tags.slice(0, 2) as tag, i}
           <span
-            class="px-1.5 py-0.5 bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-lavender)] rounded-full"
+            class="px-1.5 py-0.5 bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-lavender)]"
           >
             {tag}
           </span>

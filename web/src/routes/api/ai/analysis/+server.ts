@@ -17,22 +17,20 @@ export async function GET({ url }: { url: URL }) {
   )) as ExperimentAndMetrics;
   const system = createSystemPrompt();
   const user = createUserPrompt(data);
+  console.log(user);
   try {
     const client = createAnthropicClient();
     const msg = await client.messages.create({
       model: MODEL,
       system,
       messages: [{ role: "user", content: user }],
-      max_tokens: 1024,
-      temperature: 0.0
+      max_tokens: 21_333,
+      temperature: 0.6
     });
-
-    const raw =
-      msg.content[0].type === "text"
-        ? msg.content[0].text
-        : JSON.stringify({ error: "invalid model response" });
-
+    const textItem = msg.content.find(item => item.type === "text");
+    const raw = textItem ? textItem.text : JSON.stringify({ error: "invalid model response" });
     const parsed = parseOutput(raw);
+    console.log(parsed);
 
     return new Response(JSON.stringify(parsed), {
       headers: { "Content-Type": "application/json" },
@@ -53,60 +51,60 @@ function createSystemPrompt(): string {
 Respond using the following JSON schema:
 
 {
-  "title": "OutputSchema",
-  "type": "object",
-  "required": ["summary", "insights", "recommendations", "hyperparameter_recommendations"],
+  "$defs": {
+    "HPRecommendation": {
+      "properties": {
+        "recommendation": {
+          "default": {
+            "strip_whitespace": null,
+            "to_upper": null,
+            "to_lower": null,
+            "strict": null,
+            "min_length": null,
+            "max_length": 18,
+            "pattern": null
+          },
+          "title": "Recommendation",
+          "type": "string"
+        },
+        "importance_level": {
+          "enum": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "title": "Importance Level",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "importance_level"
+      ],
+      "title": "HPRecommendation",
+      "type": "object"
+    }
+  },
   "properties": {
     "summary": {
       "title": "Summary",
-      "type": "string",
-      "description": "A high-level overview of the experiment results and key findings."
-    },
-    "insights": {
-      "title": "Insights",
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Key takeaways, observations, or surprising results."
-    },
-    "recommendations": {
-      "title": "Recommendations",
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "General suggestions for model improvement, data collection, or next steps."
+      "type": "string"
     },
     "hyperparameter_recommendations": {
-      "title": "Hyperparameter Recommendations",
-      "type": "object",
       "additionalProperties": {
         "$ref": "#/$defs/HPRecommendation"
       },
-      "description": "Specific hyperparameter suggestions mapped by hyperparameter name."
+      "title": "Hyperparameter Recommendations",
+      "type": "object"
     }
   },
-  "$defs": {
-    "HPRecommendation": {
-      "title": "HPRecommendation",
-      "type": "object",
-      "required": ["recommendation", "importance_level"],
-      "properties": {
-        "recommendation": {
-          "title": "Recommendation",
-          "type": "string",
-          "description": "Suggested value or change for the hyperparameter."
-        },
-        "importance_level": {
-          "title": "Importance Level",
-          "type": "integer",
-          "enum": [1, 2, 3, 4, 5],
-          "description": "Priority of the recommendation (1 = low, 5 = critical)."
-        }
-      }
-    }
-  }
+  "required": [
+    "summary",
+    "hyperparameter_recommendations"
+  ],
+  "title": "OutputSchema",
+  "type": "object"
 }
 
 ## Notes
