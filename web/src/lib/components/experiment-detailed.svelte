@@ -32,6 +32,7 @@
 
   let editMode = $state<boolean>(false);
   let recommendations = $state<Record<string, HPRecommendation> | null>(null);
+  let activeRecommendation = $state<string | null>(null);
 </script>
 
 {#if editMode}
@@ -176,23 +177,32 @@
               class="text-sm text-[var(--color-ctp-text)] px-2 py-1 bg-[var(--color-ctp-surface0)]"
               >{param.value}</span
             >
-            {#if recommendations}
-              <div class="items-center pl-2 relative group">
-                <Info size={16} class="text-gray-400" />
-                <div
-                  role="tooltip"
-                  class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block
-               max-w-xs break-words whitespace-normal rounded-md p-2
-               bg-[var(--color-ctp-mantle)] text-[var(--color-ctp-text)] text-sm
-               shadow-lg z-50"
-                >
-                  {recommendations[param.key].recommendation}
-                </div>
-              </div>
+            {#if recommendations && recommendations[param.key]}
+              <button 
+                class="items-center pl-2" 
+                onclick={() => activeRecommendation = recommendations[param.key].recommendation}
+                aria-label="Show recommendation"
+              >
+                <Info size={16} class="text-gray-400 hover:text-[var(--color-ctp-lavender)]" />
+              </button>
             {/if}
           </div>
         {/each}
       </div>
+
+      {#if activeRecommendation}
+        <div class="mt-5 p-4 bg-[var(--color-ctp-surface0)] border border-[var(--color-ctp-lavender)] rounded-md relative">
+          <button 
+            class="absolute top-2 right-2 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)]"
+            onclick={() => activeRecommendation = null}
+            aria-label="Close recommendation"
+          >
+            <X size={16} />
+          </button>
+          <h4 class="text-sm font-medium text-[var(--color-ctp-lavender)] mb-2">AI Recommendation</h4>
+          <p class="text-sm text-[var(--color-ctp-text)] leading-relaxed">{activeRecommendation}</p>
+        </div>
+      {/if}
     </div>
   {/if}
 
