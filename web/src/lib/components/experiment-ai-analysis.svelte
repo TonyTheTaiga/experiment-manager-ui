@@ -49,26 +49,26 @@
 
 <div>
   <div class="p-5 pb-0">
-    <h3 class="text-lg font-semibold text-[var(--color-ctp-mauve)]">
+    <h3 class="text-lg font-semibold text-ctp-mauve">
       AI Analysis
     </h3>
   </div>
   <div class="p-5">
     {#if aiAnalysis}
       <div
-        class="markdown-preview rounded-md overflow-hidden border border-[var(--color-ctp-surface1)] shadow-inner"
+        class="markdown-preview rounded-md overflow-hidden border border-ctp-surface1 shadow-inner"
       >
         {@html marked(aiAnalysis)}
       </div>
     {:else}
       <div
-        class="flex flex-col items-center justify-center p-8 bg-[var(--color-ctp-mantle)] rounded-md"
+        class="flex flex-col items-center justify-center p-8 bg-ctp-mantle rounded-md"
       >
-        <p class="text-[var(--color-ctp-subtext0)] text-sm mb-4">
+        <p class="text-ctp-subtext0 text-sm mb-4">
           No analysis available yet
         </p>
         <button
-          class="inline-flex items-center justify-center gap-2 px-4 py-2 font-medium rounded-md bg-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:bg-[var(--color-ctp-lavender)] transition-colors"
+          class="inline-flex items-center justify-center gap-2 px-4 py-2 font-medium rounded-md bg-ctp-mauve text-ctp-crust hover:bg-ctp-lavender transition-colors"
           onclick={triggerAnalysis}
         >
           <svg

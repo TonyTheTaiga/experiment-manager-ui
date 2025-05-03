@@ -29,7 +29,6 @@
   }
 
   let searchResults = $state<Experiment[]>([]);
-  // $inspect(searchResults);
   let reference = $state<Experiment | null>(null);
   let searchInput = $state<string>("");
   const charList: string[] = [];
@@ -114,16 +113,16 @@
 <form
   method="POST"
   action="?/create"
-  class="flex flex-col gap-8 p-6 bg-[var(--color-ctp-mantle)] rounded-xl border border-[var(--color-ctp-surface0)] shadow-lg"
+  class="flex flex-col gap-8 p-6 bg-ctp-mantle rounded-xl border border-ctp-surface0 shadow-lg"
 >
   <div class="flex flex-col gap-8">
     <!-- Basic Information Section -->
     <div class="space-y-5">
       <div
-        class="flex items-center gap-3 pb-2 border-b border-[var(--color-ctp-surface0)]"
+        class="flex items-center gap-3 pb-2 border-b border-ctp-surface0"
       >
-        <Beaker size={18} class="text-[var(--color-ctp-mauve)]" />
-        <h3 class="text-xl font-medium text-[var(--color-ctp-text)]">
+        <Beaker size={18} class="text-ctp-mauve" />
+        <h3 class="text-xl font-medium text-ctp-text">
           Basic Information
         </h3>
       </div>
@@ -131,7 +130,7 @@
       <!-- Name Input -->
       <div class="space-y-2">
         <label
-          class="text-sm font-medium text-[var(--color-ctp-subtext0)]"
+          class="text-sm font-medium text-ctp-subtext0"
           for="experiment-name"
         >
           Experiment Name
@@ -139,7 +138,7 @@
         <input
           name="experiment-name"
           type="text"
-          class="w-full px-4 py-3 bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-mauve)] transition-all placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+          class="w-full px-4 py-3 bg-ctp-base border-0 rounded-lg text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-mauve transition-all placeholder-ctp-overlay0 shadow-sm"
           placeholder="Enter experiment name"
         />
       </div>
@@ -147,7 +146,7 @@
       <!-- Description Input -->
       <div class="space-y-2">
         <label
-          class="text-sm font-medium text-[var(--color-ctp-subtext0)]"
+          class="text-sm font-medium text-ctp-subtext0"
           for="experiment-description"
         >
           Description
@@ -155,7 +154,7 @@
         <textarea
           name="experiment-description"
           rows="3"
-          class="w-full px-4 py-3 bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-blue)] transition-all resize-none placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+          class="w-full px-4 py-3 bg-ctp-base border-0 rounded-lg text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-blue transition-all resize-none placeholder-ctp-overlay0 shadow-sm"
           placeholder="Briefly describe this experiment"
         ></textarea>
       </div>
@@ -164,22 +163,22 @@
     <!-- Tags Section -->
     <div class="space-y-4">
       <div
-        class="flex items-center gap-3 pb-2 border-b border-[var(--color-ctp-surface0)]"
+        class="flex items-center gap-3 pb-2 border-b border-ctp-surface0"
       >
-        <TagIcon size={18} class="text-[var(--color-ctp-pink)]" />
-        <h3 class="text-xl font-medium text-[var(--color-ctp-text)]">Tags</h3>
+        <TagIcon size={18} class="text-ctp-pink" />
+        <h3 class="text-xl font-medium text-ctp-text">Tags</h3>
       </div>
 
       <div class="flex flex-wrap items-center gap-2">
         {#each tags as tag, i}
           <input type="hidden" value={tag} name="tags.{i}" />
           <span
-            class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-[var(--color-ctp-pink)]/10 text-[var(--color-ctp-pink)] border-0 group"
+            class="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-ctp-pink/10 text-ctp-pink border-0 group"
           >
             {tag}
             <button
               type="button"
-              class="text-[var(--color-ctp-pink)]/70 hover:text-[var(--color-ctp-red)] transition-colors ml-2"
+              class="text-ctp-pink/70 hover:text-ctp-red transition-colors ml-2"
               onclick={() => tags.splice(i, 1)}
               aria-label="Remove tag"
             >
@@ -193,7 +192,7 @@
             <input
               type="text"
               bind:value={tag}
-              class="w-40 px-3 py-2 text-sm bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-pink)] transition-all placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+              class="w-40 px-3 py-2 text-sm bg-ctp-base border-0 rounded-lg text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-pink transition-all placeholder-ctp-overlay0 shadow-sm"
               placeholder="New tag"
               onkeydown={(event) => {
                 if (event.key === "Enter") {
@@ -208,7 +207,7 @@
                 event.preventDefault();
                 addTag();
               }}
-              class="p-2 rounded-full text-[var(--color-ctp-pink)] hover:bg-[var(--color-ctp-pink)]/10 transition-all"
+              class="p-2 rounded-full text-ctp-pink hover:bg-ctp-pink/10 transition-all"
             >
               <Plus size={16} />
             </button>
@@ -220,7 +219,7 @@
               event.preventDefault();
               addingNewTag = true;
             }}
-            class="inline-flex items-center gap-1 py-1 px-3 text-sm rounded-full bg-transparent text-[var(--color-ctp-pink)] border border-dashed border-[var(--color-ctp-pink)]/50 hover:bg-[var(--color-ctp-pink)]/10 transition-all"
+            class="inline-flex items-center gap-1 py-1 px-3 text-sm rounded-full bg-transparent text-ctp-pink border border-dashed border-ctp-pink/50 hover:bg-ctp-pink/10 transition-all"
           >
             <Plus size={14} />
             Add Tag
@@ -232,10 +231,10 @@
     <!-- Hyperparameters Section -->
     <div class="space-y-4">
       <div
-        class="flex items-center gap-3 pb-2 border-b border-[var(--color-ctp-surface0)]"
+        class="flex items-center gap-3 pb-2 border-b border-ctp-surface0"
       >
-        <Settings size={18} class="text-[var(--color-ctp-sapphire)]" />
-        <h3 class="text-xl font-medium text-[var(--color-ctp-text)]">
+        <Settings size={18} class="text-ctp-sapphire" />
+        <h3 class="text-xl font-medium text-ctp-text">
           Parameters
         </h3>
       </div>
@@ -244,20 +243,20 @@
         {#each hyperparams as pair, i}
           <div class="flex gap-3 items-center">
             <input
-              class="w-full px-4 py-3 text-sm bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-sapphire)] transition-all flex-1 placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+              class="w-full px-4 py-3 text-sm bg-ctp-base border-0 rounded-lg text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-sapphire transition-all flex-1 placeholder-ctp-overlay0 shadow-sm"
               name="hyperparams.{i}.key"
               placeholder="Parameter name"
               required
             />
             <input
-              class="w-full px-4 py-3 text-sm bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-sapphire)] transition-all flex-1 placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+              class="w-full px-4 py-3 text-sm bg-ctp-base border-0 rounded-lg text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-sapphire transition-all flex-1 placeholder-ctp-overlay0 shadow-sm"
               name="hyperparams.{i}.value"
               placeholder="Value"
               required
             />
             <button
               type="button"
-              class="p-2 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)] hover:bg-[var(--color-ctp-red)]/10 rounded-full transition-all"
+              class="p-2 text-ctp-subtext0 hover:text-ctp-red hover:bg-ctp-red/10 rounded-full transition-all"
               onclick={() => hyperparams.splice(i, 1)}
             >
               <X size={18} />
@@ -267,7 +266,7 @@
 
         <button
           type="button"
-          class="inline-flex items-center gap-2 py-2 px-4 text-sm font-medium rounded-lg bg-[var(--color-ctp-sapphire)]/10 text-[var(--color-ctp-sapphire)] border border-dashed border-[var(--color-ctp-sapphire)]/50 hover:bg-[var(--color-ctp-sapphire)]/20 transition-all"
+          class="inline-flex items-center gap-2 py-2 px-4 text-sm font-medium rounded-lg bg-ctp-sapphire/10 text-ctp-sapphire border border-dashed border-ctp-sapphire/50 hover:bg-ctp-sapphire/20 transition-all"
           onclick={() =>
             (hyperparams = [...hyperparams, { key: "", value: "" }])}
         >
@@ -284,10 +283,10 @@
       {/if}
 
       <div
-        class="flex items-center gap-3 pb-2 border-b border-[var(--color-ctp-surface0)]"
+        class="flex items-center gap-3 pb-2 border-b border-ctp-surface0"
       >
-        <Link size={18} class="text-[var(--color-ctp-lavender)]" />
-        <h3 class="text-xl font-medium text-[var(--color-ctp-text)]">
+        <Link size={18} class="text-ctp-lavender" />
+        <h3 class="text-xl font-medium text-ctp-text">
           References
         </h3>
       </div>
@@ -295,12 +294,12 @@
       <div>
         {#if reference}
           <span
-            class="inline-flex items-center px-3 py-1.5 text-sm rounded-lg bg-[var(--color-ctp-lavender)]/10 text-[var(--color-ctp-lavender)] border-0"
+            class="inline-flex items-center px-3 py-1.5 text-sm rounded-lg bg-ctp-lavender/10 text-ctp-lavender border-0"
           >
             {reference.name}
             <button
               type="button"
-              class="text-[var(--color-ctp-lavender)]/70 hover:text-[var(--color-ctp-red)] transition-colors ml-2"
+              class="text-ctp-lavender/70 hover:text-ctp-red transition-colors ml-2"
               onclick={() => (reference = null)}
               aria-label="Remove reference"
             >
@@ -316,20 +315,20 @@
             id="search-input"
             bind:value={searchInput}
             placeholder="Search for references..."
-            class="w-full px-4 py-3 bg-[var(--color-ctp-base)] border-0 rounded-lg text-[var(--color-ctp-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-ctp-lavender)] transition-all placeholder-[var(--color-ctp-overlay0)] shadow-sm"
+            class="w-full px-4 py-3 bg-ctp-base border-0 rounded-lg text-ctp-text focus:outline-none focus:ring-2 focus:ring-ctp-lavender transition-all placeholder-ctp-overlay0 shadow-sm"
             onkeydown={async (event) => await handleKeyDown(event)}
           />
         </div>
         {#if searchResults.length > 0}
           <div
-            class="absolute top-full left-0 right-0 z-10 mt-1 p-2 border-0 bg-[var(--color-ctp-base)] rounded-lg shadow-xl max-h-60 overflow-y-auto"
+            class="absolute top-full left-0 right-0 z-10 mt-1 p-2 border-0 bg-ctp-base rounded-lg shadow-xl max-h-60 overflow-y-auto"
           >
             <ul class="flex flex-col">
               {#each searchResults as experiment, index}
                 <button
                   class="{selectedIndex === index
-                    ? 'bg-[var(--color-ctp-lavender)]/10 text-[var(--color-ctp-lavender)]'
-                    : ''} hover:bg-[var(--color-ctp-lavender)]/10 text-left px-3 py-2 rounded-lg text-[var(--color-ctp-text)] hover:text-[var(--color-ctp-lavender)] transition-colors"
+                    ? 'bg-ctp-lavender/10 text-ctp-lavender'
+                    : ''} hover:bg-ctp-lavender/10 text-left px-3 py-2 rounded-lg text-ctp-text hover:text-ctp-lavender transition-colors"
                   onclick={(e) => {
                     e.preventDefault();
                     reference = experiment;
@@ -348,18 +347,18 @@
 
   <!-- Action Buttons -->
   <div
-    class="flex justify-end gap-3 pt-6 mt-2 border-t border-[var(--color-ctp-surface0)]"
+    class="flex justify-end gap-3 pt-6 mt-2 border-t border-ctp-surface0"
   >
     <button
       onclick={toggleIsOpen}
       type="button"
-      class="inline-flex items-center justify-center px-5 py-2.5 font-medium rounded-lg bg-transparent text-[var(--color-ctp-text)] hover:bg-[var(--color-ctp-surface0)] transition-colors"
+      class="inline-flex items-center justify-center px-5 py-2.5 font-medium rounded-lg bg-transparent text-ctp-text hover:bg-ctp-surface0 transition-colors"
     >
       Cancel
     </button>
     <button
       type="submit"
-      class="inline-flex items-center justify-center gap-2 px-5 py-2.5 font-medium rounded-lg bg-gradient-to-r from-[var(--color-ctp-blue)] to-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:shadow-lg transition-all"
+      class="inline-flex items-center justify-center gap-2 px-5 py-2.5 font-medium rounded-lg bg-gradient-to-r from-ctp-blue to-ctp-mauve text-ctp-crust hover:shadow-lg transition-all"
     >
       <Plus size={18} />
       Create Experiment

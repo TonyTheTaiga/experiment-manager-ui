@@ -21,13 +21,13 @@
 <div class="flex flex-col h-full">
   <header>
     <nav
-      class="px-6 py-4 flex flex-row justify-end bg-[var(--color-ctp-mantle)] border-b border-[var(--color-ctp-surface0)]"
+      class="px-6 py-4 flex flex-row justify-end bg-ctp-mantle border-b border-ctp-surface0"
     >
       <button
         onclick={() => {
           isOpen = true;
         }}
-        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-[var(--color-ctp-mauve)] text-[var(--color-ctp-crust)] hover:bg-[var(--color-ctp-lavender)] transition-colors font-medium"
+        class="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-md bg-ctp-mauve text-ctp-crust hover:bg-ctp-lavender transition-colors font-medium"
       >
         <Plus size={16} /> New Experiment</button
       >
