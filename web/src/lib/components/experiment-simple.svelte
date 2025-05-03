@@ -37,7 +37,6 @@
               `/api/experiments/${experiment.id}/ref`,
             );
             const data = (await response.json()) as string[];
-            console.log(data);
             highlighted = data;
           }
         }}
@@ -77,18 +76,14 @@
 
   <!-- Description -->
   {#if experiment.description}
-    <p
-      class="text-ctp-subtext0 text-sm leading-relaxed mb-4 line-clamp-2"
-    >
+    <p class="text-ctp-subtext0 text-sm leading-relaxed mb-4 line-clamp-2">
       {experiment.description}
     </p>
   {/if}
 
   <!-- Metrics indicator -->
   {#if experiment.availableMetrics && experiment.availableMetrics.length > 0}
-    <div
-      class="flex items-center gap-1.5 text-ctp-subtext1 text-xs mb-3"
-    >
+    <div class="flex items-center gap-1.5 text-ctp-subtext1 text-xs mb-3">
       <ChartLine size={14} />
       <span
         >{experiment.availableMetrics.length} metric{experiment.availableMetrics
@@ -105,20 +100,14 @@
   >
     <!-- Tags -->
     {#if experiment.tags && experiment.tags.length > 0}
-      <div
-        class="flex items-center gap-1.5 text-xs text-ctp-subtext0"
-      >
+      <div class="flex items-center gap-1.5 text-xs text-ctp-subtext0">
         <Tag size={12} />
         {#each experiment.tags.slice(0, 2) as tag, i}
-          <span
-            class="px-1.5 py-0.5 bg-ctp-surface0 text-ctp-lavender"
-          >
+          <span class="px-1.5 py-0.5 bg-ctp-surface0 text-ctp-lavender">
             {tag}
           </span>
           {#if i === 0 && experiment.tags.length > 2}
-            <span class="text-ctp-subtext0"
-              >+{experiment.tags.length - 1}</span
-            >
+            <span class="text-ctp-subtext0">+{experiment.tags.length - 1}</span>
           {/if}
         {/each}
       </div>
@@ -126,9 +115,7 @@
 
     <!-- Created At -->
     {#if experiment?.createdAt}
-      <time
-        class="flex items-center gap-1 text-xs text-ctp-subtext0"
-      >
+      <time class="flex items-center gap-1 text-xs text-ctp-subtext0">
         <Clock size={12} />
         {new Date(experiment.createdAt).toLocaleDateString("en-US", {
           month: "short",

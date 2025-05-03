@@ -17,7 +17,6 @@ export async function GET({ url }: { url: URL }) {
   )) as ExperimentAndMetrics;
   const system = createSystemPrompt();
   const user = createUserPrompt(data);
-  console.log(user);
   try {
     const client = createAnthropicClient();
     const msg = await client.messages.create({
@@ -30,8 +29,6 @@ export async function GET({ url }: { url: URL }) {
     const textItem = msg.content.find(item => item.type === "text");
     const raw = textItem ? textItem.text : JSON.stringify({ error: "invalid model response" });
     const parsed = parseOutput(raw);
-    console.log(parsed);
-
     return new Response(JSON.stringify(parsed), {
       headers: { "Content-Type": "application/json" },
     });

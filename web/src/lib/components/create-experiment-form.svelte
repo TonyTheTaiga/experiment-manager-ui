@@ -35,7 +35,6 @@
   let selectedIndex = $state<number>(-1);
 
   async function getExperiments(query: string | null) {
-    console.log(query);
     let url = `/api/experiments`;
     if (query) {
       url += `?startwith=${encodeURIComponent(query)}`;
@@ -93,7 +92,6 @@
 
     if (charList.length && charList.length > 0) {
       await getExperiments(charList.join(""));
-      console.log("charList", charList);
       selectedIndex = -1;
     } else if (charList.length === 0) {
       searchResults = [];
@@ -118,13 +116,9 @@
   <div class="flex flex-col gap-8">
     <!-- Basic Information Section -->
     <div class="space-y-5">
-      <div
-        class="flex items-center gap-3 pb-2 border-b border-ctp-surface0"
-      >
+      <div class="flex items-center gap-3 pb-2 border-b border-ctp-surface0">
         <Beaker size={18} class="text-ctp-mauve" />
-        <h3 class="text-xl font-medium text-ctp-text">
-          Basic Information
-        </h3>
+        <h3 class="text-xl font-medium text-ctp-text">Basic Information</h3>
       </div>
 
       <!-- Name Input -->
@@ -162,9 +156,7 @@
 
     <!-- Tags Section -->
     <div class="space-y-4">
-      <div
-        class="flex items-center gap-3 pb-2 border-b border-ctp-surface0"
-      >
+      <div class="flex items-center gap-3 pb-2 border-b border-ctp-surface0">
         <TagIcon size={18} class="text-ctp-pink" />
         <h3 class="text-xl font-medium text-ctp-text">Tags</h3>
       </div>
@@ -230,13 +222,9 @@
 
     <!-- Hyperparameters Section -->
     <div class="space-y-4">
-      <div
-        class="flex items-center gap-3 pb-2 border-b border-ctp-surface0"
-      >
+      <div class="flex items-center gap-3 pb-2 border-b border-ctp-surface0">
         <Settings size={18} class="text-ctp-sapphire" />
-        <h3 class="text-xl font-medium text-ctp-text">
-          Parameters
-        </h3>
+        <h3 class="text-xl font-medium text-ctp-text">Parameters</h3>
       </div>
 
       <div class="space-y-3">
@@ -282,13 +270,9 @@
         <input class="hidden" name="reference-id" bind:value={reference.id} />
       {/if}
 
-      <div
-        class="flex items-center gap-3 pb-2 border-b border-ctp-surface0"
-      >
+      <div class="flex items-center gap-3 pb-2 border-b border-ctp-surface0">
         <Link size={18} class="text-ctp-lavender" />
-        <h3 class="text-xl font-medium text-ctp-text">
-          References
-        </h3>
+        <h3 class="text-xl font-medium text-ctp-text">References</h3>
       </div>
 
       <div>
@@ -346,9 +330,7 @@
   </div>
 
   <!-- Action Buttons -->
-  <div
-    class="flex justify-end gap-3 pt-6 mt-2 border-t border-ctp-surface0"
-  >
+  <div class="flex justify-end gap-3 pt-6 mt-2 border-t border-ctp-surface0">
     <button
       onclick={toggleIsOpen}
       type="button"

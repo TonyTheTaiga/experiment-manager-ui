@@ -13,8 +13,6 @@
   let aiAnalysis = $state<string | null>(null);
 
   async function triggerAnalysis() {
-    console.log("AI Analysis triggered");
-
     try {
       const results = await Promise.allSettled([
         fetch(`/api/ai/analysis?experimentId=${experiment.id}`).then((res) =>
@@ -49,9 +47,7 @@
 
 <div>
   <div class="p-5 pb-0">
-    <h3 class="text-lg font-semibold text-ctp-mauve">
-      AI Analysis
-    </h3>
+    <h3 class="text-lg font-semibold text-ctp-mauve">AI Analysis</h3>
   </div>
   <div class="p-5">
     {#if aiAnalysis}
@@ -64,9 +60,7 @@
       <div
         class="flex flex-col items-center justify-center p-8 bg-ctp-mantle rounded-md"
       >
-        <p class="text-ctp-subtext0 text-sm mb-4">
-          No analysis available yet
-        </p>
+        <p class="text-ctp-subtext0 text-sm mb-4">No analysis available yet</p>
         <button
           class="inline-flex items-center justify-center gap-2 px-4 py-2 font-medium rounded-md bg-ctp-mauve text-ctp-crust hover:bg-ctp-lavender transition-colors"
           onclick={triggerAnalysis}
