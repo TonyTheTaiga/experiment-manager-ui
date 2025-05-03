@@ -1,5 +1,0 @@
-pre-commit:
-  commands:
-    prettier:
-      run: cd node && npx prettier --check {staged_files}
-      files: web/**/*.{js,ts,json}
