@@ -29,7 +29,7 @@
     selectedId: string | null;
     highlighted: string[];
   } = $props();
-
+  
   let editMode = $state<boolean>(false);
   let recommendations = $state<Record<string, HPRecommendation> | null>(null);
   let activeRecommendation = $state<string | null>(null);
@@ -38,8 +38,10 @@
 {#if editMode}
   <EditExperimentModal bind:experiment bind:editMode />
 {/if}
-
 <article class="bg-[var(--color-ctp-base)] overflow-hidden shadow-lg">
+<article
+  class="bg-[var(--color-ctp-base)] border border-[var(--color-ctp-surface1)] rounded-lg overflow-hidden shadow-lg"
+>
   <!-- Header with actions -->
   <header
     class="p-4 bg-[var(--color-ctp-mantle)] border-b border-[var(--color-ctp-surface0)] flex justify-between items-center"
