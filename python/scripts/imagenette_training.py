@@ -270,13 +270,6 @@ if __name__ == "__main__":
         val_loss, val_acc, val_prec, val_rec, val_f1 = validate(
             model, device, val_loader, criterion, epoch, essistant, split="val"
         )
-
-        # Save the best model
-        if val_acc > best_val_acc:
-            best_val_acc = val_acc
-            torch.save(model.state_dict(), best_model_path)
-            print(f"New best model saved with validation accuracy: {best_val_acc:.2f}%")
-
         # Update learning rate
         scheduler.step()
 

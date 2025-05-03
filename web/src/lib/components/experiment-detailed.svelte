@@ -40,17 +40,22 @@
   <EditExperimentModal bind:experiment bind:editMode />
 {/if}
 
-<article class="bg-[var(--color-ctp-base)] overflow-hidden shadow-lg">
+<article class="bg-ctp-base overflow-hidden shadow-lg">
   <!-- Header with actions -->
   <header
-    class="p-4 bg-[var(--color-ctp-mantle)] border-b border-[var(--color-ctp-surface0)] flex justify-between items-center"
+    class="p-4 bg-ctp-mantle border-b border-ctp-surface0 flex justify-between items-center"
   >
-    <h2 class="text-xl font-semibold text-[var(--color-ctp-text)]">
-      {experiment.name}
+    <h2 class="flex space-x-4">
+      <span class="text-xl font-semibold text-ctp-text">
+        {experiment.name}
+      </span>
+      <span class="text-sm text-ctp-subtext0 content-center">
+        {experiment.id}
+      </span>
     </h2>
     <div class="flex items-center gap-3">
       <button
-        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)] transition-transform active:rotate-90"
+        class="p-1.5 text-ctp-subtext0 hover:text-ctp-subtext0 transition-transform active:rotate-90"
         onclick={async () => {
           const response = await fetch(
             `/api/ai/analysis?experimentId=${experiment.id}`,
@@ -65,7 +70,7 @@
         onclick={() => {
           editMode = true;
         }}
-        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)]"
+        class="p-1.5 text-ctp-subtext0 hover:text-ctp-text"
       >
         <Pencil size={16} />
       </button>
@@ -81,7 +86,7 @@
             highlighted = data;
           }
         }}
-        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)]"
+        class="p-1.5 text-ctp-subtext0 hover:text-ctp-text"
       >
         {#if highlighted.at(-1) === experiment.id}
           <EyeClosed size={16} />
@@ -93,7 +98,7 @@
         <input type="hidden" name="id" value={experiment.id} />
         <button
           type="submit"
-          class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-red)]"
+          class="p-1.5 text-ctp-subtext0 hover:text-ctp-red"
           aria-label="Delete"
         >
           <X size={16} />
@@ -107,7 +112,7 @@
             selectedId = experiment.id;
           }
         }}
-        class="p-1.5 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)]"
+        class="p-1.5 text-ctp-subtext0 hover:text-ctp-text"
         aria-label="Minimize"
       >
         <Minimize2 size={16} />
@@ -116,9 +121,9 @@
   </header>
 
   <!-- Metadata section -->
-  <div class="p-5 border-b border-[var(--color-ctp-surface0)]">
+  <div class="p-5 border-b border-ctp-surface0">
     <div
-      class="flex items-center gap-6 mb-4 text-[var(--color-ctp-subtext0)] text-sm"
+      class="flex items-center gap-6 mb-4 text-ctp-subtext0 text-sm"
     >
       <div class="flex items-center gap-1.5">
         <Clock size={14} />
@@ -139,7 +144,7 @@
           <div class="flex flex-wrap gap-2">
             {#each experiment.tags as tag}
               <span
-                class="inline-flex items-center px-2 py-0.5 text-xs bg-[var(--color-ctp-surface0)] text-[var(--color-ctp-mauve)]"
+                class="inline-flex items-center px-2 py-0.5 text-xs bg-ctp-surface0 text-ctp-mauve"
               >
                 {tag}
               </span>
@@ -151,7 +156,7 @@
 
     {#if experiment.description}
       <p
-        class="text-[var(--color-ctp-text)] text-sm py-2 border-l-2 border-[var(--color-ctp-mauve)] pl-3 my-3 max-w-prose leading-relaxed"
+        class="text-ctp-text text-sm py-2 border-l-2 border-ctp-mauve pl-3 my-3 max-w-prose leading-relaxed"
       >
         {experiment.description}
       </p>
@@ -160,22 +165,22 @@
 
   <!-- Parameters section -->
   {#if experiment.hyperparams}
-    <div class="p-5 border-b border-[var(--color-ctp-surface0)]">
+    <div class="p-5 border-b border-ctp-surface0">
       <div class="flex items-center gap-2 mb-4">
-        <Settings size={16} class="text-[var(--color-ctp-mauve)]" />
-        <h3 class="text-lg font-semibold text-[var(--color-ctp-mauve)]">
+        <Settings size={16} class="text-ctp-mauve" />
+        <h3 class="text-lg font-semibold text-ctp-mauve">
           Parameters
         </h3>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {#each experiment.hyperparams as param}
-          <div class="flex items-center bg-[var(--color-ctp-mantle)] p-3">
-            <span class="text-sm font-medium text-[var(--color-ctp-subtext1)]"
+          <div class="flex items-center bg-ctp-mantle p-3">
+            <span class="text-sm font-medium text-ctp-subtext1"
               >{param.key}</span
             >
             <div class="flex-grow"></div>
             <span
-              class="text-sm text-[var(--color-ctp-text)] px-2 py-1 bg-[var(--color-ctp-surface0)]"
+              class="text-sm text-ctp-text px-2 py-1 bg-ctp-surface0"
               >{param.value}</span
             >
             {#if recommendations && recommendations[param.key]}
@@ -188,7 +193,7 @@
               >
                 <Info
                   size={16}
-                  class="text-gray-400 hover:text-[var(--color-ctp-lavender)]"
+                  class="text-gray-400 hover:text-ctp-lavender"
                 />
               </button>
             {/if}
@@ -198,19 +203,19 @@
 
       {#if activeRecommendation}
         <div
-          class="mt-5 p-4 bg-[var(--color-ctp-surface0)] border border-[var(--color-ctp-lavender)] rounded-md relative"
+          class="mt-5 p-4 bg-ctp-surface0 border border-ctp-lavender rounded-md relative"
         >
           <button
-            class="absolute top-2 right-2 text-[var(--color-ctp-subtext0)] hover:text-[var(--color-ctp-text)]"
+            class="absolute top-2 right-2 text-ctp-subtext0 hover:text-ctp-text"
             onclick={() => (activeRecommendation = null)}
             aria-label="Close recommendation"
           >
             <X size={16} />
           </button>
-          <h4 class="text-sm font-medium text-[var(--color-ctp-lavender)] mb-2">
+          <h4 class="text-sm font-medium text-ctp-lavender mb-2">
             AI Recommendation
           </h4>
-          <p class="text-sm text-[var(--color-ctp-text)] leading-relaxed">
+          <p class="text-sm text-ctp-text leading-relaxed">
             {activeRecommendation}
           </p>
         </div>
@@ -223,8 +228,8 @@
     <div>
       <div class="p-5 pb-0">
         <div class="flex items-center gap-2">
-          <ChartLine size={16} class="text-[var(--color-ctp-mauve)]" />
-          <h3 class="text-lg font-semibold text-[var(--color-ctp-mauve)]">
+          <ChartLine size={16} class="text-ctp-mauve" />
+          <h3 class="text-lg font-semibold text-ctp-mauve">
             Charts
           </h3>
         </div>
