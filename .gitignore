@@ -207,3 +207,5 @@ pyrightconfig.json
 *.pt
 
 **/.claude/settings.local.json
+
+**/data/
