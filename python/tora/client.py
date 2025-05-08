@@ -49,12 +49,18 @@ class Tora(Singleton):
         if self._tags:
             data["tags"] = self._tags  # pyright: ignore
 
-        req = self._client.post("/experiments/create", json=data, headers={"Content-Type": "application/json"})
+        req = self._client.post(
+            "/experiments/create",
+            json=data,
+            headers={"Content-Type": "application/json"},
+        )
         req.raise_for_status()
         return req.json()["experiment"]["id"]
 
     def log(self, name, value, step: int | None = None, metadata: dict | None = None):
-        self._buffer.append({"name": name, "value": value, "step": step, "metadata": metadata})
+        self._buffer.append(
+            {"name": name, "value": value, "step": step, "metadata": metadata}
+        )
         if len(self._buffer) >= self._max_buffer_len:
             self._write_logs()
 
