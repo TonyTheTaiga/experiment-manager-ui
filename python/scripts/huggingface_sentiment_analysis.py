@@ -1,6 +1,5 @@
 import argparse
 import os
-import time
 import numpy as np
 import torch
 from datasets import load_dataset
@@ -74,11 +73,13 @@ def train_sentiment_model(args):
         device = torch.device("mps")
     else:
         device = torch.device("cpu")
+
     print(f"Using device: {device}")
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.seed)
+
     hyperparams = {
         "model_name": args.model_name,
         "max_length": args.max_length,
@@ -103,6 +104,7 @@ def train_sentiment_model(args):
         dataset = load_dataset("glue", "sst2")
     else:
         dataset = load_dataset(args.dataset_name)
+
     if "train" in dataset and "validation" in dataset:
         train_dataset = dataset["train"]  # pyright: ignore
         eval_dataset = dataset["validation"]  # pyright: ignore
@@ -113,6 +115,7 @@ def train_sentiment_model(args):
         split_dataset = dataset["train"].train_test_split(test_size=0.2, seed=args.seed)  # pyright: ignore
         train_dataset = split_dataset["train"]
         eval_dataset = split_dataset["test"]
+
     text_field, label_field = None, None
     for field in ["text", "sentence", "content"]:
         if field in train_dataset.features:  # pyright: ignore
@@ -125,12 +128,14 @@ def train_sentiment_model(args):
     if not text_field or not label_field:
         print("Could not identify text and label fields. Please specify them manually.")
         return
+
     print(f"Using text field: {text_field}, label field: {label_field}")
     label_names = getattr(train_dataset.features[label_field], "names", None)  # pyright: ignore
     if label_names:
         num_labels = len(label_names)
     else:
         num_labels = int(max(train_dataset[label_field])) + 1  # pyright: ignore
+
     print(f"Loading model: {args.model_name}")
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     model = AutoModelForSequenceClassification.from_pretrained(
@@ -183,20 +188,19 @@ def train_sentiment_model(args):
         callbacks=[loss_callback],
     )
     print("Starting training...")
-    train_start_time = time.time()
     train_result = trainer.train()
-    train_time = time.time() - train_start_time
     train_metrics = train_result.metrics
     trainer.log_metrics("train", train_metrics)
     trainer.save_metrics("train", train_metrics)
     trainer.save_state()
-    log_metric(tora, "train_time", train_time, args.epochs)
+
     print("Evaluating model...")
     eval_metrics = trainer.evaluate()
     trainer.log_metrics("eval", eval_metrics)
     trainer.save_metrics("eval", eval_metrics)
     for key, value in eval_metrics.items():
         log_metric(tora, f"eval_{key}", value, args.epochs)
+
     trainer.save_model(os.path.join(args.output_dir, "final_model"))
     if label_names:
         predictions = trainer.predict(tokenized_eval)  # pyright: ignore
