@@ -13,7 +13,6 @@ from torch.utils.data import DataLoader, Dataset, random_split
 
 
 def safe_value(value):
-    """Convert any value to float for logging, return None for strings"""
     if isinstance(value, (int, float)):
         if np.isnan(value) or np.isinf(value):
             return 0.0
@@ -30,7 +29,6 @@ def safe_value(value):
 
 
 def log_metric(client, name, value, step):
-    """Log only numeric metrics"""
     value = safe_value(value)
     if value is not None:
         client.log(name=name, value=value, step=step)
@@ -164,7 +162,6 @@ def validate(model, device, val_loader, criterion, scaler, epoch, tora, split="v
 
 
 def generate_synthetic_data():
-    """Generate synthetic time series data with trend, seasonality and noise"""
     np.random.seed(42)
     time_steps = 1000
     t = np.arange(time_steps)

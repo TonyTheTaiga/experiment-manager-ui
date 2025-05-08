@@ -12,7 +12,6 @@ from torch.utils.data import DataLoader, Dataset, random_split
 
 
 def safe_value(value):
-    """Convert any value to float for logging, return None for strings"""
     if isinstance(value, (int, float)):
         if np.isnan(value) or np.isinf(value):
             return 0.0
@@ -29,14 +28,12 @@ def safe_value(value):
 
 
 def log_metric(client, name, value, step):
-    """Log only numeric metrics"""
     value = safe_value(value)
     if value is not None:
         client.log(name=name, value=value, step=step)
 
 
 def download_movielens_dataset():
-    """Download MovieLens dataset if not available"""
     if not os.path.exists("data/ml-100k"):
         print("Downloading MovieLens 100K dataset...")
         import urllib.request
@@ -55,7 +52,6 @@ def download_movielens_dataset():
 
 
 def load_movielens_data():
-    """Load MovieLens 100K dataset"""
     download_movielens_dataset()
     ratings_path = "data/ml-100k/u.data"
     ratings = pd.read_csv(
@@ -109,8 +105,6 @@ def load_movielens_data():
 
 
 class RecommenderDataset(Dataset):
-    """Dataset for recommender system training"""
-
     def __init__(self, ratings_df, n_users, n_items, binary=True):
         self.ratings_df = ratings_df
         self.n_users = n_users
@@ -138,8 +132,6 @@ class RecommenderDataset(Dataset):
 
 
 class MatrixFactorization(nn.Module):
-    """Matrix factorization model for collaborative filtering"""
-
     def __init__(self, n_users, n_items, n_factors, dropout=0.2, binary=True):
         super(MatrixFactorization, self).__init__()
         self.user_embedding = nn.Embedding(n_users, n_factors)
@@ -154,7 +146,6 @@ class MatrixFactorization(nn.Module):
         self._init_weights()
 
     def _init_weights(self):
-        """Initialize weights with normal distribution"""
         nn.init.normal_(self.user_embedding.weight, std=0.1)
         nn.init.normal_(self.item_embedding.weight, std=0.1)
         nn.init.zeros_(self.user_bias.weight)
@@ -175,7 +166,6 @@ class MatrixFactorization(nn.Module):
 
 
 def create_negative_samples(ratings_df, n_items, neg_ratio=1):
-    """Create negative samples for training"""
     user_item_set = set(zip(ratings_df["user_id"], ratings_df["item_id"]))
     negative_samples = []
     for user_id in ratings_df["user_id"].unique():
@@ -203,7 +193,6 @@ def create_negative_samples(ratings_df, n_items, neg_ratio=1):
 def train_epoch(
     model, device, train_loader, optimizer, criterion, epoch, tora, binary=True
 ):
-    """Train model for one epoch"""
     model.train()
     running_loss = 0.0
     correct = 0
@@ -246,7 +235,6 @@ def train_epoch(
 
 
 def validate(model, device, val_loader, criterion, epoch, tora, binary=True, k=10):
-    """Validate model performance"""
     model.eval()
     running_loss = 0.0
     total = 0

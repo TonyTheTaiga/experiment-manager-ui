@@ -53,26 +53,21 @@ class ToraCallback(TrainerCallback):
         self.tora = tora_client
 
     def on_log(self, args, state, control, logs=None, **kwargs):
-        # Called at each logging step (e.g. every `logging_steps`).
         if logs is None:
             return
         loss = logs.get("loss")
         if loss is not None:
-            # Log the training loss under "train_loss"
             log_metric(self.tora, "train_loss", loss, state.global_step)
 
     def on_evaluate(self, args, state, control, metrics=None, **kwargs):
-        # Called after each evaluation (e.g. every `eval_steps`).
         if metrics is None:
             return
         for key, value in metrics.items():
-            # Only log keys that start with "eval_"
             if key.startswith("eval_"):
                 log_metric(self.tora, key, value, state.global_step)
 
 
 def train_sentiment_model(args):
-    # Set device
     if torch.cuda.is_available():
         device = torch.device("cuda")
     elif torch.backends.mps.is_available():
@@ -80,12 +75,10 @@ def train_sentiment_model(args):
     else:
         device = torch.device("cpu")
     print(f"Using device: {device}")
-    # Set random seed for reproducibility
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(args.seed)
-    # Define hyperparameters
     hyperparams = {
         "model_name": args.model_name,
         "dataset_name": args.dataset_name,
@@ -98,7 +91,6 @@ def train_sentiment_model(args):
         "seed": args.seed,
         "device": str(device),
     }
-    # Initialize Tora experiment
     tora = Tora.create_experiment(
         name=f"Sentiment_Analysis_{args.model_name.split('/')[-1]}",
         description=f"Fine-tuning {args.model_name} on {args.dataset_name} for sentiment analysis",
@@ -106,14 +98,12 @@ def train_sentiment_model(args):
         tags=["nlp", "sentiment-analysis", "transformer", "huggingface"],
     )
     print(f"Loading dataset: {args.dataset_name}")
-    # Load dataset
     if args.dataset_name == "imdb":
         dataset = load_dataset("imdb")
     elif args.dataset_name == "sst2":
         dataset = load_dataset("glue", "sst2")
     else:
         dataset = load_dataset(args.dataset_name)
-    # Split or assign train/validation
     if "train" in dataset and "validation" in dataset:
         train_dataset = dataset["train"]
         eval_dataset = dataset["validation"]
@@ -124,7 +114,6 @@ def train_sentiment_model(args):
         split_dataset = dataset["train"].train_test_split(test_size=0.2, seed=args.seed)
         train_dataset = split_dataset["train"]
         eval_dataset = split_dataset["test"]
-    # Identify text and label fields
     text_field, label_field = None, None
     for field in ["text", "sentence", "content"]:
         if field in train_dataset.features:
@@ -138,13 +127,11 @@ def train_sentiment_model(args):
         print("Could not identify text and label fields. Please specify them manually.")
         return
     print(f"Using text field: {text_field}, label field: {label_field}")
-    # Get number of labels
     label_names = getattr(train_dataset.features[label_field], "names", None)
     if label_names:
         num_labels = len(label_names)
     else:
         num_labels = int(max(train_dataset[label_field])) + 1
-    # Load tokenizer and model
     print(f"Loading model: {args.model_name}")
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     model = AutoModelForSequenceClassification.from_pretrained(
@@ -155,7 +142,6 @@ def train_sentiment_model(args):
     hyperparams["model_parameters"] = model_size
     print(f"Model size: {model_size} parameters")
 
-    # Tokenize dataset
     def tokenize_function(examples):
         return tokenizer(
             examples[text_field],
@@ -166,9 +152,7 @@ def train_sentiment_model(args):
 
     tokenized_train = train_dataset.map(tokenize_function, batched=True)
     tokenized_eval = eval_dataset.map(tokenize_function, batched=True)
-    # Data collator
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
-    # Training arguments
     training_args = TrainingArguments(
         output_dir=args.output_dir,
         num_train_epochs=args.epochs,
@@ -188,7 +172,6 @@ def train_sentiment_model(args):
         report_to="none",
         seed=args.seed,
     )
-    # Instantiate the Tora loss-logging callback
     loss_callback = ToraCallback(tora)
     trainer = Trainer(
         model=model,
@@ -200,12 +183,10 @@ def train_sentiment_model(args):
         compute_metrics=compute_metrics,
         callbacks=[loss_callback],
     )
-    # Train the model
     print("Starting training...")
     train_start_time = time.time()
     train_result = trainer.train()
     train_time = time.time() - train_start_time
-    # Log final training metrics
     train_metrics = train_result.metrics
     trainer.log_metrics("train", train_metrics)
     trainer.save_metrics("train", train_metrics)
@@ -213,16 +194,13 @@ def train_sentiment_model(args):
     for key, value in train_metrics.items():
         log_metric(tora, f"train_{key}", value, args.epochs)
     log_metric(tora, "train_time", train_time, args.epochs)
-    # Evaluate the model
     print("Evaluating model...")
     eval_metrics = trainer.evaluate()
     trainer.log_metrics("eval", eval_metrics)
     trainer.save_metrics("eval", eval_metrics)
     for key, value in eval_metrics.items():
         log_metric(tora, f"eval_{key}", value, args.epochs)
-    # Save the final model
     trainer.save_model(os.path.join(args.output_dir, "final_model"))
-    # Detailed per-class metrics (if label names exist)
     if label_names:
         predictions = trainer.predict(tokenized_eval)
         preds = np.argmax(predictions.predictions, axis=1)
