@@ -1,6 +1,8 @@
 import { getExperimentAndMetrics } from "$lib/server/database";
 import type { ExperimentAndMetrics } from "$lib/types";
 import { createAnthropicClient } from "$lib/server/llm";
+import { AnalysisSchema } from "./schema";
+import zodToJsonSchema from "zod-to-json-schema";
 
 const MODEL = "claude-3-7-sonnet-20250219";
 
@@ -42,67 +44,15 @@ export async function GET({ url }: { url: URL }) {
 }
 
 function createSystemPrompt(): string {
+  const schema = zodToJsonSchema(AnalysisSchema, "AnalysisSchema");
+  // console.log(JSON.stringify(schema, null, 2));
+
   return `
 # You are a ML lead tasked to analyze and compile a report of machine learning experiments for stakeholders and model trainers.
 
 Respond using the following JSON schema:
 
-{
-  "$defs": {
-    "HPRecommendation": {
-      "properties": {
-        "recommendation": {
-          "default": {
-            "strip_whitespace": null,
-            "to_upper": null,
-            "to_lower": null,
-            "strict": null,
-            "min_length": null,
-            "max_length": 18,
-            "pattern": null
-          },
-          "title": "Recommendation",
-          "type": "string"
-        },
-        "importance_level": {
-          "enum": [
-            1,
-            2,
-            3,
-            4,
-            5
-          ],
-          "title": "Importance Level",
-          "type": "integer"
-        }
-      },
-      "required": [
-        "importance_level"
-      ],
-      "title": "HPRecommendation",
-      "type": "object"
-    }
-  },
-  "properties": {
-    "summary": {
-      "title": "Summary",
-      "type": "string"
-    },
-    "hyperparameter_recommendations": {
-      "additionalProperties": {
-        "$ref": "#/$defs/HPRecommendation"
-      },
-      "title": "Hyperparameter Recommendations",
-      "type": "object"
-    }
-  },
-  "required": [
-    "summary",
-    "hyperparameter_recommendations"
-  ],
-  "title": "OutputSchema",
-  "type": "object"
-}
+${JSON.stringify(schema, null, 2)}
 
 ## Notes
 * Only recommend changes to hyperparameters that were logged.
