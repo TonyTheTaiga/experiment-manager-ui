@@ -49,7 +49,18 @@
       <span class="text-xl font-semibold text-ctp-text">
         {experiment.name}
       </span>
-      <span class="text-sm text-ctp-subtext0 content-center">
+      <span
+        role="button"
+        tabindex="0"
+        class="text-sm text-ctp-subtext0 content-center cursor-pointer hover:text-ctp-text hover:underline"
+        onclick={() => {
+          navigator.clipboard.writeText(experiment.id);
+        }}
+        onkeydown={(e) => {
+          if (e.key === "Enter" || e.key === " ") e.currentTarget.click();
+        }}
+        title="Click to copy ID"
+      >
         {experiment.id}
       </span>
     </h2>
@@ -186,7 +197,10 @@
                     recommendations[param.key].recommendation)}
                 aria-label="Show recommendation"
               >
-                <Info size={16} class="text-gray-400 hover:text-ctp-lavender" />
+                <Info
+                  size={16}
+                  class="text-ctp-subtext0 hover:text-ctp-lavender"
+                />
               </button>
             {/if}
           </div>
