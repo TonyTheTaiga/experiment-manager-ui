@@ -23,7 +23,14 @@ class Tora:
         self._http_client = httpx.Client(base_url=server_url)
 
     @classmethod
-    def create_experiment(cls, name, description, hyperparams, tags):
+    def create_experiment(
+        cls,
+        name,
+        description,
+        hyperparams,
+        tags,
+        server_url: str = "http://localhost:5173/api",
+    ):
         data = {"name": name}
         if description:
             data["description"] = description
@@ -35,12 +42,12 @@ class Tora:
             data["tags"] = tags  # pyright: ignore
 
         req = httpx.post(
-            "/experiments/create",
+            server_url + "/experiments/create",
             json=data,
             headers={"Content-Type": "application/json"},
         )
         req.raise_for_status()
-        return cls(req.json()["experiment"]["id"])
+        return cls(req.json()["experiment"]["id"], server_url=server_url)
 
     def log(self, name, value, step: int | None = None, metadata: dict | None = None):
         self._buffer.append(
