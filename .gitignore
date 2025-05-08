@@ -104,5 +104,9 @@ pyrightconfig.json
 **/data/
 *.pt
 
+# Python scripts - ignore non-python files
+/python/scripts/*
+!/python/scripts/*.py
+
 # Special cases
 !web/src/lib

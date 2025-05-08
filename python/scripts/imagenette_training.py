@@ -2,7 +2,6 @@ import os
 import tarfile
 import time
 import urllib.request
-
 import numpy as np
 import torch
 import torch.nn as nn
@@ -227,7 +226,6 @@ if __name__ == "__main__":
             model, device, val_loader, criterion, epoch, tora, split="val"
         )
         scheduler.step()
-
     test_loss, test_acc, test_prec, test_rec, test_f1 = validate(
         model, device, test_loader, criterion, epochs, tora, split="test"
     )

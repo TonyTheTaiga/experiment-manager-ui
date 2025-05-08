@@ -3,7 +3,6 @@ import random
 import time
 from collections import deque
 from typing import Dict, Tuple
-
 import gym
 import matplotlib.pyplot as plt
 import numpy as np
