@@ -1,6 +1,9 @@
 import httpx
 
 
+TORA_BASE_URL = "http://localhost:5173/api"
+
+
 def hp_to_tora_format(
     hp: dict[str, str | int | float],
 ) -> list[dict[str, str | int | float]]:
@@ -20,7 +23,7 @@ class Tora:
         description: str,
         hyperparams: dict[str, str | int | float],
         tags: list[str],
-        server_url: str = "http://localhost:5173/api",
+        server_url: str = TORA_BASE_URL,
         max_buffer_len: int = 25,
     ):
         self._experiment_id = experiment_id
@@ -38,7 +41,7 @@ class Tora:
         description: str,
         hyperparams: dict[str, str | int | float],
         tags: list[str],
-        server_url: str = "http://localhost:5173/api",
+        server_url: str = TORA_BASE_URL,
     ):
         data = {}
 
