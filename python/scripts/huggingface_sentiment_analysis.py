@@ -42,9 +42,9 @@ def compute_metrics(pred):
     labels = pred.label_ids
     preds = pred.predictions.argmax(-1)
     accuracy = accuracy_score(labels, preds)
-    precision = precision_score(labels, preds, average="weighted", zero_division=0)
-    recall = recall_score(labels, preds, average="weighted", zero_division=0)
-    f1 = f1_score(labels, preds, average="weighted", zero_division=0)
+    precision = precision_score(labels, preds, average="weighted", zero_division=0)  # pyright: ignore
+    recall = recall_score(labels, preds, average="weighted", zero_division=0)  # pyright: ignore
+    f1 = f1_score(labels, preds, average="weighted", zero_division=0)  # pyright: ignore
     return {"accuracy": accuracy, "precision": precision, "recall": recall, "f1": f1}
 
 
@@ -81,7 +81,6 @@ def train_sentiment_model(args):
         torch.cuda.manual_seed_all(args.seed)
     hyperparams = {
         "model_name": args.model_name,
-        "dataset_name": args.dataset_name,
         "max_length": args.max_length,
         "batch_size": args.batch_size,
         "learning_rate": args.learning_rate,
@@ -105,33 +104,33 @@ def train_sentiment_model(args):
     else:
         dataset = load_dataset(args.dataset_name)
     if "train" in dataset and "validation" in dataset:
-        train_dataset = dataset["train"]
-        eval_dataset = dataset["validation"]
+        train_dataset = dataset["train"]  # pyright: ignore
+        eval_dataset = dataset["validation"]  # pyright: ignore
     elif "train" in dataset and "test" in dataset:
-        train_dataset = dataset["train"]
-        eval_dataset = dataset["test"]
+        train_dataset = dataset["train"]  # pyright: ignore
+        eval_dataset = dataset["test"]  # pyright: ignore
     else:
-        split_dataset = dataset["train"].train_test_split(test_size=0.2, seed=args.seed)
+        split_dataset = dataset["train"].train_test_split(test_size=0.2, seed=args.seed)  # pyright: ignore
         train_dataset = split_dataset["train"]
         eval_dataset = split_dataset["test"]
     text_field, label_field = None, None
     for field in ["text", "sentence", "content"]:
-        if field in train_dataset.features:
+        if field in train_dataset.features:  # pyright: ignore
             text_field = field
             break
     for field in ["label", "sentiment", "class"]:
-        if field in train_dataset.features:
+        if field in train_dataset.features:  # pyright: ignore
             label_field = field
             break
     if not text_field or not label_field:
         print("Could not identify text and label fields. Please specify them manually.")
         return
     print(f"Using text field: {text_field}, label field: {label_field}")
-    label_names = getattr(train_dataset.features[label_field], "names", None)
+    label_names = getattr(train_dataset.features[label_field], "names", None)  # pyright: ignore
     if label_names:
         num_labels = len(label_names)
     else:
-        num_labels = int(max(train_dataset[label_field])) + 1
+        num_labels = int(max(train_dataset[label_field])) + 1  # pyright: ignore
     print(f"Loading model: {args.model_name}")
     tokenizer = AutoTokenizer.from_pretrained(args.model_name)
     model = AutoModelForSequenceClassification.from_pretrained(
@@ -150,8 +149,8 @@ def train_sentiment_model(args):
             max_length=args.max_length,
         )
 
-    tokenized_train = train_dataset.map(tokenize_function, batched=True)
-    tokenized_eval = eval_dataset.map(tokenize_function, batched=True)
+    tokenized_train = train_dataset.map(tokenize_function, batched=True)  # pyright: ignore
+    tokenized_eval = eval_dataset.map(tokenize_function, batched=True)  # pyright: ignore
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
     training_args = TrainingArguments(
         output_dir=args.output_dir,
@@ -191,8 +190,6 @@ def train_sentiment_model(args):
     trainer.log_metrics("train", train_metrics)
     trainer.save_metrics("train", train_metrics)
     trainer.save_state()
-    for key, value in train_metrics.items():
-        log_metric(tora, f"train_{key}", value, args.epochs)
     log_metric(tora, "train_time", train_time, args.epochs)
     print("Evaluating model...")
     eval_metrics = trainer.evaluate()
@@ -202,13 +199,13 @@ def train_sentiment_model(args):
         log_metric(tora, f"eval_{key}", value, args.epochs)
     trainer.save_model(os.path.join(args.output_dir, "final_model"))
     if label_names:
-        predictions = trainer.predict(tokenized_eval)
+        predictions = trainer.predict(tokenized_eval)  # pyright: ignore
         preds = np.argmax(predictions.predictions, axis=1)
         labels = predictions.label_ids
         for i, class_name in enumerate(label_names):
-            class_precision = precision_score(labels == i, preds == i, zero_division=0)
-            class_recall = recall_score(labels == i, preds == i, zero_division=0)
-            class_f1 = f1_score(labels == i, preds == i, zero_division=0)
+            class_precision = precision_score(labels == i, preds == i, zero_division=0)  # pyright: ignore
+            class_recall = recall_score(labels == i, preds == i, zero_division=0)  # pyright: ignore
+            class_f1 = f1_score(labels == i, preds == i, zero_division=0)  # pyright: ignore
             log_metric(
                 tora,
                 f"class_{class_name}_precision",
