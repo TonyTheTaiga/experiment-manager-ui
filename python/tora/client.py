@@ -15,20 +15,23 @@ class Tora(Singleton):
     def __init__(
         self,
         name: str,
+        server_url: str = "http://localhost:5173/api",
+        experiment_id: str | None = None,
         description: str | None = None,
         hyperparams: dict[str, str | float | int] | None = None,
         tags: list[str] | None = None,
         max_buffer_len: int = 25,
     ):
-        self._client = httpx.Client(base_url="http://localhost:5173/api")
+        self._client = httpx.Client(base_url=server_url)
 
         self._name = name
         self._description = description
         self._hyperparams = self._format_hyperparams(hyperparams)
         self._tags = tags
-        self._id = self._create_experiment()
         self._max_buffer_len = max_buffer_len
         self._buffer = []
+
+        self._experiment_id = experiment_id or self._create_experiment()
 
     def _format_hyperparams(self, hp: dict | None) -> list[dict]:
         formatted_hyperparams = []
@@ -66,7 +69,7 @@ class Tora(Singleton):
 
     def _write_logs(self):
         req = self._client.post(
-            f"/experiments/{self._id}/metrics/batch",
+            f"/experiments/{self._experiment_id}/metrics/batch",
             headers={"Content-Type": "application/json"},
             json=self._buffer,
             timeout=120,

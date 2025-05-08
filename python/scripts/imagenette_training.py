@@ -218,8 +218,6 @@ if __name__ == "__main__":
     else:
         optimizer = optim.SGD(model.parameters(), lr=lr)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
-    best_val_acc = 0
-    best_model_path = "best_imagenette_model.pt"
     for epoch in range(1, epochs + 1):
         log_metric(tora, "learning_rate", optimizer.param_groups[0]["lr"], epoch)
         train_loss, train_acc = train_epoch(
@@ -229,8 +227,7 @@ if __name__ == "__main__":
             model, device, val_loader, criterion, epoch, tora, split="val"
         )
         scheduler.step()
-    print(f"Loading best model with validation accuracy: {best_val_acc:.2f}%")
-    model.load_state_dict(torch.load(best_model_path))
+
     test_loss, test_acc, test_prec, test_rec, test_f1 = validate(
         model, device, test_loader, criterion, epochs, tora, split="test"
     )
