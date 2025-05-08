@@ -198,8 +198,6 @@ def train_sentiment_model(args):
     eval_metrics = trainer.evaluate()
     trainer.log_metrics("eval", eval_metrics)
     trainer.save_metrics("eval", eval_metrics)
-    for key, value in eval_metrics.items():
-        log_metric(tora, f"eval_{key}", value, args.epochs)
 
     trainer.save_model(os.path.join(args.output_dir, "final_model"))
     if label_names:
