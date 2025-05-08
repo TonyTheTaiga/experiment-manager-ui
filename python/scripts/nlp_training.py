@@ -1,5 +1,4 @@
 import time
-
 import datasets
 import numpy as np
 import torch
@@ -10,13 +9,12 @@ from sklearn.metrics import (
     confusion_matrix,
     precision_recall_fscore_support,
 )
-from tora.client import Tora
+from tora import Tora
 from torch.utils.data import DataLoader, Dataset
 from transformers import BertModel, BertTokenizer
 
 
 def safe_value(value):
-    """Convert any value to float for logging, return None for strings"""
     if isinstance(value, (int, float)):
         if np.isnan(value) or np.isinf(value):
             return 0.0
@@ -33,7 +31,6 @@ def safe_value(value):
 
 
 def log_metric(client, name, value, step):
-    """Log only numeric metrics"""
     value = safe_value(value)
     if value is not None:
         client.log(name=name, value=value, step=step)
@@ -219,7 +216,7 @@ if __name__ == "__main__":
             "criterion": "CrossEntropyLoss",
         }
     )
-    tora = Tora(
+    tora = Tora.create_experiment(
         name="SST2_BERT",
         description="BERT model for SST-2 sentiment classification with tracked metrics",
         hyperparams=hyperparams,

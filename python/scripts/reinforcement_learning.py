@@ -3,18 +3,16 @@ import random
 import time
 from collections import deque
 from typing import Dict, Tuple
-
 import gym
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from tora.client import Tora
+from tora import Tora
 
 
 def safe_value(value):
-    """Convert any value to float for logging, return None for strings"""
     if isinstance(value, (int, float)):
         if np.isnan(value) or np.isinf(value):
             return 0.0
@@ -31,15 +29,12 @@ def safe_value(value):
 
 
 def log_metric(client, name, value, step):
-    """Log only numeric metrics"""
     value = safe_value(value)
     if value is not None:
         client.log(name=name, value=value, step=step)
 
 
 class ReplayBuffer:
-    """Experience replay buffer to store and sample transitions."""
-
     def __init__(self, capacity: int):
         self.buffer = deque(maxlen=capacity)
 
@@ -63,8 +58,6 @@ class ReplayBuffer:
 
 
 class DQN(nn.Module):
-    """Deep Q-Network for reinforcement learning."""
-
     def __init__(self, state_dim: int, action_dim: int, hidden_dim: int = 128):
         super(DQN, self).__init__()
         self.layers = nn.Sequential(
@@ -80,8 +73,6 @@ class DQN(nn.Module):
 
 
 class DQNAgent:
-    """Agent implementing Deep Q-Learning with experience replay and target networks."""
-
     def __init__(
         self,
         state_dim: int,
@@ -115,7 +106,6 @@ class DQNAgent:
         self.criterion = nn.MSELoss()
 
     def select_action(self, state: np.ndarray, training: bool = True) -> int:
-        """Select action using epsilon-greedy policy."""
         if training and np.random.rand() < self.epsilon:
             return np.random.randint(self.action_dim)
         else:
@@ -125,7 +115,6 @@ class DQNAgent:
             return q_values.argmax().item()
 
     def update(self) -> float:
-        """Update the Q-network using a batch of experiences."""
         if len(self.buffer) < self.batch_size:
             return 0.0
         states, actions, rewards, next_states, dones = self.buffer.sample(
@@ -160,7 +149,6 @@ class DQNAgent:
 def train_dqn(
     env_name: str, hyperparams: Dict, tora: Tora, seed: int = 42
 ) -> np.ndarray:
-    """Train a DQN agent on a given environment and track metrics."""
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -265,7 +253,6 @@ def train_dqn(
 
 
 def evaluate_agent(env, agent, episodes: int, max_steps: int) -> float:
-    """Evaluate agent performance over multiple episodes."""
     total_reward = 0
     for _ in range(episodes):
         state = env.reset()
@@ -285,11 +272,9 @@ def evaluate_agent(env, agent, episodes: int, max_steps: int) -> float:
 def visualize_and_save_results(
     rewards: np.ndarray, eval_rewards: np.ndarray, smoothing_window: int = 10
 ):
-    """Visualize training results and save plots."""
     os.makedirs("results", exist_ok=True)
 
     def smooth(data, window):
-        """Apply moving average smoothing to data."""
         return np.convolve(data, np.ones(window) / window, mode="valid")
 
     smoothed_rewards = smooth(rewards, smoothing_window)
@@ -340,7 +325,7 @@ if __name__ == "__main__":
             "action_dim": action_dim,
         }
     )
-    tora = Tora(
+    tora = Tora.create_experiment(
         name=f"DQN_{env_name}",
         description=f"Deep Q-Network agent for {env_name} environment",
         hyperparams=hyperparams,

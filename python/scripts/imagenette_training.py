@@ -2,7 +2,6 @@ import os
 import tarfile
 import time
 import urllib.request
-
 import numpy as np
 import torch
 import torch.nn as nn
@@ -12,13 +11,12 @@ from sklearn.metrics import (
     confusion_matrix,
     precision_recall_fscore_support,
 )
-from tora.client import Tora as Tora
+from tora import Tora
 from torch.utils.data import DataLoader
 from torchvision import datasets, models, transforms
 
 
 def safe_value(value):
-    """Convert any value to float for logging, return None for strings"""
     if isinstance(value, (int, float)):
         if np.isnan(value) or np.isinf(value):
             return 0.0
@@ -35,7 +33,6 @@ def safe_value(value):
 
 
 def log_metric(client, name, value, step):
-    """Log only numeric metrics"""
     value = safe_value(value)
     if value is not None:
         client.log(name=name, value=value, step=step)
@@ -182,7 +179,7 @@ if __name__ == "__main__":
             "model": "ResNet34",
         }
     )
-    tora = Tora(
+    tora = Tora.create_experiment(
         name="Imagenette_ResNet34",
         description="ResNet34 model for Imagenette classification with tracked metrics",
         hyperparams=hyperparams,
@@ -218,8 +215,6 @@ if __name__ == "__main__":
     else:
         optimizer = optim.SGD(model.parameters(), lr=lr)
     scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
-    best_val_acc = 0
-    best_model_path = "best_imagenette_model.pt"
     for epoch in range(1, epochs + 1):
         log_metric(tora, "learning_rate", optimizer.param_groups[0]["lr"], epoch)
         train_loss, train_acc = train_epoch(
@@ -229,8 +224,6 @@ if __name__ == "__main__":
             model, device, val_loader, criterion, epoch, tora, split="val"
         )
         scheduler.step()
-    print(f"Loading best model with validation accuracy: {best_val_acc:.2f}%")
-    model.load_state_dict(torch.load(best_model_path))
     test_loss, test_acc, test_prec, test_rec, test_f1 = validate(
         model, device, test_loader, criterion, epochs, tora, split="test"
     )

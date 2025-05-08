@@ -44,7 +44,7 @@ def get_batches(X, y, batch_size):
 if __name__ == "__main__":
     from sklearn.datasets import load_breast_cancer
     from sklearn.preprocessing import StandardScaler
-    from tora.client import Tora as Tora
+    from tora import Tora
 
     data = load_breast_cancer()
     X, y = data.data, data.target
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     learning_rate = 2e-4
     model = LogisticRegression(num_features=X.shape[1], learning_rate=learning_rate)
     epochs = 30
-    tora = Tora(
+    tora = Tora.create_experiment(
         name="Cancer",
         description="Cancer dataset",
         hyperparams={"epochs": epochs, "lr": learning_rate},

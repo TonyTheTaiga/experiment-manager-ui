@@ -1,6 +1,5 @@
 import os
 import time
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,12 +8,11 @@ import torch.nn as nn
 import torch.optim as optim
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.preprocessing import MinMaxScaler
-from tora.client import Tora
+from tora import Tora
 from torch.utils.data import DataLoader, Dataset, random_split
 
 
 def safe_value(value):
-    """Convert any value to float for logging, return None for strings"""
     if isinstance(value, (int, float)):
         if np.isnan(value) or np.isinf(value):
             return 0.0
@@ -31,7 +29,6 @@ def safe_value(value):
 
 
 def log_metric(client, name, value, step):
-    """Log only numeric metrics"""
     value = safe_value(value)
     if value is not None:
         client.log(name=name, value=value, step=step)
@@ -165,7 +162,6 @@ def validate(model, device, val_loader, criterion, scaler, epoch, tora, split="v
 
 
 def generate_synthetic_data():
-    """Generate synthetic time series data with trend, seasonality and noise"""
     np.random.seed(42)
     time_steps = 1000
     t = np.arange(time_steps)
@@ -260,7 +256,7 @@ if __name__ == "__main__":
     ).to(device)
     model_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     hyperparams["model_parameters"] = model_params
-    tora = Tora(
+    tora = Tora.create_experiment(
         name="TimeSeries_LSTM",
         description="LSTM model for time series forecasting with tracked metrics",
         hyperparams=hyperparams,
