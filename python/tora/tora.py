@@ -1,23 +1,32 @@
 import httpx
 
 
-def _format_hyperparams(hp: dict | None) -> list[dict]:
-    formatted_hyperparams = []
-    if hp:
-        for key, value in hp.items():
-            formatted_hyperparams.append({"key": key, "value": value})
+def hp_to_tora_format(
+    hp: dict[str, str | int | float],
+) -> list[dict[str, str | int | float]]:
+    return [{"key": key, "value": value} for key, value in hp.items()]
 
-    return formatted_hyperparams
+
+def hp_from_tora_format(
+    hp_list: list[dict[str, str | int | float]],
+) -> dict[str, str | int | float]:
+    return {k: v for single in hp_list for k, v in single.items()}
 
 
 class Tora:
     def __init__(
         self,
         experiment_id: str,
+        description: str,
+        hyperparams: dict[str, str | int | float],
+        tags: list[str],
         server_url: str = "http://localhost:5173/api",
         max_buffer_len: int = 25,
     ):
         self._experiment_id = experiment_id
+        self.description = description
+        self.hyperparams = hyperparams
+        self.tags = tags
         self._max_buffer_len = max_buffer_len
         self._buffer = []
         self._http_client = httpx.Client(base_url=server_url)
@@ -25,21 +34,23 @@ class Tora:
     @classmethod
     def create_experiment(
         cls,
-        name,
-        description,
-        hyperparams,
-        tags,
+        name: str,
+        description: str,
+        hyperparams: dict[str, str | int | float],
+        tags: list[str],
         server_url: str = "http://localhost:5173/api",
     ):
-        data = {"name": name}
+        data = {}
+
+        data["name"] = name
         if description:
             data["description"] = description
 
         if hyperparams:
-            data["hyperparams"] = _format_hyperparams(hyperparams)  # pyright: ignore
+            data["hyperparams"] = hp_to_tora_format(hyperparams)
 
         if tags:
-            data["tags"] = tags  # pyright: ignore
+            data["tags"] = tags
 
         req = httpx.post(
             server_url + "/experiments/create",
@@ -47,7 +58,29 @@ class Tora:
             headers={"Content-Type": "application/json"},
         )
         req.raise_for_status()
-        return cls(req.json()["experiment"]["id"], server_url=server_url)
+        return cls(
+            req.json()["experiment"]["id"],
+            description,
+            hyperparams,
+            tags,
+            server_url=server_url,
+        )
+
+    @classmethod
+    def load_experiment(
+        cls,
+        experiment_id: str,
+        server_url: str = "http://localhost:5173/api",
+    ):
+        req = httpx.get(url=server_url + f"/experiments/{experiment_id}")
+        req.raise_for_status()
+        data = req.json()
+        experiment_id = data["id"]
+        description = data["description"]
+        hyperparams = hp_from_tora_format(data["hyperparams"])
+        tags = data["tags"]
+
+        return cls(experiment_id, description, hyperparams, tags, server_url)
 
     def log(self, name, value, step: int | None = None, metadata: dict | None = None):
         self._buffer.append(
