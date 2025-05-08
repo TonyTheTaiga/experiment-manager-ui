@@ -167,7 +167,7 @@ if __name__ == "__main__":
             "criterion": "CrossEntropyLoss",
         }
     )
-    tora = Tora(
+    tora = Tora.create_experiment(
         name="MNIST_CNN",
         description="CNN model for MNIST digit classification with tracked metrics",
         hyperparams=hyperparams,

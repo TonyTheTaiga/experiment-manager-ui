@@ -387,7 +387,7 @@ if __name__ == "__main__":
             "model": "MatrixFactorization",
         }
     )
-    tora = Tora(
+    tora = Tora.create_experiment(
         name="MovieLens_Recommender",
         description="Matrix factorization model for movie recommendations",
         hyperparams=hyperparams,

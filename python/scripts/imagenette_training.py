@@ -12,7 +12,7 @@ from sklearn.metrics import (
     confusion_matrix,
     precision_recall_fscore_support,
 )
-from tora.client import Tora as Tora
+from tora.client import Tora
 from torch.utils.data import DataLoader
 from torchvision import datasets, models, transforms
 
@@ -182,7 +182,7 @@ if __name__ == "__main__":
             "model": "ResNet34",
         }
     )
-    tora = Tora(
+    tora = Tora.create_experiment(
         name="Imagenette_ResNet34",
         description="ResNet34 model for Imagenette classification with tracked metrics",
         hyperparams=hyperparams,

@@ -340,7 +340,7 @@ if __name__ == "__main__":
             "action_dim": action_dim,
         }
     )
-    tora = Tora(
+    tora = Tora.create_experiment(
         name=f"DQN_{env_name}",
         description=f"Deep Q-Network agent for {env_name} environment",
         hyperparams=hyperparams,

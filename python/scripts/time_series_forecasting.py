@@ -260,7 +260,7 @@ if __name__ == "__main__":
     ).to(device)
     model_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     hyperparams["model_parameters"] = model_params
-    tora = Tora(
+    tora = Tora.create_experiment(
         name="TimeSeries_LSTM",
         description="LSTM model for time series forecasting with tracked metrics",
         hyperparams=hyperparams,

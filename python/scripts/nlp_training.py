@@ -219,7 +219,7 @@ if __name__ == "__main__":
             "criterion": "CrossEntropyLoss",
         }
     )
-    tora = Tora(
+    tora = Tora.create_experiment(
         name="SST2_BERT",
         description="BERT model for SST-2 sentiment classification with tracked metrics",
         hyperparams=hyperparams,
