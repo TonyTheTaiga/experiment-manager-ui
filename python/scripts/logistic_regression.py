@@ -44,7 +44,7 @@ def get_batches(X, y, batch_size):
 if __name__ == "__main__":
     from sklearn.datasets import load_breast_cancer
     from sklearn.preprocessing import StandardScaler
-    from tora.client import Tora
+    from tora import Tora
 
     data = load_breast_cancer()
     X, y = data.data, data.target

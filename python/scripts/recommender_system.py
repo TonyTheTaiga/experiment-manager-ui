@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from sklearn.metrics import ndcg_score, precision_score, recall_score
-from tora.client import Tora as Tora
+from tora import Tora as Tora
 from torch.utils.data import DataLoader, Dataset, random_split
 
 

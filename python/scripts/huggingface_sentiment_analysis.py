@@ -10,7 +10,7 @@ import torch.nn as nn
 from datasets import load_dataset
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 from torch.utils.data import DataLoader
-from tora.client import Tora
+from tora import Tora
 from transformers import (
     AutoModelForSequenceClassification,
     AutoTokenizer,
@@ -197,7 +197,7 @@ def train_sentiment_model(args):
         logging_steps=50,
         eval_steps=500,
         save_steps=1000,
-        evaluation_strategy="steps",
+        eval_strategy="steps",
         load_best_model_at_end=True,
         metric_for_best_model="accuracy",
         save_total_limit=2,
@@ -211,7 +211,7 @@ def train_sentiment_model(args):
         args=training_args,
         train_dataset=tokenized_train,
         eval_dataset=tokenized_eval,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
         data_collator=data_collator,
         compute_metrics=compute_metrics,
     )

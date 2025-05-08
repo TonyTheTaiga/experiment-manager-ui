@@ -10,7 +10,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from tora.client import Tora
+from tora import Tora
 
 
 def safe_value(value):

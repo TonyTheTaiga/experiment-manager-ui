@@ -9,7 +9,7 @@ import torch.nn as nn
 import torch.optim as optim
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.preprocessing import MinMaxScaler
-from tora.client import Tora
+from tora import Tora
 from torch.utils.data import DataLoader, Dataset, random_split
 
 

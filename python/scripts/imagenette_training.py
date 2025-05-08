@@ -12,7 +12,7 @@ from sklearn.metrics import (
     confusion_matrix,
     precision_recall_fscore_support,
 )
-from tora.client import Tora
+from tora import Tora
 from torch.utils.data import DataLoader
 from torchvision import datasets, models, transforms
 
