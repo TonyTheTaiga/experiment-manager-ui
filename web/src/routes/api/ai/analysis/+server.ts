@@ -45,8 +45,6 @@ export async function GET({ url }: { url: URL }) {
 
 function createSystemPrompt(): string {
   const schema = zodToJsonSchema(AnalysisSchema, "AnalysisSchema");
-  // console.log(JSON.stringify(schema, null, 2));
-
   return `
 # You are a ML lead tasked to analyze and compile a report of machine learning experiments for stakeholders and model trainers.
 
