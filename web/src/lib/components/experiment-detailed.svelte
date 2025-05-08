@@ -122,9 +122,7 @@
 
   <!-- Metadata section -->
   <div class="p-5 border-b border-ctp-surface0">
-    <div
-      class="flex items-center gap-6 mb-4 text-ctp-subtext0 text-sm"
-    >
+    <div class="flex items-center gap-6 mb-4 text-ctp-subtext0 text-sm">
       <div class="flex items-center gap-1.5">
         <Clock size={14} />
         <time>
@@ -168,9 +166,7 @@
     <div class="p-5 border-b border-ctp-surface0">
       <div class="flex items-center gap-2 mb-4">
         <Settings size={16} class="text-ctp-mauve" />
-        <h3 class="text-lg font-semibold text-ctp-mauve">
-          Parameters
-        </h3>
+        <h3 class="text-lg font-semibold text-ctp-mauve">Parameters</h3>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {#each experiment.hyperparams as param}
@@ -179,8 +175,7 @@
               >{param.key}</span
             >
             <div class="flex-grow"></div>
-            <span
-              class="text-sm text-ctp-text px-2 py-1 bg-ctp-surface0"
+            <span class="text-sm text-ctp-text px-2 py-1 bg-ctp-surface0"
               >{param.value}</span
             >
             {#if recommendations && recommendations[param.key]}
@@ -191,10 +186,7 @@
                     recommendations[param.key].recommendation)}
                 aria-label="Show recommendation"
               >
-                <Info
-                  size={16}
-                  class="text-gray-400 hover:text-ctp-lavender"
-                />
+                <Info size={16} class="text-gray-400 hover:text-ctp-lavender" />
               </button>
             {/if}
           </div>
@@ -229,9 +221,7 @@
       <div class="p-5 pb-0">
         <div class="flex items-center gap-2">
           <ChartLine size={16} class="text-ctp-mauve" />
-          <h3 class="text-lg font-semibold text-ctp-mauve">
-            Charts
-          </h3>
+          <h3 class="text-lg font-semibold text-ctp-mauve">Charts</h3>
         </div>
       </div>
       <InteractiveChart {experiment} />

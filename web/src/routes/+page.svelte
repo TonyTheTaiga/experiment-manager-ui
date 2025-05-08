@@ -4,6 +4,7 @@
   import type { Experiment } from "$lib/types";
   import type { PageData } from "./$types";
   import { Plus } from "lucide-svelte";
+  import Logo from "$lib/components/logo.svelte";
 
   let { data }: { data: PageData } = $props();
   let experiments: Experiment[] = $state(data.experiments);
@@ -21,8 +22,11 @@
 <div class="flex flex-col h-full">
   <header>
     <nav
-      class="px-6 py-4 flex flex-row justify-end bg-ctp-mantle border-b border-ctp-surface0"
+      class="px-6 py-4 flex flex-row justify-between bg-ctp-mantle border-b border-ctp-surface0"
     >
+      <div class="w-42 text-ctp-mauve fill-current">
+        <Logo />
+      </div>
       <button
         onclick={() => {
           isOpen = true;
