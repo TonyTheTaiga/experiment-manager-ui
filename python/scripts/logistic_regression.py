@@ -43,7 +43,7 @@ if __name__ == "__main__":
     from sklearn.datasets import load_breast_cancer
     from sklearn.preprocessing import StandardScaler
 
-    from tora.client import Client as Essistant
+    from tora.client import Tora as Tora
 
 
     data = load_breast_cancer()
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     model = LogisticRegression(num_features=X.shape[1], learning_rate=learning_rate)
     epochs = 30
 
-    essistant = Essistant(
+    tora = Tora(
         name="Cancer",
         description="Cancer dataset",
         hyperparams={"epochs": epochs, "lr": learning_rate},
@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
         acc = (np.array(predictions) == np.array(truths)).mean()
         epoch_loss = total_loss / samples
-        essistant.log(name="epoch_loss", value=epoch_loss.item(), step=epoch)  # pyright: ignore
-        essistant.log(name="accuracy", value=acc.item(), step=epoch)  # pyright: ignore
+        tora.log(name="epoch_loss", value=epoch_loss.item(), step=epoch)  # pyright: ignore
+        tora.log(name="accuracy", value=acc.item(), step=epoch)  # pyright: ignore
 
-    essistant.shutdown()
+    tora.shutdown()

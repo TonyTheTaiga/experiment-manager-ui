@@ -9,7 +9,7 @@ from sklearn.metrics import precision_recall_fscore_support, accuracy_score, con
 import os
 import datasets
 
-from tora.client import Client as Essistant
+from tora.client import Tora
 
 
 def safe_value(value):
@@ -85,7 +85,7 @@ class BertClassifier(nn.Module):
         return logits
 
 
-def train_epoch(model, device, train_loader, optimizer, criterion, epoch, essistant):
+def train_epoch(model, device, train_loader, optimizer, criterion, epoch, tora):
     model.train()
     running_loss = 0.0
     correct = 0
@@ -123,14 +123,14 @@ def train_epoch(model, device, train_loader, optimizer, criterion, epoch, essist
     epoch_time = time.time() - start_time
 
     # Log metrics
-    log_metric(essistant, "train_loss", epoch_loss, epoch)
-    log_metric(essistant, "train_accuracy", accuracy, epoch)
-    log_metric(essistant, "epoch_time", epoch_time, epoch)
+    log_metric(tora, "train_loss", epoch_loss, epoch)
+    log_metric(tora, "train_accuracy", accuracy, epoch)
+    log_metric(tora, "epoch_time", epoch_time, epoch)
 
     return epoch_loss, accuracy
 
 
-def validate(model, device, test_loader, criterion, epoch, essistant, split="val"):
+def validate(model, device, test_loader, criterion, epoch, tora, split="val"):
     model.eval()
     test_loss = 0
     all_targets = []
@@ -164,11 +164,11 @@ def validate(model, device, test_loader, criterion, epoch, essistant, split="val
 
     # Log metrics
     prefix = "val" if split == "val" else "test"
-    log_metric(essistant, f"{prefix}_loss", test_loss, epoch)
-    log_metric(essistant, f"{prefix}_accuracy", accuracy, epoch)
-    log_metric(essistant, f"{prefix}_precision", precision * 100, epoch)
-    log_metric(essistant, f"{prefix}_recall", recall * 100, epoch)
-    log_metric(essistant, f"{prefix}_f1", f1 * 100, epoch)
+    log_metric(tora, f"{prefix}_loss", test_loss, epoch)
+    log_metric(tora, f"{prefix}_accuracy", accuracy, epoch)
+    log_metric(tora, f"{prefix}_precision", precision * 100, epoch)
+    log_metric(tora, f"{prefix}_recall", recall * 100, epoch)
+    log_metric(tora, f"{prefix}_f1", f1 * 100, epoch)
 
     print(
         f"\n{split.capitalize()} set: Average loss: {test_loss:.4f}, Accuracy: {accuracy:.2f}%, F1: {f1 * 100:.2f}%\n"
@@ -209,24 +209,24 @@ if __name__ == "__main__":
     # Load dataset (SST-2 sentiment analysis dataset)
     print("Loading dataset...")
     sst2 = datasets.load_dataset("glue", "sst2")
-    
+
     train_dataset = sst2["train"]
     validation_dataset = sst2["validation"]
-    
+
     # Get class names and count
     num_classes = 2
     class_names = ["negative", "positive"]
-    
+
     # Initialize tokenizer
     tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
-    
+
     # Prepare datasets
     train_texts = train_dataset["sentence"]
     train_labels = train_dataset["label"]
-    
+
     val_texts = validation_dataset["sentence"]
     val_labels = validation_dataset["label"]
-    
+
     # Create dataset objects
     train_dataset = TextClassificationDataset(
         train_texts, train_labels, tokenizer, max_length=hyperparams["max_length"]
@@ -234,7 +234,7 @@ if __name__ == "__main__":
     val_dataset = TextClassificationDataset(
         val_texts, val_labels, tokenizer, max_length=hyperparams["max_length"]
     )
-    
+
     # Create data loaders
     train_loader = DataLoader(
         train_dataset, batch_size=hyperparams["batch_size"], shuffle=True
@@ -242,15 +242,15 @@ if __name__ == "__main__":
     val_loader = DataLoader(
         val_dataset, batch_size=hyperparams["batch_size"]
     )
-    
+
     # Add dataset and model information
     model = BertClassifier(
-        num_classes=num_classes, 
+        num_classes=num_classes,
         dropout_rate=hyperparams["dropout_rate"],
         freeze_bert=hyperparams["freeze_bert"]
     )
     model_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    
+
     hyperparams.update(
         {
             "dataset": "SST-2",
@@ -264,7 +264,7 @@ if __name__ == "__main__":
     )
 
     # Initialize experiment tracker
-    essistant = Essistant(
+    tora = Tora(
         name="SST2_BERT",
         description="BERT model for SST-2 sentiment classification with tracked metrics",
         hyperparams=hyperparams,
@@ -287,7 +287,7 @@ if __name__ == "__main__":
         )
     else:
         optimizer = optim.Adam(
-            model.parameters(), 
+            model.parameters(),
             lr=hyperparams["lr"],
             weight_decay=hyperparams["weight_decay"]
         )
@@ -296,7 +296,7 @@ if __name__ == "__main__":
     from transformers import get_linear_schedule_with_warmup
     num_training_steps = len(train_loader) * hyperparams["epochs"]
     scheduler = get_linear_schedule_with_warmup(
-        optimizer, 
+        optimizer,
         num_warmup_steps=hyperparams["warmup_steps"],
         num_training_steps=num_training_steps
     )
@@ -307,12 +307,12 @@ if __name__ == "__main__":
 
     for epoch in range(1, hyperparams["epochs"] + 1):
         # Log current learning rate
-        log_metric(essistant, "learning_rate", optimizer.param_groups[0]["lr"], epoch)
+        log_metric(tora, "learning_rate", optimizer.param_groups[0]["lr"], epoch)
 
         # Train and validate for one epoch
-        train_loss, train_acc = train_epoch(model, device, train_loader, optimizer, criterion, epoch, essistant)
+        train_loss, train_acc = train_epoch(model, device, train_loader, optimizer, criterion, epoch, tora)
         val_loss, val_acc, val_prec, val_rec, val_f1 = validate(
-            model, device, val_loader, criterion, epoch, essistant, split="val"
+            model, device, val_loader, criterion, epoch, tora, split="val"
         )
 
         # Save best model
@@ -328,14 +328,14 @@ if __name__ == "__main__":
     print(f"Loading best model with validation accuracy: {best_val_acc:.2f}%")
     model.load_state_dict(torch.load(best_model_path))
     test_loss, test_acc, test_prec, test_rec, test_f1 = validate(
-        model, device, val_loader, criterion, hyperparams["epochs"], essistant, split="test"
+        model, device, val_loader, criterion, hyperparams["epochs"], tora, split="test"
     )
 
     # Log final metrics
-    log_metric(essistant, "final_test_accuracy", test_acc, hyperparams["epochs"])
-    log_metric(essistant, "final_test_precision", test_prec * 100, hyperparams["epochs"])
-    log_metric(essistant, "final_test_recall", test_rec * 100, hyperparams["epochs"])
-    log_metric(essistant, "final_test_f1", test_f1 * 100, hyperparams["epochs"])
+    log_metric(tora, "final_test_accuracy", test_acc, hyperparams["epochs"])
+    log_metric(tora, "final_test_precision", test_prec * 100, hyperparams["epochs"])
+    log_metric(tora, "final_test_recall", test_rec * 100, hyperparams["epochs"])
+    log_metric(tora, "final_test_f1", test_f1 * 100, hyperparams["epochs"])
 
     # Calculate confusion matrix
     all_targets = []
@@ -346,7 +346,7 @@ if __name__ == "__main__":
             input_ids = batch["input_ids"].to(device)
             attention_mask = batch["attention_mask"].to(device)
             labels = batch["label"].to(device)
-            
+
             outputs = model(input_ids=input_ids, attention_mask=attention_mask)
             pred = outputs.argmax(dim=1)
             all_targets.extend(labels.cpu().numpy())
@@ -374,10 +374,10 @@ if __name__ == "__main__":
 
             # Log per-class metrics
             class_name = class_names[class_idx]
-            log_metric(essistant, f"class_{class_name}_precision", class_precision * 100, hyperparams["epochs"])
-            log_metric(essistant, f"class_{class_name}_recall", class_recall * 100, hyperparams["epochs"])
-            log_metric(essistant, f"class_{class_name}_f1", class_f1 * 100, hyperparams["epochs"])
+            log_metric(tora, f"class_{class_name}_precision", class_precision * 100, hyperparams["epochs"])
+            log_metric(tora, f"class_{class_name}_recall", class_recall * 100, hyperparams["epochs"])
+            log_metric(tora, f"class_{class_name}_f1", class_f1 * 100, hyperparams["epochs"])
     except Exception as e:
         print(f"Error calculating per-class metrics: {str(e)}")
 
-    essistant.shutdown()
+    tora.shutdown()

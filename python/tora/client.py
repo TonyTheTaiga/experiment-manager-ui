@@ -11,7 +11,7 @@ class Singleton:
         return cls._instance
 
 
-class Client(Singleton):
+class Tora(Singleton):
     def __init__(
         self,
         name: str,

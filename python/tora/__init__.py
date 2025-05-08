@@ -1,1 +1,1 @@
-from tora.client import Client
+from tora.client import Tora

@@ -7,7 +7,7 @@ import time
 import numpy as np
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score, confusion_matrix
 
-from tora.client import Client as Essistant
+from tora.client import Tora
 
 
 def safe_value(value):
@@ -65,7 +65,7 @@ class SimpleCNN(nn.Module):
         return x
 
 
-def train_epoch(model, device, train_loader, optimizer, criterion, epoch, essistant):
+def train_epoch(model, device, train_loader, optimizer, criterion, epoch, tora):
     model.train()
     running_loss = 0.0
     correct = 0
@@ -101,14 +101,14 @@ def train_epoch(model, device, train_loader, optimizer, criterion, epoch, essist
     epoch_time = time.time() - start_time
 
     # Log metrics
-    log_metric(essistant, "train_loss", epoch_loss, epoch)
-    log_metric(essistant, "train_accuracy", accuracy, epoch)
-    log_metric(essistant, "epoch_time", epoch_time, epoch)
+    log_metric(tora, "train_loss", epoch_loss, epoch)
+    log_metric(tora, "train_accuracy", accuracy, epoch)
+    log_metric(tora, "epoch_time", epoch_time, epoch)
 
     return epoch_loss, accuracy
 
 
-def validate(model, device, test_loader, criterion, epoch, essistant, split="val"):
+def validate(model, device, test_loader, criterion, epoch, tora, split="val"):
     model.eval()
     test_loss = 0
     all_targets = []
@@ -138,11 +138,11 @@ def validate(model, device, test_loader, criterion, epoch, essistant, split="val
 
     # Log metrics
     prefix = "val" if split == "val" else "test"
-    log_metric(essistant, f"{prefix}_loss", test_loss, epoch)
-    log_metric(essistant, f"{prefix}_accuracy", accuracy, epoch)
-    log_metric(essistant, f"{prefix}_precision", precision * 100, epoch)
-    log_metric(essistant, f"{prefix}_recall", recall * 100, epoch)
-    log_metric(essistant, f"{prefix}_f1", f1 * 100, epoch)
+    log_metric(tora, f"{prefix}_loss", test_loss, epoch)
+    log_metric(tora, f"{prefix}_accuracy", accuracy, epoch)
+    log_metric(tora, f"{prefix}_precision", precision * 100, epoch)
+    log_metric(tora, f"{prefix}_recall", recall * 100, epoch)
+    log_metric(tora, f"{prefix}_f1", f1 * 100, epoch)
 
     print(
         f"\n{split.capitalize()} set: Average loss: {test_loss:.4f}, Accuracy: {accuracy:.2f}%, F1: {f1 * 100:.2f}%\n"
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     )
 
     # Initialize experiment tracker
-    essistant = Essistant(
+    tora = Tora(
         name="MNIST_CNN",
         description="CNN model for MNIST digit classification with tracked metrics",
         hyperparams=hyperparams,
@@ -255,12 +255,12 @@ if __name__ == "__main__":
 
     for epoch in range(1, epochs + 1):
         # Log current learning rate
-        log_metric(essistant, "learning_rate", optimizer.param_groups[0]["lr"], epoch)
+        log_metric(tora, "learning_rate", optimizer.param_groups[0]["lr"], epoch)
 
         # Train and validate for one epoch
-        train_loss, train_acc = train_epoch(model, device, train_loader, optimizer, criterion, epoch, essistant)
+        train_loss, train_acc = train_epoch(model, device, train_loader, optimizer, criterion, epoch, tora)
         val_loss, val_acc, val_prec, val_rec, val_f1 = validate(
-            model, device, val_loader, criterion, epoch, essistant, split="val"
+            model, device, val_loader, criterion, epoch, tora, split="val"
         )
 
         # Update learning rate
@@ -269,14 +269,14 @@ if __name__ == "__main__":
     # Evaluate best model on test set
     model.load_state_dict(torch.load("best_mnist_model.pt"))
     test_loss, test_acc, test_prec, test_rec, test_f1 = validate(
-        model, device, test_loader, criterion, epochs, essistant, split="test"
+        model, device, test_loader, criterion, epochs, tora, split="test"
     )
 
     # Log final metrics
-    log_metric(essistant, "final_test_accuracy", test_acc, epochs)
-    log_metric(essistant, "final_test_precision", test_prec * 100, epochs)
-    log_metric(essistant, "final_test_recall", test_rec * 100, epochs)
-    log_metric(essistant, "final_test_f1", test_f1 * 100, epochs)
+    log_metric(tora, "final_test_accuracy", test_acc, epochs)
+    log_metric(tora, "final_test_precision", test_prec * 100, epochs)
+    log_metric(tora, "final_test_recall", test_rec * 100, epochs)
+    log_metric(tora, "final_test_f1", test_f1 * 100, epochs)
 
     # Log per-class metrics from confusion matrix
     all_targets = []
@@ -311,10 +311,10 @@ if __name__ == "__main__":
                 class_f1 = 0
 
             # Log per-class metrics
-            log_metric(essistant, f"class_{class_idx}_precision", class_precision * 100, epochs)
-            log_metric(essistant, f"class_{class_idx}_recall", class_recall * 100, epochs)
-            log_metric(essistant, f"class_{class_idx}_f1", class_f1 * 100, epochs)
+            log_metric(tora, f"class_{class_idx}_precision", class_precision * 100, epochs)
+            log_metric(tora, f"class_{class_idx}_recall", class_recall * 100, epochs)
+            log_metric(tora, f"class_{class_idx}_f1", class_f1 * 100, epochs)
     except Exception as e:
         print(f"Error calculating per-class metrics: {str(e)}")
 
-    essistant.shutdown()
+    tora.shutdown()
