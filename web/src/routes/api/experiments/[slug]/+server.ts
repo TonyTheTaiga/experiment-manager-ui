@@ -1,5 +1,9 @@
 import { json } from "@sveltejs/kit";
-import { getExperiment, updateExperiment, createReference } from "$lib/server/database";
+import {
+  getExperiment,
+  updateExperiment,
+  createReference,
+} from "$lib/server/database";
 
 export async function GET({ params: { slug } }: { params: { slug: string } }) {
   const experiment = await getExperiment(slug);
