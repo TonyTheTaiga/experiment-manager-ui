@@ -43,16 +43,13 @@
 <article class="bg-ctp-base overflow-hidden shadow-lg">
   <!-- Header with actions -->
   <header
-    class="p-4 bg-ctp-mantle border-b border-ctp-surface0 flex justify-between items-center"
+    class="p-4 bg-ctp-mantle border-b border-ctp-surface0 flex flex-col md:flex-row justify-between items-center"
   >
-    <h2 class="flex space-x-4">
-      <span class="text-xl font-semibold text-ctp-text">
-        {experiment.name}
-      </span>
+    <h2>
       <span
         role="button"
         tabindex="0"
-        class="text-sm text-ctp-subtext0 content-center cursor-pointer hover:text-ctp-text hover:underline"
+        class="text-xl font-semibold text-ctp-subtext0 content-center cursor-pointer hover:text-ctp-text hover:underline"
         onclick={() => {
           navigator.clipboard.writeText(experiment.id);
         }}
@@ -61,7 +58,7 @@
         }}
         title="Click to copy ID"
       >
-        {experiment.id}
+        {experiment.name}
       </span>
     </h2>
     <div class="flex items-center gap-3">
