@@ -54,6 +54,7 @@ class ToraCallback(TrainerCallback):
     def on_log(self, args, state, control, logs=None, **kwargs):
         if logs is None:
             return
+
         loss = logs.get("loss")
         if loss is not None:
             log_metric(self.tora, "train_loss", loss, state.global_step)
@@ -61,6 +62,7 @@ class ToraCallback(TrainerCallback):
     def on_evaluate(self, args, state, control, metrics=None, **kwargs):
         if metrics is None:
             return
+
         for key, value in metrics.items():
             if key.startswith("eval_"):
                 log_metric(self.tora, key, value, state.global_step)
