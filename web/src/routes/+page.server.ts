@@ -141,6 +141,7 @@ async function handleUpdate(request: Request, fetch: Function) {
     "experiment-id": id,
     "experiment-name": name,
     "experiment-description": description,
+    "reference-id": referenceId,
     tags,
   } = parseFormData(form);
 
@@ -155,6 +156,20 @@ async function handleUpdate(request: Request, fetch: Function) {
 
   if (!response.ok) {
     return fail(500, { message: "Failed to update experiment" });
+  }
+
+  if (referenceId) {
+    const referenceResponse = await fetch(
+      API_ROUTES.CREATE_REFERENCE.replace("[slug]", id),
+      {
+        method: "POST",
+        body: JSON.stringify({ referenceId }),
+      },
+    );
+
+    if (!referenceResponse.ok) {
+      return fail(500, { message: "Failed to create reference" });
+    }
   }
 
   return {

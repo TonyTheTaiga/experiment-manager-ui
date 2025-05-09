@@ -1,5 +1,5 @@
 import { json } from "@sveltejs/kit";
-import { getExperiment, updateExperiment } from "$lib/server/database";
+import { getExperiment, updateExperiment, createReference } from "$lib/server/database";
 
 export async function GET({ params: { slug } }: { params: { slug: string } }) {
   const experiment = await getExperiment(slug);
@@ -19,6 +19,7 @@ export async function POST({
     description: data.description,
     tags: data.tags,
   });
+
   return new Response(
     JSON.stringify({ message: "Experiment updated successfully" }),
     {
