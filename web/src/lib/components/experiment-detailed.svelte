@@ -82,7 +82,7 @@
     </h2>
     <div class="flex items-center gap-3">
       <button
-        class="p-1.5 text-ctp-subtext0 hover:text-ctp-subtext0 transition-transform active:rotate-90"
+        class="p-1.5 text-ctp-subtext0 hover:text-ctp-text transition-transform active:rotate-90"
         onclick={async () => {
           const response = await fetch(
             `/api/ai/analysis?experimentId=${experiment.id}`,
